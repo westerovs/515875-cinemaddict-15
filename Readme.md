@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Александр Вестеровский](https://up.htmlacademy.ru/ecmascript/15/user/515875).
-* Наставник: `Неизвестно`.
+* Наставник: [Магомед Кандаев](https://htmlacademy.ru/profile/magomedkandaev).
 
 ---
 
