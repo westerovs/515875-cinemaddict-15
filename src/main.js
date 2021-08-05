@@ -1,3 +1,4 @@
+import {task} from './task.js';
 import {createRankTemplate} from './view/rank';
 import {createFilterTemplate} from './view/filter';
 import {createSortingTemplate} from './view/sorting';
@@ -6,6 +7,8 @@ import {createShowMoreTemplate} from './view/show-more';
 import {createFilmCardTemplate} from './view/film-card';
 import {createFilmDetailsTemplate} from './view/film-details';
 import {createAllFilmsCountTemplate} from './view/all-films-count';
+
+console.log(task);
 
 const SHOW_CARD_COUNT = 5;
 const SHOW_CARD_EXTRA = 2;
@@ -24,7 +27,7 @@ render(siteMainElement, createFilterTemplate());
 render(siteMainElement, createSortingTemplate());
 render(siteMainElement, createFilmsBoardTemplate());
 render(siteFooterStatistics, createAllFilmsCountTemplate());
-render(pageBody, createFilmDetailsTemplate());
+// render(pageBody, createFilmDetailsTemplate());
 
 const filmsBoard = siteMainElement.querySelector('.films');
 const filmsListMain = filmsBoard.querySelector('.films-list--main');
