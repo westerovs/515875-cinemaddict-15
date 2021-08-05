@@ -1,4 +1,6 @@
-import {task} from './task.js';
+import dayjs from 'dayjs';
+import {generateTask} from './task.js';
+
 import {createRankTemplate} from './view/rank';
 import {createFilterTemplate} from './view/filter';
 import {createSortingTemplate} from './view/sorting';
@@ -8,9 +10,9 @@ import {createFilmCardTemplate} from './view/film-card';
 import {createFilmDetailsTemplate} from './view/film-details';
 import {createAllFilmsCountTemplate} from './view/all-films-count';
 
-console.log(task);
+// console.log(generateTask())
 
-const SHOW_CARD_COUNT = 5;
+const SHOW_CARD_COUNT = 7;
 const SHOW_CARD_EXTRA = 2;
 
 const render = (container, template, place = 'beforeend') => {
@@ -37,8 +39,8 @@ const filmsListMainContainer = filmsListMain.querySelector('.films-list__contain
 
 render(filmsListMain, createShowMoreTemplate());
 
-for (let i = 0; i < SHOW_CARD_COUNT; i++) {
-  render(filmsListMainContainer, createFilmCardTemplate());
+for (let i = 1; i <= SHOW_CARD_COUNT; i++) {
+  render(filmsListMainContainer, createFilmCardTemplate(i));
 }
 
 for (let i = 0; i < SHOW_CARD_EXTRA; i++) {

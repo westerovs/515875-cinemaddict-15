@@ -1,5 +1,8 @@
 import { getRandomNumber } from './utils.js';
 
+// комментарии — это отдельная структура данных
+// с эмоцией, датой, автором и сообщением
+
 const filmNames = [
   'Contact',
   'Rocky',
@@ -48,21 +51,28 @@ const filmGenres = [
   'Historical',
 ];
 
-// комментарии — это отдельная структура данных
-// с эмоцией, датой, автором и сообщением
-const filmComments = () => {
 
-};
+const generateTask = () => {
+  const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 
-const task = {
-  name: filmNames[getRandomNumber(0, filmNames.length - 1)],
-  year: filmYears[getRandomNumber(0, filmYears.length - 1)],
-  desc: filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
-  poster: filmPosters[getRandomNumber(0, filmPosters.length - 1)],
-  genre: filmGenres[getRandomNumber(0, filmGenres.length - 1)],
-  duration: filmDurations[getRandomNumber(0, filmDurations.length - 1)],
+  return {
+    name: filmNames[getRandomNumber(0, filmNames.length - 1)],
+    year: filmYears[getRandomNumber(0, filmYears.length - 1)],
+    desc: filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
+    poster: filmPosters[getRandomNumber(0, filmPosters.length - 1)],
+    genre: filmGenres[getRandomNumber(0, filmGenres.length - 1)],
+    duration: filmDurations[getRandomNumber(0, filmDurations.length - 1)],
+    watchlist: generateRandomBoolean(),
+    watched: generateRandomBoolean(),
+    favorite: generateRandomBoolean(),
+
+    extra: {
+      topRated: false,
+      mostCommented: false,
+    },
+  };
 };
 
 export {
-  task,
+  generateTask
 };
