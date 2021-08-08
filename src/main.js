@@ -1,20 +1,19 @@
-import dayjs from 'dayjs';
-import {generateTask} from './task.js';
+import { generateTask } from './task.js';
 
-import {createRankTemplate} from './view/rank';
-import {createFilterTemplate} from './view/filter';
-import {createSortingTemplate} from './view/sorting';
-import {createFilmsBoardTemplate} from './view/films-board';
-import {createShowMoreTemplate} from './view/show-more';
-import {createFilmCardTemplate} from './view/film-card';
+import { createRankTemplate } from './view/rank';
+import { createFilterTemplate } from './view/filter';
+import { createSortingTemplate } from './view/sorting';
+import { createFilmsBoardTemplate } from './view/films-board';
+import { createShowMoreTemplate } from './view/show-more';
+import { createFilmCardTemplate } from './view/film-card';
 // import {createFilmDetailsTemplate} from './view/film-details';
-import {createAllFilmsCountTemplate} from './view/all-films-count';
+import { createAllFilmsCountTemplate } from './view/all-films-count';
 
 const SHOW_CARD_COUNT = 10;
 const SHOW_CARD_EXTRA = 2;
 
-const tasksGenerateArr = new Array(SHOW_CARD_COUNT).fill().map(() => generateTask());
-const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill().map(() => generateTask());
+const tasksGenerateArr = new Array(SHOW_CARD_COUNT).fill('').map(() => generateTask());
+const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(() => generateTask());
 
 const render = (container, template, place = 'beforeend') => {
   container.insertAdjacentHTML(place, template);

@@ -1,7 +1,5 @@
 import { getRandomNumber } from './utils.js';
-
-// комментарии — это отдельная структура данных
-// с эмоцией, датой, автором и сообщением
+import { generateFilmComments } from './comments.js';
 
 const filmNames = [
   'Contact',
@@ -36,11 +34,11 @@ const filmPosters = [
 ];
 
 const filmDescriptions = [
-  'Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Cras aliquet varius magna, non porta ligula feugiat eget.Phasellus eros mauris, Sed sed nisi sed augue convallis suscipit in sed felis. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
   'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
   'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
   'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
-  'Non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.  sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
 ];
 
 const filmGenres = [
@@ -50,6 +48,8 @@ const filmGenres = [
   'Comedy',
   'Historical',
 ];
+
+const filmRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
 
 const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 
@@ -63,6 +63,11 @@ const generateTask = () => ({
   watchlist: generateRandomBoolean(),
   watched: generateRandomBoolean(),
   favorite: generateRandomBoolean(),
+  rating: filmRating(),
+  comments: {
+    totalComments: getRandomNumber(0, 999),
+    comment: generateFilmComments(),
+  },
   extra: {
     topRated: false,
     mostCommented: false,
