@@ -1,4 +1,3 @@
-// cтраны
 const COUNTRIES = [
   'USA',
   'ALBANIA',
@@ -7,7 +6,6 @@ const COUNTRIES = [
   'USSR',
 ];
 
-// месяца
 const MONTHS = [
   'January',
   'February',
@@ -23,7 +21,16 @@ const MONTHS = [
   'December',
 ];
 
+const GENRES = [
+  'Musical',
+  'Drama',
+  'Thriller',
+  'Comedy',
+  'Historical',
+];
+
 export {
   COUNTRIES,
-  MONTHS
+  MONTHS,
+  GENRES
 };

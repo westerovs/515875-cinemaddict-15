@@ -1,32 +1,7 @@
-export const createFilmDetailsTemplate = (task) => {
-  const {
-    name,
-    year,
-    desc,
-    poster,
-    genre,
-    duration,
-    rating,
-    comments,
-    watchlist,
-    watched,
-    favorite,
-    director,
-    screenwriters,
-    actors,
-    country,
-    month,
-    release,
-  } = task;
+const createCommentTemplate = (comment) => {
+  const { emoji, text, author, date } = comment;
 
-  const commentsTotal = comments.totalComments;
-
-  const generateCommentsArr = new Array(commentsTotal).fill('').map(() => comments.comment);
-
-  const commentTemplate = (comment) => {
-    const { emoji, text, author, date } = comment;
-
-    return `
+  return `
       <li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="${ emoji }" width="55" height="55" alt="emoji-smile">
@@ -41,9 +16,33 @@ export const createFilmDetailsTemplate = (task) => {
         </div>
       </li>
     `;
-  };
+};
 
-  const renderComments = () => generateCommentsArr.map((comment) => commentTemplate(comment));
+export const createFilmDetailsTemplate = (task) => {
+  const {
+    name,
+    desc,
+    poster,
+    genresDetails,
+    duration,
+    rating,
+    comments,
+    watchlist,
+    watched,
+    favorite,
+    director,
+    screenwriters,
+    actors,
+    country,
+    ageRating,
+    release,
+  } = task;
+
+  const commentsTotal = comments.totalComments;
+
+  const commentTemplate = new Array(commentsTotal)
+    .fill('')
+    .map(() => createCommentTemplate(comments.comment)).join('');
 
   return `
     <section class="film-details">
@@ -56,7 +55,7 @@ export const createFilmDetailsTemplate = (task) => {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${ poster }" alt="">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${ ageRating }</p>
           </div>
 
           <div class="film-details__info">
@@ -78,15 +77,15 @@ export const createFilmDetailsTemplate = (task) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">xxxxxxxxxxxx</td>
+                <td class="film-details__cell">${ [...screenwriters].join(', ') }</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${ [...actors] }</td>
+                <td class="film-details__cell">${ [...actors].join(', ') }</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March 1945</td>
+                <td class="film-details__cell">${ release }</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -94,14 +93,16 @@ export const createFilmDetailsTemplate = (task) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${ country }</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
+
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${ genre }</span>
-                  <span class="film-details__genre">Film-Noir</span>
-                  <span class="film-details__genre">Mystery</span></td>
+                  <span class="film-details__genre">${ [...genresDetails][0] }</span>
+                  <span class="film-details__genre">${ [...genresDetails][1] }</span>
+                  <span class="film-details__genre">${ [...genresDetails][2] }</span>
+                </td>
               </tr>
             </table>
 
@@ -136,7 +137,7 @@ export const createFilmDetailsTemplate = (task) => {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${ commentsTotal }</span></h3>
 
           <ul class="film-details__comments-list">
-
+            ${ commentTemplate }
           </ul>
 
           <div class="film-details__new-comment">

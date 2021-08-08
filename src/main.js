@@ -1,4 +1,4 @@
-import { generateTask } from './task.js';
+import { generateTask } from './mock/task.js';
 
 import { createRankTemplate } from './view/rank';
 import { createFilterTemplate } from './view/filter';
