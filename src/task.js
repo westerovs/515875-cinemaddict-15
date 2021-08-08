@@ -1,7 +1,8 @@
-import { getRandomNumber } from './utils.js';
+import { getRandomNumber, getRandomItem } from './utils.js';
+import { COUNTRIES, MONTHS } from './const.js';
 import { generateFilmComments } from './comments.js';
 
-const filmNames = [
+const names = [
   'Contact',
   'Rocky',
   'The rock',
@@ -9,15 +10,15 @@ const filmNames = [
   'Interstellar',
 ];
 
-const filmYears = [
-  getRandomNumber(1929, 2021),
-  getRandomNumber(1929, 2021),
-  getRandomNumber(1929, 2021),
-  getRandomNumber(1929, 2021),
-  getRandomNumber(1929, 2021),
+const years = [
+  getRandomNumber(0, 1921, 2021),
+  getRandomNumber(0, 1921, 2021),
+  getRandomNumber(0, 1921, 2021),
+  getRandomNumber(0, 1921, 2021),
+  getRandomNumber(0, 1921, 2021),
 ];
 
-const filmDurations = [
+const durations = [
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
@@ -25,7 +26,7 @@ const filmDurations = [
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
 ];
 
-const filmPosters = [
+const posters = [
   './images/posters/the-dance-of-life.jpg',
   './images/posters/made-for-each-other.png',
   './images/posters/popeye-meets-sinbad.png',
@@ -33,7 +34,7 @@ const filmPosters = [
   './images/posters/santa-claus-conquers-the-martians.jpg',
 ];
 
-const filmDescriptions = [
+const descriptions = [
   'Cras aliquet varius magna, non porta ligula feugiat eget.Phasellus eros mauris, Sed sed nisi sed augue convallis suscipit in sed felis. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
   'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
   'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
@@ -41,7 +42,7 @@ const filmDescriptions = [
   'Non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.  sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
 ];
 
-const filmGenres = [
+const genres = [
   'Musical',
   'Drama',
   'Thriller',
@@ -49,28 +50,65 @@ const filmGenres = [
   'Historical',
 ];
 
-const filmRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
+const generatefilmRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
 
 const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 
+// ****************** ↓ для поп-апа ↓ ******************
+const directors = [
+  'James Cameron',
+  'Michael Bay',
+  'Tim Burton',
+];
+
+// сценаристы
+const screenwriters = [
+  'Anthony Mann',
+  'Jack London',
+  'John Tolkien',
+  'Alexander Rodionovich',
+  'Eduard severe',
+  'Yolter Smitt',
+];
+
+// актёры
+const actors = [
+  'Erich von Stroheim',
+  'Mary Beth Hughes',
+  'Dan Duryea',
+  'Thiel Schweiger',
+  'Sasha grey',
+  'Nicolas cage',
+];
+
+const actorsSet = new Set([
+  actors[getRandomItem(actors)],
+  actors[getRandomItem(actors)],
+  actors[getRandomItem(actors)],
+]);
+
+const release = `${ getRandomNumber(1, 31) } ${ getRandomNumber(0, MONTHS.length - 1) } ${ getRandomNumber(1920, 2019) }`;
+
 const generateTask = () => ({
-  name: filmNames[getRandomNumber(0, filmNames.length - 1)],
-  year: filmYears[getRandomNumber(0, filmYears.length - 1)],
-  desc: filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
-  poster: filmPosters[getRandomNumber(0, filmPosters.length - 1)],
-  genre: filmGenres[getRandomNumber(0, filmGenres.length - 1)],
-  duration: filmDurations[getRandomNumber(0, filmDurations.length - 1)],
+  name: names[getRandomItem(names)],
+  year: years[getRandomItem(years)],
+  desc: descriptions[getRandomItem(descriptions)],
+  poster: posters[getRandomItem(posters)],
+  genre: genres[getRandomItem(genres)],
+  duration: durations[getRandomItem(durations)],
   watchlist: generateRandomBoolean(),
   watched: generateRandomBoolean(),
   favorite: generateRandomBoolean(),
-  rating: filmRating(),
+  rating: generatefilmRating(),
+  director: directors[getRandomItem(directors)],
+  screenwriters: screenwriters[getRandomItem(screenwriters)],
+  actors: actorsSet,
+  country: COUNTRIES[getRandomItem(COUNTRIES)],
+  month: MONTHS[getRandomItem(MONTHS)],
+  release,
   comments: {
-    totalComments: getRandomNumber(0, 999),
+    totalComments: getRandomNumber(0, 10),
     comment: generateFilmComments(),
-  },
-  extra: {
-    topRated: false,
-    mostCommented: false,
   },
 });
 

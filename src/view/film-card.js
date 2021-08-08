@@ -13,7 +13,7 @@ export const createFilmCardTemplate = (task) => {
     favorite,
   } = task;
 
-  console.log(comments)
+  // console.log(comments)
 
   return `
     <article class="film-card">
