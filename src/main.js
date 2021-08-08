@@ -7,13 +7,14 @@ import {createSortingTemplate} from './view/sorting';
 import {createFilmsBoardTemplate} from './view/films-board';
 import {createShowMoreTemplate} from './view/show-more';
 import {createFilmCardTemplate} from './view/film-card';
-import {createFilmDetailsTemplate} from './view/film-details';
+// import {createFilmDetailsTemplate} from './view/film-details';
 import {createAllFilmsCountTemplate} from './view/all-films-count';
 
-// console.log(generateTask())
-
-const SHOW_CARD_COUNT = 7;
+const SHOW_CARD_COUNT = 10;
 const SHOW_CARD_EXTRA = 2;
+
+const tasksGenerateArr = new Array(SHOW_CARD_COUNT).fill().map(() => generateTask());
+const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill().map(() => generateTask());
 
 const render = (container, template, place = 'beforeend') => {
   container.insertAdjacentHTML(place, template);
@@ -39,11 +40,8 @@ const filmsListMainContainer = filmsListMain.querySelector('.films-list__contain
 
 render(filmsListMain, createShowMoreTemplate());
 
-for (let i = 1; i <= SHOW_CARD_COUNT; i++) {
-  render(filmsListMainContainer, createFilmCardTemplate(i));
-}
-
-for (let i = 0; i < SHOW_CARD_EXTRA; i++) {
-  render(filmsListExtra, createFilmCardTemplate());
-  render(filmsListTop, createFilmCardTemplate());
-}
+tasksGenerateArr.forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
+tasksExtraGenerateArr.forEach((task) => {
+  render(filmsListExtra, createFilmCardTemplate(task));
+  render(filmsListTop, createFilmCardTemplate(task));
+});

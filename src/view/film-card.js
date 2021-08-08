@@ -1,8 +1,9 @@
 export const createFilmCardTemplate = (task) => {
+  const { name } = task;
 
   return `
   <article class="film-card">
-    <h3 class="film-card__title">The Dance of Life</h3>
+    <h3 class="film-card__title">${ name }</h3>
     <p class="film-card__rating">8.3</p>
     <p class="film-card__info">
       <span class="film-card__year">1929</span>

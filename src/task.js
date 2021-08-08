@@ -36,11 +36,11 @@ const filmPosters = [
 ];
 
 const filmDescriptions = [
-  'Burlesque comic Ralph Skid Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold, rainy night at',
-  'Sentenced for a murder he did not commit, John Brant escapes from prison determined to find the real killer. By chance Brant narrow',
-  'Frankie Machine (Frank Sinatra) is released from the federal Narcotic Farm in Lexington, Kentucky with a set of drums and a new outlook',
-  'The Martians Momar (Mom Martian) and Kimar (King Martian) are worried that their children Girmar (Girl Martian) and Bomar',
-  'In this short, Sindbad the Sailor (presumably Bluto playing a role) proclaims himself, in song, to be the greatest sailor, adventurer',
+  'Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+  'Non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
 ];
 
 const filmGenres = [
@@ -51,27 +51,23 @@ const filmGenres = [
   'Historical',
 ];
 
+const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 
-const generateTask = () => {
-  const generateRandomBoolean = () => !!getRandomNumber(0, 1);
-
-  return {
-    name: filmNames[getRandomNumber(0, filmNames.length - 1)],
-    year: filmYears[getRandomNumber(0, filmYears.length - 1)],
-    desc: filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
-    poster: filmPosters[getRandomNumber(0, filmPosters.length - 1)],
-    genre: filmGenres[getRandomNumber(0, filmGenres.length - 1)],
-    duration: filmDurations[getRandomNumber(0, filmDurations.length - 1)],
-    watchlist: generateRandomBoolean(),
-    watched: generateRandomBoolean(),
-    favorite: generateRandomBoolean(),
-
-    extra: {
-      topRated: false,
-      mostCommented: false,
-    },
-  };
-};
+const generateTask = () => ({
+  name: filmNames[getRandomNumber(0, filmNames.length - 1)],
+  year: filmYears[getRandomNumber(0, filmYears.length - 1)],
+  desc: filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
+  poster: filmPosters[getRandomNumber(0, filmPosters.length - 1)],
+  genre: filmGenres[getRandomNumber(0, filmGenres.length - 1)],
+  duration: filmDurations[getRandomNumber(0, filmDurations.length - 1)],
+  watchlist: generateRandomBoolean(),
+  watched: generateRandomBoolean(),
+  favorite: generateRandomBoolean(),
+  extra: {
+    topRated: false,
+    mostCommented: false,
+  },
+});
 
 export {
   generateTask
