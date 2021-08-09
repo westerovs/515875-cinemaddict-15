@@ -1,6 +1,6 @@
 import { getRandomNumber, getRandomItem } from '../utils.js';
 import { COUNTRIES, MONTHS, GENRES } from '../const.js';
-import { generateFilmComments } from './comments.js';
+import { comments } from './comments.js';
 
 const names = [
   'Contact',
@@ -123,10 +123,7 @@ const generateTask = () => ({
   month: MONTHS[getRandomItem(MONTHS)],
   release,
   ageRating,
-  comments: {
-    totalComments: getRandomNumber(0, 10),
-    comment: generateFilmComments(),
-  },
+  comments,
 });
 
 export {

@@ -1,4 +1,4 @@
-import { getRandomNumber } from '../utils.js';
+import { getRandomNumber, getRandomItem } from '../utils.js';
 
 const filmEmoji = [
   './images/emoji/smile.png',
@@ -12,6 +12,7 @@ const filmDesc = [
   'Booooooooooring',
   'Very very old. Meh',
   'Almost two hours? Seriously?',
+  'Very very scary...',
 ];
 
 const filmAuthor = [
@@ -19,20 +20,31 @@ const filmAuthor = [
   'Tim Macoveev',
   'Arnold Blackborn',
   'Tim Traice',
+  'Paul Popoff',
 ];
 
-const filmDate = [
+const filmDates = [
   'Today',
+  'After',
+  '2019/12/31 23:59',
+  '2021/2/1 15:29',
+  '2020/5/22 07:00',
 ];
 
 
-const generateFilmComments = () => ({
-  emoji: filmEmoji[getRandomNumber(0, filmEmoji.length - 1)],
-  text: filmDesc[getRandomNumber(0, filmDesc.length - 1)],
-  author: filmAuthor[getRandomNumber(0, filmAuthor.length - 1)],
-  date: 'Today',
+const filmComments = () => ({
+  emoji: filmEmoji[getRandomItem(filmEmoji)],
+  text: filmDesc[getRandomItem(filmDesc)],
+  author: filmAuthor[getRandomItem(filmAuthor)],
+  date: filmDates[getRandomItem(filmAuthor)],
 });
 
+const comments = new Set(
+  new Array(getRandomNumber(0, 10))
+    .fill('')
+    .map(() => filmComments()),
+);
+
 export {
-  generateFilmComments
+  comments
 };

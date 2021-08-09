@@ -1,7 +1,10 @@
-const createCommentTemplate = (comment) => {
-  const { emoji, text, author, date } = comment;
+const createCommentTemplate = (comments) => {
+  let template = '';
 
-  return `
+  comments.forEach((comment) => {
+    const { emoji, text, author, date } = comment;
+
+    return template += `
       <li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="${ emoji }" width="55" height="55" alt="emoji-smile">
@@ -14,21 +17,23 @@ const createCommentTemplate = (comment) => {
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
-      </li>
-    `;
+      </li>`;
+  });
+
+  return template;
 };
 
 const createGenreTemplate = (genre) => {
+  let template = '';
   const size = genre.size;
-  let templateGenre = '';
 
   Object.values([...genre])
-    .map((item) => templateGenre += `<span class="film-details__genre">${ item }</span>`);
+    .forEach((item) => template += `<span class="film-details__genre">${ item }</span>`);
 
   return `
     <td class="film-details__term">${ size > 1 ? 'Genres' : 'Genre'  }</td>
     <td class="film-details__cell">
-      ${ templateGenre }
+      ${ template }
     </td>
   `;
 };
@@ -42,7 +47,6 @@ export const createFilmDetailsTemplate = (task) => {
     genresDetails,
     duration,
     rating,
-    comments,
     watchlist,
     watched,
     favorite,
@@ -52,13 +56,10 @@ export const createFilmDetailsTemplate = (task) => {
     country,
     ageRating,
     release,
+    comments,
   } = task;
 
-  const commentsTotal = comments.totalComments;
-
-  const commentTemplate = new Array(commentsTotal)
-    .fill('')
-    .map(() => createCommentTemplate(comments.comment)).join('');
+  const commentsCount = comments.size;
 
   return `
     <section class="film-details">
@@ -144,10 +145,10 @@ export const createFilmDetailsTemplate = (task) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${ commentsTotal }</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${ commentsCount }</span></h3>
 
           <ul class="film-details__comments-list">
-            ${ commentTemplate }
+            ${ createCommentTemplate(comments) }
           </ul>
 
           <div class="film-details__new-comment">
