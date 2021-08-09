@@ -20,7 +20,7 @@ const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTa
 const filters = toFiltersCount(tasks);
 
 const pageBody = document.querySelector('body');
-const siteHeaderElement = pageBody.querySelector('.hader');
+const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
