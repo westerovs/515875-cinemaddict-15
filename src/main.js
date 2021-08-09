@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { generateTask } from './mock/task.js';
 import { toFiltersCount } from './mock/filter.js';
+import { render } from './utils.js';
 
 import { createRankTemplate } from './view/rank';
 import { createFilterTemplate } from './view/filter';
@@ -17,12 +18,6 @@ const SHOW_CARD_EXTRA = 2;
 const tasks = new Array(SHOW_CARD_COUNT).fill('').map(generateTask);
 const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);
 const filters = toFiltersCount(tasks);
-
-const render = (container, template, place = 'beforeend') => {
-  if (container instanceof Element) {
-    container.insertAdjacentHTML(place, template);
-  }
-};
 
 const pageBody = document.querySelector('body');
 const siteHeaderElement = pageBody.querySelector('.hader');
