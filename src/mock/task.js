@@ -2,20 +2,14 @@ import { getRandomNumber, getRandomItem } from '../utils.js';
 import { COUNTRIES, MONTHS, GENRES } from '../const.js';
 import { comments } from './comments.js';
 
+const generateRandomBoolean = () => !!getRandomNumber(0, 1);
+
 const names = [
   'Contact',
   'Rocky',
   'The rock',
   'The walking dead',
   'Interstellar',
-];
-
-const originalNames = [
-  'The Great Flamarion',
-  'Psycho was originally named Wimpy',
-  'Rorys First Kiss',
-  'The Great Flamarion',
-  'American Girls',
 ];
 
 const years = [
@@ -52,9 +46,15 @@ const descriptions = [
 
 const generateFilmRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
 
-const generateRandomBoolean = () => !!getRandomNumber(0, 1);
-
 // ↓ для поп-апа ↓
+const originalNames = [
+  'The Great Flamarion',
+  'Psycho was originally named Wimpy',
+  'Rorys First Kiss',
+  'The Great Flamarion',
+  'American Girls',
+];
+
 const directors = [
   'James Cameron',
   'Michael Bay',

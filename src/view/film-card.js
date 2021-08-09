@@ -13,8 +13,6 @@ export const createFilmCardTemplate = (task) => {
     favorite,
   } = task;
 
-  // console.log(comments)
-
   return `
     <article class="film-card">
       <h3 class="film-card__title">${ name }</h3>
@@ -26,19 +24,19 @@ export const createFilmCardTemplate = (task) => {
       </p>
       <img src="${ poster }" alt="" class="film-card__poster">
       <p class="film-card__description">${ desc }</p>
-      <a class="film-card__comments">${ comments.totalComments } comments</a>
+      <a class="film-card__comments">${ comments.size } comments</a>
 
       <div class="film-card__controls">
         <button class="film-card__controls-item film-card__controls-item--add-to-watchlist
-          ${ watchlist ? 'film-card__controls-item--active' : ''}" type="button">
+          ${ watchlist ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watchlist">
           Add to watchlist
         </button>
         <button class="film-card__controls-item film-card__controls-item--mark-as-watched
-          ${ watched ? 'film-card__controls-item--active' : ''}" type="button">
+          ${ watched ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watched">
           Mark as watched
         </button>
         <button class="film-card__controls-item film-card__controls-item--favorite
-          ${ favorite ? 'film-card__controls-item--active' : ''}" type="button">
+          ${ favorite ? 'film-card__controls-item--active' : ''}" type="button" title="Add to favorite">
           Mark as favorite
         </button>
       </div>
