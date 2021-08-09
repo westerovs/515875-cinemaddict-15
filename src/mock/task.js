@@ -10,6 +10,14 @@ const names = [
   'Interstellar',
 ];
 
+const originalNames = [
+  'The Great Flamarion',
+  'Psycho was originally named Wimpy',
+  'Rorys First Kiss',
+  'The Great Flamarion',
+  'American Girls',
+];
+
 const years = [
   getRandomNumber(0, 1921, 2021),
   getRandomNumber(0, 1921, 2021),
@@ -81,6 +89,8 @@ const genresSet = new Set([
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
+  GENRES[getRandomItem(GENRES)],
+  GENRES[getRandomItem(GENRES)],
 ]);
 
 const screenwritersSet = new Set([
@@ -95,6 +105,7 @@ const ageRating = `${ getRandomNumber(6, 18) }+`;
 
 const generateTask = () => ({
   name: names[getRandomItem(names)],
+  originalName: originalNames[getRandomItem(originalNames)],
   year: years[getRandomItem(years)],
   desc: descriptions[getRandomItem(descriptions)],
   poster: posters[getRandomItem(posters)],

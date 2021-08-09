@@ -18,9 +18,25 @@ const createCommentTemplate = (comment) => {
     `;
 };
 
+const createGenreTemplate = (genre) => {
+  const size = genre.size;
+  let templateGenre = '';
+
+  Object.values([...genre])
+    .map((item) => templateGenre += `<span class="film-details__genre">${ item }</span>`);
+
+  return `
+    <td class="film-details__term">${ size > 1 ? 'Genres' : 'Genre'  }</td>
+    <td class="film-details__cell">
+      ${ templateGenre }
+    </td>
+  `;
+};
+
 export const createFilmDetailsTemplate = (task) => {
   const {
     name,
+    originalName,
     desc,
     poster,
     genresDetails,
@@ -62,7 +78,7 @@ export const createFilmDetailsTemplate = (task) => {
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${ name }</h3>
-                <p class="film-details__title-original">Original: The Great Flamarion</p>
+                <p class="film-details__title-original">Original: ${ originalName }</p>
               </div>
 
               <div class="film-details__rating">
@@ -96,13 +112,7 @@ export const createFilmDetailsTemplate = (task) => {
                 <td class="film-details__cell">${ country }</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
-
-                <td class="film-details__cell">
-                  <span class="film-details__genre">${ [...genresDetails][0] }</span>
-                  <span class="film-details__genre">${ [...genresDetails][1] }</span>
-                  <span class="film-details__genre">${ [...genresDetails][2] }</span>
-                </td>
+                ${ createGenreTemplate(genresDetails) }
               </tr>
             </table>
 
