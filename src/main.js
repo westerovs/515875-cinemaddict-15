@@ -55,17 +55,22 @@ tasksExtraGenerateArr.forEach((task) => {
 if (tasks.length > SHOW_CARD) {
   render(filmsListMain, createShowMoreTemplate());
 
-  let currentPos = 0;
+  const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
+  let currentPos = SHOW_CARD;
 
   const showMoreCards = () => {
     tasks
-      .slice(currentPos, SHOW_CARD + currentPos)
+      .slice(currentPos, currentPos + SHOW_CARD)
       .forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
 
     currentPos += SHOW_CARD;
+
+    if (currentPos >= tasks.length)  {
+      btnShowMore.removeEventListener('click', showMoreCards);
+      btnShowMore.remove();
+    }
   };
 
-  const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
   btnShowMore.addEventListener('click', showMoreCards);
 }
 
