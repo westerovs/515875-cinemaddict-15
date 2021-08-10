@@ -1,5 +1,6 @@
 export const createFilmCardTemplate = (task) => {
   const {
+    id,
     name,
     year,
     desc,
@@ -15,7 +16,7 @@ export const createFilmCardTemplate = (task) => {
 
   return `
     <article class="film-card">
-      <h3 class="film-card__title">${ name }</h3>
+      <h3 class="film-card__title">${ id } ${ name }</h3>
       <p class="film-card__rating">${ rating }</p>
       <p class="film-card__info">
         <span class="film-card__year">${ year }</span>

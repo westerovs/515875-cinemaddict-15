@@ -11,11 +11,11 @@ import { createFilmCardTemplate } from './view/film-card';
 // import { createFilmDetailsTemplate } from './view/film-details';
 import { createAllFilmsCountTemplate } from './view/all-films-count';
 
-const TASK_COUNT = 20;
-const TASK_COUNT_STEP = 5;
+const TASK_ALL_COUNT = 20;
+const SHOW_CARD = 5;
 const SHOW_CARD_EXTRA = 2;
 
-const tasks = new Array(TASK_COUNT).fill('').map((_, i) => generateTask(i + 1));
+const tasks = new Array(TASK_ALL_COUNT).fill('').map((_, i) => generateTask(i + 1));
 const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);
 const filters = toFiltersCount(tasks);
 
@@ -41,9 +41,9 @@ const filmsListTop = filmsBoard.querySelector('.films-list__container--top');
 const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
 // render cards
-tasks.splice(0, TASK_COUNT_STEP).forEach((task) => {
-  render(filmsListMainContainer, createFilmCardTemplate(task));
-});
+for (let i = 0; i < Math.min(SHOW_CARD, tasks.length); i++) {
+  render(filmsListMainContainer, createFilmCardTemplate(tasks[i]));
+}
 
 // render extra
 tasksExtraGenerateArr.forEach((task) => {
@@ -52,15 +52,17 @@ tasksExtraGenerateArr.forEach((task) => {
 });
 
 // show more cards
-if (tasks.length > TASK_COUNT_STEP) {
+if (tasks.length > SHOW_CARD) {
   render(filmsListMain, createShowMoreTemplate());
 
-  const showMoreCards = () => {
-    const renderedTaskCount = TASK_COUNT_STEP;
+  let currentPos = 0;
 
+  const showMoreCards = () => {
     tasks
-      .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_STEP)
+      .slice(currentPos, SHOW_CARD + currentPos)
       .forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
+
+    currentPos += SHOW_CARD;
   };
 
   const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
