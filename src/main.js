@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { generateTask } from './mock/task.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils.js';
@@ -12,10 +11,11 @@ import { createFilmCardTemplate } from './view/film-card';
 // import { createFilmDetailsTemplate } from './view/film-details';
 import { createAllFilmsCountTemplate } from './view/all-films-count';
 
-const SHOW_CARD_COUNT = 5;
+const TASK_COUNT = 20;
+const TASK_COUNT_STEP = 5;
 const SHOW_CARD_EXTRA = 2;
 
-const tasks = new Array(SHOW_CARD_COUNT).fill('').map(generateTask);
+const tasks = new Array(TASK_COUNT).fill('').map((_, i) => generateTask(i + 1));
 const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);
 const filters = toFiltersCount(tasks);
 
@@ -40,10 +40,30 @@ const filmsListExtra = filmsBoard.querySelector('.films-list__container--extra')
 const filmsListTop = filmsBoard.querySelector('.films-list__container--top');
 const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-render(filmsListMain, createShowMoreTemplate());
+// render cards
+tasks.splice(0, TASK_COUNT_STEP).forEach((task) => {
+  render(filmsListMainContainer, createFilmCardTemplate(task));
+});
 
-tasks.forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
+// render extra
 tasksExtraGenerateArr.forEach((task) => {
   render(filmsListExtra, createFilmCardTemplate(task));
   render(filmsListTop, createFilmCardTemplate(task));
 });
+
+// show more cards
+if (tasks.length > TASK_COUNT_STEP) {
+  render(filmsListMain, createShowMoreTemplate());
+
+  const showMoreCards = () => {
+    const renderedTaskCount = TASK_COUNT_STEP;
+
+    tasks
+      .slice(renderedTaskCount, renderedTaskCount + TASK_COUNT_STEP)
+      .forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
+  };
+
+  const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
+  btnShowMore.addEventListener('click', showMoreCards);
+}
+

@@ -103,7 +103,8 @@ const release = `${ getRandomNumber(1, 31) } ${ MONTHS[getRandomItem(MONTHS)] } 
 
 const ageRating = `${ getRandomNumber(6, 18) }+`;
 
-const generateTask = () => ({
+const generateTask = (index) => ({
+  id: index,
   name: names[getRandomItem(names)],
   originalName: originalNames[getRandomItem(originalNames)],
   year: years[getRandomItem(years)],
