@@ -1,4 +1,4 @@
-import { generateTask } from './mock/task.js';
+import { generateTask, generateTask2 } from './mock/task.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils.js';
 
@@ -14,6 +14,8 @@ import { createAllFilmsCountTemplate } from './view/all-films-count';
 const TASK_ALL_COUNT = 20;
 const SHOW_CARD = 5;
 const SHOW_CARD_EXTRA = 2;
+
+console.log(generateTask2())
 
 const tasks = new Array(TASK_ALL_COUNT).fill('').map((_, i) => generateTask(i + 1));
 const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);

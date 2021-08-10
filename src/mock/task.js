@@ -103,6 +103,7 @@ const release = `${ getRandomNumber(1, 31) } ${ MONTHS[getRandomItem(MONTHS)] } 
 
 const ageRating = `${ getRandomNumber(6, 18) }+`;
 
+// index - временный id. Для удобства
 const generateTask = (index) => ({
   id: index,
   name: names[getRandomItem(names)],
@@ -127,6 +128,35 @@ const generateTask = (index) => ({
   comments,
 });
 
+const generateTask2 = (index = 0) => ({
+  'id': index,
+  'comments': comments,
+  'film_info': {
+    'title': names[getRandomItem(names)],
+    'alternative_title': originalNames[getRandomItem(originalNames)],
+    'total_rating': generateFilmRating(),
+    'poster': posters[getRandomItem(posters)],
+    'age_rating': ageRating,
+    'director': directors[getRandomItem(directors)],
+    'writers': screenwritersSet,
+    'actors': actorsSet,
+    'release': {
+      'date': '2019-05-11T00:00:00.000Z',
+      'release_country': COUNTRIES[getRandomItem(COUNTRIES)],
+    },
+    'runtime': durations[getRandomItem(durations)],
+    'genre': GENRES[getRandomItem(GENRES)],
+    'description': descriptions[getRandomItem(descriptions)],
+  },
+  'user_details': {
+    'watchlist': generateRandomBoolean(),
+    'already_watched': generateRandomBoolean(),
+    'watching_date': '2019-04-12T16:12:32.554Z',
+    'favorite': generateRandomBoolean(),
+  },
+});
+
 export {
-  generateTask
+  generateTask,
+  generateTask2
 };
