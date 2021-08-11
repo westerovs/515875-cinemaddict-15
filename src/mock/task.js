@@ -1,4 +1,5 @@
-import { getRandomNumber, getRandomItem } from '../utils.js';
+import { getRandomNumber, getRandomItem } from '../utils/utils.js';
+import { getRandomDate } from '../utils/days.js';
 import { COUNTRIES, MONTHS, GENRES } from '../const.js';
 import { comments } from './comments.js';
 

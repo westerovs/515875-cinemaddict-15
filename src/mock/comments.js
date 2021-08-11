@@ -1,4 +1,4 @@
-import { getRandomNumber, getRandomItem } from '../utils.js';
+import { getRandomNumber, getRandomItem } from '../utils/utils.js';
 
 const emotion = [
   './images/emoji/smile.png',

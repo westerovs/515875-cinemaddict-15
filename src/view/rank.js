@@ -1,4 +1,4 @@
-import { getRandomNumber } from '../utils.js';
+import { getRandomNumber } from '../utils/utils.js';
 
 const viewed = getRandomNumber(0, 31);
 

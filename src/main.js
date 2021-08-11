@@ -1,6 +1,6 @@
 import { generateTask } from './mock/task.js';
 import { toFiltersCount } from './mock/filter.js';
-import { render } from './utils.js';
+import { render } from './utils/utils.js';
 
 import { createRankTemplate } from './view/rank';
 import { createFilterTemplate } from './view/filter';
