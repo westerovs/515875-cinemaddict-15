@@ -17,8 +17,6 @@ const getRandomDate = () => {
     .toDate();
 };
 
-console.log(getRandomDate());
-
 export {
   getRandomDate
 };

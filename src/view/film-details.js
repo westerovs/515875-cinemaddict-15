@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const createCommentTemplate = (comments) => {
   let template = '';
 
@@ -55,6 +57,8 @@ export const createFilmDetailsTemplate = (task) => {
   const { date, releaseCountry } = release;
   const countComments = comments.size;
 
+  const releaseDate = dayjs(date()).format('DD MMMM YYYY');
+
   return `
     <section class="film-details" id="${ id }">
       <form class="film-details__inner" action="" method="get">
@@ -95,7 +99,7 @@ export const createFilmDetailsTemplate = (task) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${ date() }</td>
+                  <td class="film-details__cell">${ releaseDate }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
