@@ -54,14 +54,22 @@ const directors = [
   'Tim Burton',
 ];
 
-const screenwriters = [
-  'Anthony Mann',
-  'Jack London',
-  'John Tolkien',
-  'Alexander Rodionovich',
-  'Eduard severe',
-  'Yolter Smitt',
-];
+const writers = () => {
+  const screenwriters = [
+    'Anthony Mann',
+    'Jack London',
+    'John Tolkien',
+    'Alexander Rodionovich',
+    'Eduard severe',
+    'Yolter Smitt',
+  ];
+
+  return new Set([
+    screenwriters[getRandomItem(screenwriters)],
+    screenwriters[getRandomItem(screenwriters)],
+    screenwriters[getRandomItem(screenwriters)],
+  ]);
+};
 
 const getActors = () => {
   const actors = [
@@ -86,17 +94,11 @@ const genres = new Set([
   GENRES[getRandomItem(GENRES)],
 ]);
 
-const writers = new Set([
-  screenwriters[getRandomItem(screenwriters)],
-  screenwriters[getRandomItem(screenwriters)],
-  screenwriters[getRandomItem(screenwriters)],
-]);
-
 const ageRating = `${ getRandomNumber(6, 18) }+`;
 
 const generateTask = (index = 0) => ({
   id: index,
-  comments: comments,
+  comments: comments(),
   filmInfo: {
     title: title[getRandomItem(title)],
     alternativeTitle: alternativeTitles[getRandomItem(alternativeTitles)],
@@ -104,7 +106,7 @@ const generateTask = (index = 0) => ({
     poster: posters[getRandomItem(posters)],
     ageRating: ageRating,
     director: directors[getRandomItem(directors)],
-    writers: writers,
+    writers: writers(),
     actors: getActors(),
     release: {
       date: getRandomDate,

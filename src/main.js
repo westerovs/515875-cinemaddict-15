@@ -14,9 +14,14 @@ import { createAllFilmsCountTemplate } from './view/all-films-count';
 const TASK_ALL_COUNT = 20;
 const SHOW_CARD = 5;
 const SHOW_CARD_EXTRA = 2;
+const allFilmsCount = 9999;
 
-const tasks = new Array(TASK_ALL_COUNT).fill('').map((_, i) => generateTask(i + 1));
-const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);
+const tasks = new Array(TASK_ALL_COUNT)
+  .fill('')
+  .map((_, i) => generateTask(i + 1));
+const tasksExtra = new Array(SHOW_CARD_EXTRA)
+  .fill('')
+  .map(generateTask);
 const filters = toFiltersCount(tasks);
 
 const pageBody = document.querySelector('body');
@@ -28,9 +33,9 @@ render(siteHeaderElement, createRankTemplate());
 render(siteMainElement, createFilterTemplate(filters));
 render(siteMainElement, createSortingTemplate());
 render(siteMainElement, createFilmsBoardTemplate());
-render(siteFooterStatistics, createAllFilmsCountTemplate());
+render(siteFooterStatistics, createAllFilmsCountTemplate(allFilmsCount));
 
-// ======= popup =======
+// popup
 const taskFilmDetails = generateTask();
 render(pageBody, createFilmDetailsTemplate(taskFilmDetails));
 
@@ -46,7 +51,7 @@ for (let i = 0; i < Math.min(SHOW_CARD, tasks.length); i++) {
 }
 
 // render extra
-tasksExtraGenerateArr.forEach((task) => {
+tasksExtra.forEach((task) => {
   render(filmsListExtra, createFilmCardTemplate(task));
   render(filmsListTop, createFilmCardTemplate(task));
 });

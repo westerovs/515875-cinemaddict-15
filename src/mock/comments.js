@@ -33,14 +33,14 @@ const filmDates = [
 ];
 
 const filmComments = () => ({
-  id: 0,
+  id: getRandomNumber(0, 999),
   author: filmAuthor[getRandomItem(filmAuthor)],
   comment: filmDesc[getRandomItem(filmDesc)],
   date: filmDates[getRandomItem(filmDates)],
   emotion: emotion[getRandomItem(emotion)],
 });
 
-const comments = new Set(
+const comments = () => new Set(
   new Array(getRandomNumber(1, 15))
     .fill('')
     .map(() => filmComments()),

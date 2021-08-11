@@ -5,10 +5,9 @@ const createCommentTemplate = (comments) => {
   let template = '';
 
   comments.forEach((comment) => {
-    const { emotion, comment: textComment, author, date } = comment;
-
+    const { id, emotion, comment: textComment, author, date } = comment;
     template += `
-      <li class="film-details__comment">
+      <li class="film-details__comment" id="${ id }">
         <span class="film-details__comment-emoji">
           <img src="${ emotion }" width="55" height="55" alt="emoji-smile">
         </span>
