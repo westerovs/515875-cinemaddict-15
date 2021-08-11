@@ -1,4 +1,5 @@
 import { getRandomNumber, getRandomItem } from '../utils/utils.js';
+import { getRandomDateComment } from '../utils/days.js';
 
 const emotion = [
   './images/emoji/smile.png',
@@ -24,19 +25,18 @@ const filmAuthor = [
 ];
 
 const filmDates = [
-  'Today',
-  'After',
-  '2019/12/31 23:59',
-  '2021/2/1 15:29',
-  '2020/5/22 07:00',
+  getRandomDateComment(),
+  getRandomDateComment(),
+  getRandomDateComment(),
+  getRandomDateComment(),
+  getRandomDateComment(),
 ];
-
 
 const filmComments = () => ({
   id: 0,
   author: filmAuthor[getRandomItem(filmAuthor)],
   comment: filmDesc[getRandomItem(filmDesc)],
-  date: filmDates[getRandomItem(filmAuthor)],
+  date: filmDates[getRandomItem(filmDates)],
   emotion: emotion[getRandomItem(emotion)],
 });
 

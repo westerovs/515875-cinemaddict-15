@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
+import isToday  from 'dayjs/plugin/isToday';
+import isYesterday   from 'dayjs/plugin/isYesterday';
 import { getRandomNumber } from './utils.js';
+
+dayjs.extend(isToday );
+dayjs.extend(isYesterday  );
 
 const getRandomDate = () => {
   const daysGap = getRandomNumber(-31, 31);
@@ -17,6 +22,31 @@ const getRandomDate = () => {
     .toDate();
 };
 
+const getRandomDateComment = () => {
+  const dayGap = getRandomNumber(-3, 3);
+
+  return dayjs()
+    .add(dayGap, 'day')
+    .toDate();
+};
+
+// возвращает именованный день, до 2х дней
+const isDay = (date) => {
+  if (dayjs(date).isToday()) {
+    return 'today';
+  }
+  if (dayjs(date).isYesterday()) {
+    return '1 days ago';
+  }
+  if (dayjs(date).add(1, 'day').isYesterday()) {
+    return '2 days ago';
+  } else {
+    return dayjs(date).format('YYYY/MM/DD HH:MM');
+  }
+};
+
 export {
-  getRandomDate
+  getRandomDate,
+  getRandomDateComment,
+  isDay
 };

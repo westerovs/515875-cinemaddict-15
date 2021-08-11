@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { isDay } from '../utils/days.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -6,7 +7,7 @@ const createCommentTemplate = (comments) => {
   comments.forEach((comment) => {
     const { emotion, comment: textComment, author, date } = comment;
 
-    return template += `
+    template += `
       <li class="film-details__comment">
         <span class="film-details__comment-emoji">
           <img src="${ emotion }" width="55" height="55" alt="emoji-smile">
@@ -15,7 +16,7 @@ const createCommentTemplate = (comments) => {
           <p class="film-details__comment-text">${ textComment }</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${ author }</span>
-            <span class="film-details__comment-day">${ date }</span>
+            <span class="film-details__comment-day">${ isDay(date) }</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
