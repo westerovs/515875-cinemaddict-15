@@ -12,14 +12,6 @@ const names = [
   'Interstellar',
 ];
 
-const years = [
-  getRandomNumber(0, 1921, 2021),
-  getRandomNumber(0, 1921, 2021),
-  getRandomNumber(0, 1921, 2021),
-  getRandomNumber(0, 1921, 2021),
-  getRandomNumber(0, 1921, 2021),
-];
-
 const durations = [
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
@@ -89,8 +81,6 @@ const genresSet = new Set([
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
-  GENRES[getRandomItem(GENRES)],
-  GENRES[getRandomItem(GENRES)],
 ]);
 
 const screenwritersSet = new Set([
@@ -103,60 +93,35 @@ const release = `${ getRandomNumber(1, 31) } ${ MONTHS[getRandomItem(MONTHS)] } 
 
 const ageRating = `${ getRandomNumber(6, 18) }+`;
 
-// index - временный id. Для удобства
-const generateTask = (index) => ({
+const generateTask = (index = 0) => ({
   id: index,
-  name: names[getRandomItem(names)],
-  originalName: originalNames[getRandomItem(originalNames)],
-  year: years[getRandomItem(years)],
-  desc: descriptions[getRandomItem(descriptions)],
-  poster: posters[getRandomItem(posters)],
-  genre: GENRES[getRandomItem(GENRES)],
-  genresDetails: genresSet,
-  duration: durations[getRandomItem(durations)],
-  watchlist: generateRandomBoolean(),
-  watched: generateRandomBoolean(),
-  favorite: generateRandomBoolean(),
-  rating: generateFilmRating(),
-  director: directors[getRandomItem(directors)],
-  screenwriters: screenwritersSet,
-  actors: actorsSet,
-  country: COUNTRIES[getRandomItem(COUNTRIES)],
-  month: MONTHS[getRandomItem(MONTHS)],
-  release,
-  ageRating,
-  comments,
-});
-
-const generateTask2 = (index = 0) => ({
-  'id': index,
-  'comments': comments,
-  'film_info': {
-    'title': names[getRandomItem(names)],
-    'alternative_title': originalNames[getRandomItem(originalNames)],
-    'total_rating': generateFilmRating(),
-    'poster': posters[getRandomItem(posters)],
-    'age_rating': ageRating,
-    'director': directors[getRandomItem(directors)],
-    'writers': screenwritersSet,
-    'actors': actorsSet,
-    'release': {
-      'date': '2019-05-11T00:00:00.000Z',
-      'release_country': COUNTRIES[getRandomItem(COUNTRIES)],
+  comments: comments,
+  filmInfo: {
+    title: names[getRandomItem(names)],
+    alternativeTitle: originalNames[getRandomItem(originalNames)],
+    totalRating: generateFilmRating(),
+    poster: posters[getRandomItem(posters)],
+    ageRating: ageRating,
+    director: directors[getRandomItem(directors)],
+    writers: screenwritersSet,
+    actors: actorsSet,
+    release: {
+      date: release,
+      releaseCountry: COUNTRIES[getRandomItem(COUNTRIES)],
     },
-    'runtime': durations[getRandomItem(durations)],
-    'genre': GENRES[getRandomItem(GENRES)],
-    'description': descriptions[getRandomItem(descriptions)],
+    runtime: durations[getRandomItem(durations)],
+    genre: GENRES[getRandomItem(GENRES)],
+    genresDetails: genresSet,
+    description: descriptions[getRandomItem(descriptions)],
   },
-  'user_details': {
-    'watchlist': generateRandomBoolean(),
-    'already_watched': generateRandomBoolean(),
-    'watching_date': '2019-04-12T16:12:32.554Z',
-    'favorite': generateRandomBoolean(),
+  userDetails: {
+    watchlist: generateRandomBoolean(),
+    alreadyWatched: generateRandomBoolean(),
+    watchingDate: '2019-04-12T16:12:32.554Z',
+    favorite: generateRandomBoolean(),
   },
 });
 
 export {
-  generateTask,
-  generateTask2
+  generateTask
 };

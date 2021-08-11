@@ -1,6 +1,6 @@
 import { getRandomNumber, getRandomItem } from '../utils.js';
 
-const filmEmoji = [
+const emotion = [
   './images/emoji/smile.png',
   './images/emoji/angry.png',
   './images/emoji/puke.png',
@@ -33,10 +33,11 @@ const filmDates = [
 
 
 const filmComments = () => ({
-  emoji: filmEmoji[getRandomItem(filmEmoji)],
-  text: filmDesc[getRandomItem(filmDesc)],
+  id: 0,
   author: filmAuthor[getRandomItem(filmAuthor)],
+  comment: filmDesc[getRandomItem(filmDesc)],
   date: filmDates[getRandomItem(filmAuthor)],
+  emotion: emotion[getRandomItem(emotion)],
 });
 
 const comments = new Set(

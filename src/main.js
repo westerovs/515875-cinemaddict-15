@@ -1,4 +1,4 @@
-import { generateTask, generateTask2 } from './mock/task.js';
+import { generateTask } from './mock/task.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils.js';
 
@@ -8,14 +8,12 @@ import { createSortingTemplate } from './view/sorting';
 import { createFilmsBoardTemplate } from './view/films-board';
 import { createShowMoreTemplate } from './view/show-more';
 import { createFilmCardTemplate } from './view/film-card';
-// import { createFilmDetailsTemplate } from './view/film-details';
+import { createFilmDetailsTemplate } from './view/film-details';
 import { createAllFilmsCountTemplate } from './view/all-films-count';
 
 const TASK_ALL_COUNT = 20;
 const SHOW_CARD = 5;
 const SHOW_CARD_EXTRA = 2;
-
-console.log(generateTask2())
 
 const tasks = new Array(TASK_ALL_COUNT).fill('').map((_, i) => generateTask(i + 1));
 const tasksExtraGenerateArr = new Array(SHOW_CARD_EXTRA).fill('').map(generateTask);
@@ -33,8 +31,8 @@ render(siteMainElement, createFilmsBoardTemplate());
 render(siteFooterStatistics, createAllFilmsCountTemplate());
 
 // ======= popup =======
-// const taskFilmDetails = generateTask();
-// render(pageBody, createFilmDetailsTemplate(taskFilmDetails));
+const taskFilmDetails = generateTask();
+render(pageBody, createFilmDetailsTemplate(taskFilmDetails));
 
 const filmsBoard = siteMainElement.querySelector('.films');
 const filmsListMain = filmsBoard.querySelector('.films-list--main');

@@ -1,30 +1,27 @@
 export const createFilmCardTemplate = (task) => {
+  const { id, comments, filmInfo, userDetails } = task;
+  const { watchlist, alreadyWatched, favorite } = userDetails;
   const {
-    id,
-    name,
-    year,
-    desc,
+    title,
+    totalRating,
     poster,
+    release,
+    runtime,
     genre,
-    duration,
-    rating,
-    comments,
-    watchlist,
-    watched,
-    favorite,
-  } = task;
+    description,
+  } = filmInfo;
 
   return `
-    <article class="film-card">
-      <h3 class="film-card__title">${ id } ${ name }</h3>
-      <p class="film-card__rating">${ rating }</p>
+    <article class="film-card" id="${ id }">
+      <h3 class="film-card__title">${ title }</h3>
+      <p class="film-card__rating">${ totalRating }</p>
       <p class="film-card__info">
-        <span class="film-card__year">${ year }</span>
-        <span class="film-card__duration">${ duration }</span>
+        <span class="film-card__year">${ release.date }</span>
+        <span class="film-card__duration">${ runtime }</span>
         <span class="film-card__genre">${ genre }</span>
       </p>
       <img src="${ poster }" alt="" class="film-card__poster">
-      <p class="film-card__description">${ desc }</p>
+      <p class="film-card__description">${ description }</p>
       <a class="film-card__comments">${ comments.size } comments</a>
 
       <div class="film-card__controls">
@@ -33,7 +30,7 @@ export const createFilmCardTemplate = (task) => {
           Add to watchlist
         </button>
         <button class="film-card__controls-item film-card__controls-item--mark-as-watched
-          ${ watched ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watched">
+          ${ alreadyWatched ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watched">
           Mark as watched
         </button>
         <button class="film-card__controls-item film-card__controls-item--favorite
