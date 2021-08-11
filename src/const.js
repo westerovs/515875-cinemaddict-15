@@ -6,21 +6,6 @@ const COUNTRIES = [
   'USSR',
 ];
 
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
 const GENRES = [
   'Musical',
   'Drama',
@@ -31,6 +16,5 @@ const GENRES = [
 
 export {
   COUNTRIES,
-  MONTHS,
   GENRES
 };

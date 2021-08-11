@@ -95,7 +95,7 @@ export const createFilmDetailsTemplate = (task) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${ date }</td>
+                  <td class="film-details__cell">${ date() }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>

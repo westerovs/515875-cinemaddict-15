@@ -1,11 +1,11 @@
 import { getRandomNumber, getRandomItem } from '../utils/utils.js';
 import { getRandomDate } from '../utils/days.js';
-import { COUNTRIES, MONTHS, GENRES } from '../const.js';
+import { COUNTRIES, GENRES } from '../const.js';
 import { comments } from './comments.js';
 
 const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 
-const names = [
+const title = [
   'Contact',
   'Rocky',
   'The rock',
@@ -13,7 +13,7 @@ const names = [
   'Interstellar',
 ];
 
-const durations = [
+const runtime = [
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
   `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
@@ -37,10 +37,10 @@ const descriptions = [
   'Non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.  sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
 ];
 
-const generateFilmRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
+const totalRating = () => `${ getRandomNumber(1, 9) }.${ getRandomNumber(0, 9) }`;
 
 // ↓ для поп-апа ↓
-const originalNames = [
+const alternativeTitles = [
   'The Great Flamarion',
   'Psycho was originally named Wimpy',
   'Rorys First Kiss',
@@ -63,34 +63,34 @@ const screenwriters = [
   'Yolter Smitt',
 ];
 
-const actors = [
-  'Erich von Stroheim',
-  'Mary Beth Hughes',
-  'Dan Duryea',
-  'Thiel Schweiger',
-  'Sasha grey',
-  'Nicolas cage',
-];
+const getActors = () => {
+  const actors = [
+    'Erich von Stroheim',
+    'Mary Beth Hughes',
+    'Dan Duryea',
+    'Thiel Schweiger',
+    'Sasha grey',
+    'Nicolas cage',
+  ];
 
-const actorsSet = new Set([
-  actors[getRandomItem(actors)],
-  actors[getRandomItem(actors)],
-  actors[getRandomItem(actors)],
-]);
+  return new Set([
+    actors[getRandomItem(actors)],
+    actors[getRandomItem(actors)],
+    actors[getRandomItem(actors)],
+  ]);
+};
 
-const genresSet = new Set([
+const genres = new Set([
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
   GENRES[getRandomItem(GENRES)],
 ]);
 
-const screenwritersSet = new Set([
+const writers = new Set([
   screenwriters[getRandomItem(screenwriters)],
   screenwriters[getRandomItem(screenwriters)],
   screenwriters[getRandomItem(screenwriters)],
 ]);
-
-const release = `${ getRandomNumber(1, 31) } ${ MONTHS[getRandomItem(MONTHS)] } ${ getRandomNumber(1921, 2021) }`;
 
 const ageRating = `${ getRandomNumber(6, 18) }+`;
 
@@ -98,21 +98,21 @@ const generateTask = (index = 0) => ({
   id: index,
   comments: comments,
   filmInfo: {
-    title: names[getRandomItem(names)],
-    alternativeTitle: originalNames[getRandomItem(originalNames)],
-    totalRating: generateFilmRating(),
+    title: title[getRandomItem(title)],
+    alternativeTitle: alternativeTitles[getRandomItem(alternativeTitles)],
+    totalRating: totalRating(),
     poster: posters[getRandomItem(posters)],
     ageRating: ageRating,
     director: directors[getRandomItem(directors)],
-    writers: screenwritersSet,
-    actors: actorsSet,
+    writers: writers,
+    actors: getActors(),
     release: {
-      date: release,
+      date: getRandomDate,
       releaseCountry: COUNTRIES[getRandomItem(COUNTRIES)],
     },
-    runtime: durations[getRandomItem(durations)],
+    runtime: runtime[getRandomItem(runtime)],
     genre: GENRES[getRandomItem(GENRES)],
-    genresDetails: genresSet,
+    genresDetails: genres,
     description: descriptions[getRandomItem(descriptions)],
   },
   userDetails: {
