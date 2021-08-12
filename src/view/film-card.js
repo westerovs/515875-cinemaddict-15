@@ -8,7 +8,7 @@ export const createFilmCardTemplate = (task) => {
     totalRating,
     poster,
     release,
-    runtime,
+    runTime,
     genre,
     description,
   } = filmInfo;
@@ -23,10 +23,10 @@ export const createFilmCardTemplate = (task) => {
       <p class="film-card__rating">${ totalRating }</p>
       <p class="film-card__info">
         <span class="film-card__year">${ yearRelease }</span>
-        <span class="film-card__duration">${ runtime }</span>
-        <span class="film-card__genre">${ genre }</span>
+        <span class="film-card__duration">${ runTime }</span>
+        <span class="film-card__genre">${ genre.mainGenre }</span>
       </p>
-      <img src="${ poster }" alt="" class="film-card__poster">
+      <img src="./images/posters/${ poster }" alt="" class="film-card__poster">
       <p class="film-card__description">${ description }</p>
       <a class="film-card__comments">${ countComments } comments</a>
 

@@ -9,7 +9,7 @@ const createCommentTemplate = (comments) => {
     template += `
       <li class="film-details__comment" id="${ id }">
         <span class="film-details__comment-emoji">
-          <img src="${ emotion }" width="55" height="55" alt="emoji-smile">
+          <img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="emoji-smile">
         </span>
         <div>
           <p class="film-details__comment-text">${ textComment }</p>
@@ -27,14 +27,17 @@ const createCommentTemplate = (comments) => {
 
 const createGenreTemplate = (genre) => {
   let template = '';
-  const countGenre = genre.size;
+  const { mainGenre, subGenre } = genre;
+  const countGenre = subGenre.length;
 
-  Object.values([...genre])
-    .forEach((item) => template += `<span class="film-details__genre">${ item }</span>`);
+  subGenre.forEach((item) => template += `<span class="film-details__genre">${ item }</span>`);
 
   return `
     <td class="film-details__term">${ countGenre > 1 ? 'Genres' : 'Genre' }</td>
-    <td class="film-details__cell">${ template }</td>`;
+    <td class="film-details__cell">
+      <span class="film-details__genre">${ mainGenre }</span>
+        ${ template }
+    </td>`;
 };
 
 export const createFilmDetailsTemplate = (task) => {
@@ -50,13 +53,12 @@ export const createFilmDetailsTemplate = (task) => {
     writers,
     actors,
     release,
-    runtime,
-    genresDetails,
+    runTime,
+    genre,
     description,
   } = filmInfo;
   const { date, releaseCountry } = release;
   const countComments = comments.size;
-
   const releaseDate = dayjs(date()).format('DD MMMM YYYY');
 
   return `
@@ -68,7 +70,7 @@ export const createFilmDetailsTemplate = (task) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="${ poster }" alt="">
+              <img class="film-details__poster-img" src="./images/posters/${ poster }" alt="">
               <p class="film-details__age">${ ageRating }</p>
             </div>
 
@@ -91,11 +93,11 @@ export const createFilmDetailsTemplate = (task) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${ [...writers].join(', ') }</td>
+                  <td class="film-details__cell">${ writers }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${ [...actors].join(', ') }</td>
+                  <td class="film-details__cell">${ actors }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
@@ -103,14 +105,14 @@ export const createFilmDetailsTemplate = (task) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${ runtime }</td>
+                  <td class="film-details__cell">${ runTime }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
                   <td class="film-details__cell">${ releaseCountry }</td>
                 </tr>
                 <tr class="film-details__row">
-                  ${ createGenreTemplate(genresDetails) }
+                  ${ createGenreTemplate(genre) }
                 </tr>
               </table>
 
