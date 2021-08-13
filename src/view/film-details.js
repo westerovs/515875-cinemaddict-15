@@ -27,15 +27,13 @@ const createCommentTemplate = (comments) => {
 
 const createGenreTemplate = (genre) => {
   let template = '';
-  const { mainGenre, subGenre } = genre;
-  const countGenre = subGenre.length;
+  const countGenre = genre.length;
 
-  subGenre.forEach((item) => template += `<span class="film-details__genre">${ item }</span>`);
+  genre.forEach((item) => template += `<span class="film-details__genre">${ item }</span>`);
 
   return `
     <td class="film-details__term">${ countGenre > 1 ? 'Genres' : 'Genre' }</td>
     <td class="film-details__cell">
-      <span class="film-details__genre">${ mainGenre }</span>
         ${ template }
     </td>`;
 };
@@ -71,7 +69,7 @@ export const createFilmDetailsTemplate = (task) => {
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
               <img class="film-details__poster-img" src="./images/posters/${ poster }" alt="">
-              <p class="film-details__age">${ ageRating }</p>
+              <p class="film-details__age">${ ageRating }+</p>
             </div>
 
             <div class="film-details__info">

@@ -1,4 +1,4 @@
-import { generateTask } from './mock/film.js';
+import { generateFilm } from './mock/film.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils/utils.js';
 
@@ -18,10 +18,11 @@ const TOTAL_MOVIES = 9999;
 
 const films = new Array(FILM_COUNT)
   .fill('')
-  .map((_, i) => generateTask(i + 1));
+  .map((_, i) => generateFilm(i + 1));
+
 const filmsExtra = new Array(SHOW_FILMS_EXTRA)
   .fill('')
-  .map(generateTask);
+  .map(generateFilm);
 const filters = toFiltersCount(films);
 
 const pageBody = document.querySelector('body');
@@ -36,7 +37,7 @@ render(siteMainElement, createFilmsBoardTemplate());
 render(siteFooterStatistics, createAllFilmsCountTemplate(TOTAL_MOVIES));
 
 // popup
-const taskFilmDetails = generateTask();
+const taskFilmDetails = generateFilm();
 render(pageBody, createFilmDetailsTemplate(taskFilmDetails));
 
 const filmsBoard = siteMainElement.querySelector('.films');

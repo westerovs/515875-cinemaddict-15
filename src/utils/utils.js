@@ -2,17 +2,12 @@ const getRandomNumber = (min = 0, max) => Math.round(Math.random() * (max - min)
 
 const getRandomItem = (items, min = 0) => items[getRandomNumber(min, items.length - 1)];
 
-// для удобной генерации неповторяющихся, рандомных items
-const getRandomUniqueItems = (items) => {
-  const set = new Set();
+const shuffleArr = (arr) => {
+  const randomIndex = getRandomNumber(0, arr.length - 1);
 
-  for (const item of items) {
-    set.add(item);
-  }
+  arr.forEach((item, i) => [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]]);
 
-  return [...set]
-    .slice(0, getRandomNumber(0, items.length - 1))
-    .join(', ');
+  return arr;
 };
 
 const render = (container, template, place = 'beforeend') => {
@@ -24,6 +19,6 @@ const render = (container, template, place = 'beforeend') => {
 export {
   getRandomNumber,
   getRandomItem,
-  getRandomUniqueItems,
+  shuffleArr,
   render
 };

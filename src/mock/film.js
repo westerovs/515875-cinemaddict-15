@@ -1,4 +1,4 @@
-import { getRandomNumber, getRandomItem, getRandomUniqueItems } from '../utils/utils.js';
+import { getRandomNumber, getRandomItem, shuffleArr } from '../utils/utils.js';
 import { getRandomDate } from '../utils/days.js';
 import { COUNTRIES, GENRES } from '../const.js';
 import { getComments } from './comments.js';
@@ -13,13 +13,7 @@ const titles = [
   'Interstellar',
 ];
 
-const runTimes = [
-  `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
-  `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
-  `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
-  `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
-  `${getRandomNumber(0, 3)}h ${getRandomNumber(0, 60)}m`,
-];
+const getRunTimes = () => `${ getRandomNumber(0, 3) }h ${ getRandomNumber(0, 60) }m`;
 
 const posters = [
   'the-dance-of-life.jpg',
@@ -31,9 +25,9 @@ const posters = [
 
 const getDescriptions = () => {
   const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.';
-  const textLength = text.split(' ').length;
+  const textPartsLength = text.split('.').length;
 
-  return text.split(' ', getRandomNumber(0, textLength)).join(' ');
+  return text.split('.', getRandomNumber(0, textPartsLength)).join('. ');
 };
 
 const getTotalRating = () => `${ getRandomNumber(-9, 9) }.${ getRandomNumber(0, 9) }`;
@@ -63,7 +57,7 @@ const getWriters = () => {
     'Yolter Smitt',
   ];
 
-  return getRandomUniqueItems(screenwriters);
+  return shuffleArr(screenwriters).slice(0, getRandomNumber(1, screenwriters.length - 1));
 };
 
 const getActors = () => {
@@ -76,41 +70,14 @@ const getActors = () => {
     'Nicolas cage',
   ];
 
-  return getRandomUniqueItems(actors);
+  return shuffleArr(actors).slice(0, getRandomNumber(1, actors.length - 1));
 };
 
-const getGenres = () => {
-  // рандомные жанры
-  const genres = new Set([
-    getRandomItem(GENRES),
-    getRandomItem(GENRES),
-  ]);
+const getGenres = () => shuffleArr(GENRES).slice(0, getRandomNumber(1, GENRES.length - 1));
 
-  // главный жанр фильма
-  const mainGenre = getRandomItem(GENRES);
+const getAgeRating = () => getRandomNumber(6, 18);
 
-  // поджанры для поп-апа, исключающие главный жанр
-  const subGenre = [...genres].filter((genre) => {
-    if (genre === mainGenre) { return; }
-    return genre;
-  });
-
-  // руководствовался идеей что есть жанр и поджанры в попапе
-  return {
-    mainGenre,
-    subGenre,
-  };
-};
-
-const getAgeRating = () => [
-  `${ getRandomNumber(6, 18) }+`,
-  `${ getRandomNumber(6, 18) }+`,
-  `${ getRandomNumber(6, 18) }+`,
-  `${ getRandomNumber(6, 18) }+`,
-  `${ getRandomNumber(6, 18) }+`,
-];
-
-const generateTask = (index = 0) => ({
+const generateFilm = (index = 0) => ({
   id: index,
   comments: getComments(),
   filmInfo: {
@@ -118,7 +85,7 @@ const generateTask = (index = 0) => ({
     alternativeTitle: getRandomItem(alternativeTitles),
     totalRating: getTotalRating(),
     poster: getRandomItem(posters),
-    ageRating: getRandomItem(getAgeRating()),
+    ageRating: getAgeRating(),
     director: getRandomItem(directors),
     writers: getWriters(),
     actors: getActors(),
@@ -126,7 +93,7 @@ const generateTask = (index = 0) => ({
       date: getRandomDate,
       releaseCountry: getRandomItem(COUNTRIES),
     },
-    runTime: getRandomItem(runTimes),
+    runTime: getRunTimes(),
     genre: getGenres(),
     description: getDescriptions(),
   },
@@ -139,5 +106,5 @@ const generateTask = (index = 0) => ({
 });
 
 export {
-  generateTask
+  generateFilm
 };
