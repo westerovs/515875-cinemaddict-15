@@ -41,24 +41,22 @@ const filmsListExtra = filmsBoard.querySelector('.films-list__container--extra')
 const filmsListTop = filmsBoard.querySelector('.films-list__container--top');
 const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-const createFilms = () => {
-  for (let i = 0; i < Math.min(SHOW_FILMS, films.length); i++) {
-    render(filmsListMainContainer, new FilmCardView(films[i]).getElement());
-  }
+const renderFilms = (container, film) => {
+  const filmComponent = new FilmCardView(film);
+
+  render(container, filmComponent.getElement());
 };
 
-const createFilmsExtra = () => {
-  filmsExtra.forEach((task) => {
-    render(filmsListExtra, new FilmCardView(task).getElement());
-    render(filmsListTop, new FilmCardView(task).getElement());
-  });
-};
+// all films
+for (let i = 0; i < Math.min(SHOW_FILMS, films.length); i++) {
+  renderFilms(filmsListMainContainer, films[i]);
+}
 
-createFilms();
-createFilmsExtra();
-
-// popup
-
+// extra films
+for (let i = 0; i < filmsExtra.length; i++) {
+  renderFilms(filmsListExtra, filmsExtra[i]);
+  renderFilms(filmsListTop, filmsExtra[i]);
+}
 
 // show more cards
 if (films.length > SHOW_FILMS) {
