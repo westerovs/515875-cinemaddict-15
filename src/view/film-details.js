@@ -1,4 +1,5 @@
 import { isDay } from '../utils/days.js';
+import { createElement } from '../utils/utils.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -37,8 +38,8 @@ const createGenreTemplate = (genre) => {
     </td>`;
 };
 
-export const createFilmDetailsTemplate = (task) => {
-  const { id, comments, filmInfo, userDetails } = task;
+const createFilmDetailsTemplate = (film) => {
+  const { id, comments, filmInfo, userDetails } = film;
   const { watchlist, alreadyWatched, favorite } = userDetails;
   const {
     title,
@@ -59,8 +60,8 @@ export const createFilmDetailsTemplate = (task) => {
 
   const releaseDate = date.format('DD MMMM YYYY');
 
-  return `
-    <section class="film-details" id="${ id }">
+  return (
+    `<section class="film-details" id="${ id }">
       <form class="film-details__inner" action="" method="get">
         <div class="film-details__top-container">
           <div class="film-details__close">
@@ -182,6 +183,30 @@ export const createFilmDetailsTemplate = (task) => {
           </section>
         </div>
       </form>
-    </section>`;
+    </section>`
+  );
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._elem = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._elem) {
+      this._elem = createElement(this.getTemplate());
+    }
+
+    return this._elem;
+  }
+
+  remove() {
+    this._elem = null;
+  }
+}
 
