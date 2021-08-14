@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { isDay } from '../utils/days.js';
 
 const createCommentTemplate = (comments) => {
@@ -57,7 +56,8 @@ export const createFilmDetailsTemplate = (task) => {
   } = filmInfo;
   const { date, releaseCountry } = release;
   const countComments = comments.size;
-  const releaseDate = dayjs(date()).format('DD MMMM YYYY');
+
+  const releaseDate = date.format('DD MMMM YYYY');
 
   return `
     <section class="film-details" id="${ id }">

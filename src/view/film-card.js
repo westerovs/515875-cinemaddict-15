@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 export const createFilmCardTemplate = (task) => {
   const { id, comments, filmInfo, userDetails } = task;
   const { watchlist, alreadyWatched, favorite } = userDetails;
@@ -15,7 +13,7 @@ export const createFilmCardTemplate = (task) => {
   const { date } = release;
   const countComments = comments.size;
 
-  const yearRelease = dayjs(date()).format('YYYY');
+  const yearRelease = date.format('YYYY');
 
   return `
     <article class="film-card" id="${ id }">
