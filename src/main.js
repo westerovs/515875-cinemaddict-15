@@ -31,11 +31,11 @@ const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
 renderElement(siteHeaderElement, new RankView().getElement());
-renderElement(siteMainElement, new FilterView().getElement(filters));
+renderElement(siteMainElement, new FilterView(filters).getElement());
 renderElement(siteMainElement, new SortingView().getElement());
 
 renderElement(siteMainElement, new FilmBoardView().getElement());
-renderElement(siteFooterStatistics, new FooterStatistic().getElement(TOTAL_MOVIES));
+renderElement(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES).getElement());
 
 // popup
 // const taskFilmDetails = generateFilm();

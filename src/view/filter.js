@@ -17,17 +17,18 @@ const createFilterTemplate = (filters) => {
 };
 
 export default class Filter {
-  constructor() {
+  constructor(filters) {
     this._elem = null;
+    this._filters = filters;
   }
 
-  getTemplate(filters) {
-    return createFilterTemplate(filters);
+  getTemplate() {
+    return createFilterTemplate(this._filters);
   }
 
-  getElement(filters) {
+  getElement() {
     if (!this._elem) {
-      this._elem = createElement(this.getTemplate(filters));
+      this._elem = createElement(this.getTemplate());
     }
 
     return this._elem;
