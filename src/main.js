@@ -1,15 +1,15 @@
-import { generateFilm } from './mock/film.js';
-import { toFiltersCount } from './mock/filter.js';
-import { renderTemplate } from './utils/utils.js';
+import { generateFilm } from './mock/film';
+import { toFiltersCount } from './mock/filter';
+import { renderElement, renderTemplate } from './utils/utils';
 
-import { createRankTemplate } from './view/rank';
-import { createFilterTemplate } from './view/filter';
-import { createSortingTemplate } from './view/sorting';
-import { createFilmsBoardTemplate } from './view/films-board';
-import { createShowMoreTemplate } from './view/show-more';
+import RankView from './view/rank';
+import FilterView from './view/filter';
+import SortingView from './view/sorting';
+import FilmBoardView from './view/films-board';
+import ShowMoreBtnView from './view/show-more';
 import { createFilmCardTemplate } from './view/film-card';
-import { createFilmDetailsTemplate } from './view/film-details';
-import { createAllFilmsCountTemplate } from './view/all-films-count';
+// import { createFilmDetailsTemplate } from './view/film-details';
+import FooterStatistic from './view/footer-statistic.js';
 
 const FILM_COUNT = 20;
 const SHOW_FILMS = 5;
@@ -30,15 +30,16 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-renderTemplate(siteHeaderElement, createRankTemplate());
-renderTemplate(siteMainElement, createFilterTemplate(filters));
-renderTemplate(siteMainElement, createSortingTemplate());
-renderTemplate(siteMainElement, createFilmsBoardTemplate());
-renderTemplate(siteFooterStatistics, createAllFilmsCountTemplate(TOTAL_MOVIES));
+renderElement(siteHeaderElement, new RankView().getElement());
+renderElement(siteMainElement, new FilterView().getElement(filters));
+renderElement(siteMainElement, new SortingView().getElement());
+
+renderElement(siteMainElement, new FilmBoardView().getElement());
+renderElement(siteFooterStatistics, new FooterStatistic().getElement(TOTAL_MOVIES));
 
 // popup
-const taskFilmDetails = generateFilm();
-renderTemplate(pageBody, createFilmDetailsTemplate(taskFilmDetails));
+// const taskFilmDetails = generateFilm();
+// renderTemplate(pageBody, createFilmDetailsTemplate(taskFilmDetails));
 
 const filmsBoard = siteMainElement.querySelector('.films');
 const filmsListMain = filmsBoard.querySelector('.films-list--main');
@@ -59,7 +60,7 @@ filmsExtra.forEach((task) => {
 
 // show more cards
 if (films.length > SHOW_FILMS) {
-  renderTemplate(filmsListMain, createShowMoreTemplate());
+  renderElement(filmsListMain, new ShowMoreBtnView().getElement());
 
   const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
   let currentPos = SHOW_FILMS;
