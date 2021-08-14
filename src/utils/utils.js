@@ -15,7 +15,7 @@ const renderPosition = {
   BEFOREEND: 'beforeend',
 };
 
-const renderElement = (container, element, place = renderPosition.BEFOREEND) => {
+const render = (container, element, place = renderPosition.BEFOREEND) => {
   switch (place) {
     case renderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -23,12 +23,6 @@ const renderElement = (container, element, place = renderPosition.BEFOREEND) => 
     case renderPosition.BEFOREEND:
       container.append(element);
       break;
-  }
-};
-
-const renderTemplate = (container, template, place = 'beforeend') => {
-  if (container instanceof Element) {
-    container.insertAdjacentHTML(place, template);
   }
 };
 
@@ -44,7 +38,6 @@ export {
   getRandomItem,
   shuffleArr,
   renderPosition,
-  renderTemplate,
-  renderElement,
+  render,
   createElement
 };

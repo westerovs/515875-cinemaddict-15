@@ -83,8 +83,10 @@ const getGenres = () => shuffleArr(GENRES).slice(0, getRandomNumber(1, GENRES.le
 
 const getAgeRating = () => getRandomNumber(6, 18);
 
-const generateFilm = (index = 0) => ({
-  id: index,
+const getId = () => getRandomNumber(0, 999);
+
+const generateFilm = () => ({
+  id: getId(),
   comments: getComments(),
   filmInfo: {
     title: getRandomItem(titles),
