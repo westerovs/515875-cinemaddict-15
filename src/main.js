@@ -1,6 +1,6 @@
 import { generateFilm } from './mock/film.js';
 import { toFiltersCount } from './mock/filter.js';
-import { render } from './utils/utils.js';
+import { renderTemplate } from './utils/utils.js';
 
 import { createRankTemplate } from './view/rank';
 import { createFilterTemplate } from './view/filter';
@@ -30,15 +30,15 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-render(siteHeaderElement, createRankTemplate());
-render(siteMainElement, createFilterTemplate(filters));
-render(siteMainElement, createSortingTemplate());
-render(siteMainElement, createFilmsBoardTemplate());
-render(siteFooterStatistics, createAllFilmsCountTemplate(TOTAL_MOVIES));
+renderTemplate(siteHeaderElement, createRankTemplate());
+renderTemplate(siteMainElement, createFilterTemplate(filters));
+renderTemplate(siteMainElement, createSortingTemplate());
+renderTemplate(siteMainElement, createFilmsBoardTemplate());
+renderTemplate(siteFooterStatistics, createAllFilmsCountTemplate(TOTAL_MOVIES));
 
 // popup
 const taskFilmDetails = generateFilm();
-render(pageBody, createFilmDetailsTemplate(taskFilmDetails));
+renderTemplate(pageBody, createFilmDetailsTemplate(taskFilmDetails));
 
 const filmsBoard = siteMainElement.querySelector('.films');
 const filmsListMain = filmsBoard.querySelector('.films-list--main');
@@ -46,20 +46,20 @@ const filmsListExtra = filmsBoard.querySelector('.films-list__container--extra')
 const filmsListTop = filmsBoard.querySelector('.films-list__container--top');
 const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-// render cards
+// renderTemplate cards
 for (let i = 0; i < Math.min(SHOW_FILMS, films.length); i++) {
-  render(filmsListMainContainer, createFilmCardTemplate(films[i]));
+  renderTemplate(filmsListMainContainer, createFilmCardTemplate(films[i]));
 }
 
-// render extra
+// renderTemplate extra
 filmsExtra.forEach((task) => {
-  render(filmsListExtra, createFilmCardTemplate(task));
-  render(filmsListTop, createFilmCardTemplate(task));
+  renderTemplate(filmsListExtra, createFilmCardTemplate(task));
+  renderTemplate(filmsListTop, createFilmCardTemplate(task));
 });
 
 // show more cards
 if (films.length > SHOW_FILMS) {
-  render(filmsListMain, createShowMoreTemplate());
+  renderTemplate(filmsListMain, createShowMoreTemplate());
 
   const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
   let currentPos = SHOW_FILMS;
@@ -67,7 +67,7 @@ if (films.length > SHOW_FILMS) {
   const showMoreCards = () => {
     films
       .slice(currentPos, currentPos + SHOW_FILMS)
-      .forEach((task) => render(filmsListMainContainer, createFilmCardTemplate(task)));
+      .forEach((task) => renderTemplate(filmsListMainContainer, createFilmCardTemplate(task)));
 
     currentPos += SHOW_FILMS;
 
