@@ -1,5 +1,5 @@
-export const createAllFilmsCountTemplate = () => `
-    <p>130 291 movies inside</p>
+export const createAllFilmsCountTemplate = (allFilmsCount) => `
+    <p>${ allFilmsCount } movies inside</p>
   </section>
 `;
 
