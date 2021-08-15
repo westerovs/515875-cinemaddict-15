@@ -56,11 +56,11 @@ const renderFilm = (filmListElement, film) => {
     document.body.classList.remove('hide-overflow');
   };
 
-  const addTodoListeners = (...elements) => {
+  const addListeners = (...elements) => {
     elements.forEach((item) => item.addEventListener('click', showFilmDetails));
   };
 
-  addTodoListeners(poster, title, comments);
+  addListeners(poster, title, comments);
 
   filmEditComponent.getElement().querySelector('.film-details__close-btn')
     .addEventListener('click', () => closeFilmDetails());
