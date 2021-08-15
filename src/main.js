@@ -10,7 +10,7 @@ import FilmsListView from './view/films-list.js';
 import FilmsListExtraView from './view/films-list-extra.js';
 import ShowMoreBtnView from './view/show-more.js';
 import FilmCardView from './view/film-card.js';
-// import FilmDetailsView from './view/film-details.js';
+import FilmDetailsView from './view/film-details.js';
 import FooterStatistic from './view/footer-statistic.js';
 
 const FILM_COUNT = 20;
@@ -39,23 +39,31 @@ render(filmsBoard, new FilmsListView().getElement());
 const filmsListMain = filmsBoard.querySelector('.films-list--main');
 const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-const renderFilms = () => {
-  for (let i = 0; i < Math.min(SHOW_FILMS, films.length); i++) {
-    render(filmsListMainContainer, new FilmCardView(films[i]).getElement());
-  }
+const renderFilm = (filmListElement, film) => {
+  const filmComponent = new FilmCardView(film);
+  const filmEditComponent = new FilmDetailsView(film);
+
+  render(filmListElement, filmComponent.getElement());
 };
 
-const renderExtraFilms = (title) => {
-  const filmListExtra = new FilmsListExtraView(title);
-  render(filmsBoard, filmListExtra.getElement());
+const renderFilms = () => {
+  for (let i = 0; i < Math.min(SHOW_FILMS, films.length); i++) {
+    renderFilm(filmsListMainContainer, films[i]);
+  }
 
-  const filmListExtraContainer = filmListExtra.getElement().querySelector('.films-list__container');
-  filmsExtra.forEach((film) => render(filmListExtraContainer, new FilmCardView(film).getElement()));
+  const renderExtraFilms = (title) => {
+    const filmListExtra = new FilmsListExtraView(title);
+    render(filmsBoard, filmListExtra.getElement());
+
+    const filmListExtraContainer = filmListExtra.getElement().querySelector('.films-list__container');
+    filmsExtra.forEach((film) => renderFilm(filmListExtraContainer, film));
+  };
+
+  renderExtraFilms('Top rated');
+  renderExtraFilms('Most commented');
 };
 
 renderFilms();
-renderExtraFilms('Top rated');
-renderExtraFilms('Most commented');
 
 // show more cards
 if (films.length > SHOW_FILMS) {
@@ -79,5 +87,3 @@ if (films.length > SHOW_FILMS) {
 
   btnShowMore.addEventListener('click', showMoreCards);
 }
-
-
