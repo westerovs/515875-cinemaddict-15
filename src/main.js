@@ -75,7 +75,7 @@ if (films.length > SHOW_FILMS) {
   const showMoreCards = () => {
     films
       .slice(currentPos, currentPos + SHOW_FILMS)
-      .forEach((task) => render(filmsListMainContainer, new FilmCardView(task).getElement()));
+      .forEach((film) => renderFilm(filmsListMainContainer, film));
 
     currentPos += SHOW_FILMS;
 
