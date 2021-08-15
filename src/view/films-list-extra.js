@@ -1,24 +1,20 @@
 import { createElement } from '../utils/utils.js';
 
-const createFilmsListExtraTemplate = () => (
+const createFilmsListExtraTemplate = (title) => (
   `<section class="films-list films-list--extra">
-    <h2 class="films-list__title">Top rated</h2>
-    <div class="films-list__container films-list__container--extra"></div>
-  </section>
-
-  <section class="films-list films-list--extra">
-    <h2 class="films-list__title">Most commented</h2>
-    <div class="films-list__container films-list__container--top"></div>
+    <h2 class="films-list__title">${ title }</h2>
+    <div class="films-list__container"></div>
   </section>`
 );
 
 export default class FilmsListExtra {
-  constructor() {
+  constructor(title) {
     this._elem = null;
+    this._title = title;
   }
 
   getTemplate() {
-    return createFilmsListExtraTemplate();
+    return createFilmsListExtraTemplate(this._title);
   }
 
   getElement() {
@@ -34,3 +30,12 @@ export default class FilmsListExtra {
   }
 }
 
+// `<section class="films-list films-list--extra">
+//     <h2 class="films-list__title">Top rated</h2>
+//     <div class="films-list__container films-list__container--extra"></div>
+//   </section>
+//
+//   <section class="films-list films-list--extra">
+//     <h2 class="films-list__title">Most commented</h2>
+//     <div class="films-list__container films-list__container--top"></div>
+//   </section>`
