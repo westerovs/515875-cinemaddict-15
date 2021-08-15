@@ -9,11 +9,11 @@ const createFooterStatisticTemplate = (allFilmsCount) => (
 export default class FooterStatistic {
   constructor(countFilms) {
     this._elem = null;
-    this.countFilms = countFilms;
+    this._countFilms = countFilms;
   }
 
   getTemplate() {
-    return createFooterStatisticTemplate(this.countFilms);
+    return createFooterStatisticTemplate(this._countFilms);
   }
 
   getElement() {

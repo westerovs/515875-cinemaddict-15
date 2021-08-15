@@ -66,10 +66,6 @@ export default class FilmCard {
     return this._elem;
   }
 
-  onClickHandler(handler) {
-    this.getElement().addEventListener('click', () => handler);
-  }
-
   remove() {
     this._elem = null;
   }

@@ -42,6 +42,28 @@ const filmsListMainContainer = filmsListMain.querySelector('.films-list__contain
 const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCardView(film);
   const filmEditComponent = new FilmDetailsView(film);
+  const poster = filmComponent.getElement().querySelector('.film-card__poster');
+  const title = filmComponent.getElement().querySelector('.film-card__title');
+  const comments = filmComponent.getElement().querySelector('.film-card__comments');
+
+  const showFilmDetails = () => {
+    document.body.appendChild(filmEditComponent.getElement());
+    document.body.classList.add('hide-overflow');
+  };
+
+  const closeFilmDetails = () => {
+    document.body.removeChild(filmEditComponent.getElement());
+    document.body.classList.remove('hide-overflow');
+  };
+
+  const addTodoListeners = (...elements) => {
+    elements.forEach((item) => item.addEventListener('click', showFilmDetails));
+  };
+
+  addTodoListeners(poster, title, comments);
+
+  filmEditComponent.getElement().querySelector('.film-details__close-btn')
+    .addEventListener('click', () => closeFilmDetails());
 
   render(filmListElement, filmComponent.getElement());
 };
@@ -62,8 +84,6 @@ const renderFilms = () => {
   renderExtraFilms('Top rated');
   renderExtraFilms('Most commented');
 };
-
-renderFilms();
 
 // show more cards
 if (films.length > SHOW_FILMS) {
@@ -87,3 +107,5 @@ if (films.length > SHOW_FILMS) {
 
   btnShowMore.addEventListener('click', showMoreCards);
 }
+
+renderFilms();
