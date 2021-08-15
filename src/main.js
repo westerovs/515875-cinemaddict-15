@@ -32,31 +32,31 @@ render(siteMainElement, new FilterView(filters).getElement());
 render(siteMainElement, new SortingView().getElement());
 render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES).getElement());
 
-const renderFilm = (filmListElement, film) => {
-  const filmComponent = new FilmCardView(film);
+const renderFilmEdit = (film) => {
   const filmEditComponent = new FilmDetailsView(film);
-  const poster = filmComponent.getElement().querySelector('.film-card__poster');
-  const title = filmComponent.getElement().querySelector('.film-card__title');
-  const comments = filmComponent.getElement().querySelector('.film-card__comments');
 
-  const showFilmDetails = () => {
-    document.body.appendChild(filmEditComponent.getElement());
-    document.body.classList.add('hide-overflow');
-  };
+  document.body.appendChild(filmEditComponent.getElement());
+  document.body.classList.add('hide-overflow');
 
   const closeFilmDetails = () => {
     document.body.removeChild(filmEditComponent.getElement());
     document.body.classList.remove('hide-overflow');
   };
 
-  const addListeners = (...elements) => {
-    elements.forEach((item) => item.addEventListener('click', showFilmDetails));
-  };
-
-  addListeners(poster, title, comments);
 
   filmEditComponent.getElement().querySelector('.film-details__close-btn')
     .addEventListener('click', () => closeFilmDetails());
+};
+
+const renderFilm = (filmListElement, film) => {
+  const filmComponent = new FilmCardView(film);
+  const poster = filmComponent.getElement().querySelector('.film-card__poster');
+  const title = filmComponent.getElement().querySelector('.film-card__title');
+  const comments = filmComponent.getElement().querySelector('.film-card__comments');
+
+  poster.addEventListener('click', () => renderFilmEdit(film));
+  title.addEventListener('click', () => renderFilmEdit(film));
+  comments.addEventListener('click', () => renderFilmEdit(film));
 
   render(filmListElement, filmComponent.getElement());
 };
