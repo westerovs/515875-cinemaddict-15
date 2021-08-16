@@ -4,11 +4,11 @@ import { render } from './utils/utils.js';
 
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
-import SortingView from './view/sorting.js';
-import FilmsBoardView from './view/films-board.js';
+import SortingView from './view/sort.js';
+import FilmsBoardView from './view/film-board.js';
 import FilmsListView from './view/films-list.js';
 import FilmsListExtraView from './view/films-list-extra.js';
-import ShowMoreBtnView from './view/show-more.js';
+import ShowMoreBtnView from './view/show-more-btn.js';
 import FilmCardView from './view/film-card.js';
 import FilmDetailsView from './view/film-details.js';
 import FooterStatistic from './view/footer-statistic.js';
