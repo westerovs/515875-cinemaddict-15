@@ -1,7 +1,7 @@
-import dayjs from 'dayjs';
+import { createElement } from '../utils/utils.js';
 
-export const createFilmCardTemplate = (task) => {
-  const { id, comments, filmInfo, userDetails } = task;
+const createFilmCardTemplate = (film) => {
+  const { id, comments, filmInfo, userDetails } = film;
   const { watchlist, alreadyWatched, favorite } = userDetails;
   const {
     title,
@@ -15,10 +15,10 @@ export const createFilmCardTemplate = (task) => {
   const { date } = release;
   const countComments = comments.size;
 
-  const yearRelease = dayjs(date()).format('YYYY');
+  const yearRelease = date.format('YYYY');
 
-  return `
-    <article class="film-card" id="${ id }">
+  return (
+    `<article class="film-card" id="${ id }">
       <h3 class="film-card__title">${ title }</h3>
       <p class="film-card__rating">${ totalRating }</p>
       <p class="film-card__info">
@@ -44,5 +44,30 @@ export const createFilmCardTemplate = (task) => {
           Mark as favorite
         </button>
       </div>
-    </article>`;
+    </article>`
+  );
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._elem = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._elem) {
+      this._elem = createElement(this.getTemplate());
+    }
+
+    return this._elem;
+  }
+
+  remove() {
+    this._elem = null;
+  }
+}
+

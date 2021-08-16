@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { getRandomNumber, getRandomItem, shuffleArr } from '../utils/utils.js';
 import { getRandomDate } from '../utils/days.js';
 import { COUNTRIES, GENRES } from '../const.js';
@@ -73,12 +74,19 @@ const getActors = () => {
   return shuffleArr(actors).slice(0, getRandomNumber(1, actors.length - 1));
 };
 
+const getRelease = () => {
+  const date = getRandomDate();
+  return dayjs(date);
+};
+
 const getGenres = () => shuffleArr(GENRES).slice(0, getRandomNumber(1, GENRES.length - 1));
 
 const getAgeRating = () => getRandomNumber(6, 18);
 
-const generateFilm = (index = 0) => ({
-  id: index,
+const getId = () => getRandomNumber(0, 999);
+
+const generateFilm = () => ({
+  id: getId(),
   comments: getComments(),
   filmInfo: {
     title: getRandomItem(titles),
@@ -90,7 +98,7 @@ const generateFilm = (index = 0) => ({
     writers: getWriters(),
     actors: getActors(),
     release: {
-      date: getRandomDate,
+      date: getRelease(),
       releaseCountry: getRandomItem(COUNTRIES),
     },
     runTime: getRunTimes(),

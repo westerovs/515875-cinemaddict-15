@@ -1,19 +1,28 @@
-export const createFilmsBoardTemplate = () => `
-  <section class="films">
-    <section class="films-list films-list--main">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+import { createElement } from '../utils/utils.js';
 
-      <div class="films-list__container"></div>
-    </section>
+const createFilmsBoardTemplate = () => (
+  '<section class="films"></section>'
+);
 
-    <section class="films-list films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-      <div class="films-list__container films-list__container--extra"></div>
-    </section>
+export default class FilmBoard {
+  constructor() {
+    this._elem = null;
+  }
 
-    <section class="films-list films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-      <div class="films-list__container films-list__container--top"></div>
-    </section>
-  </section>
-`;
+  getTemplate() {
+    return createFilmsBoardTemplate();
+  }
+
+  getElement() {
+    if (!this._elem) {
+      this._elem = createElement(this.getTemplate());
+    }
+
+    return this._elem;
+  }
+
+  remove() {
+    this._elem = null;
+  }
+}
+
