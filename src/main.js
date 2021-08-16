@@ -12,6 +12,7 @@ import ShowMoreBtnView from './view/show-more-btn.js';
 import FilmCardView from './view/film-card.js';
 import FilmDetailsView from './view/film-details.js';
 import FooterStatistic from './view/footer-statistic.js';
+import NoFilms from './view/no-films.js';
 
 const FILM_COUNT = 20;
 const SHOW_FILMS = 5;
@@ -118,4 +119,9 @@ const renderFilmsBoard = () => {
   renderFilms();
 };
 
-renderFilmsBoard();
+if (!films.length) {
+  render(siteMainElement, new NoFilms().getElement());
+} else {
+  renderFilmsBoard();
+}
+
