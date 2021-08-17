@@ -4,14 +4,15 @@ import { render } from './utils/utils.js';
 
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
-import SortingView from './view/sorting.js';
-import FilmsBoardView from './view/films-board.js';
+import SortingView from './view/sort.js';
+import FilmsBoardView from './view/film-board.js';
 import FilmsListView from './view/films-list.js';
 import FilmsListExtraView from './view/films-list-extra.js';
-import ShowMoreBtnView from './view/show-more.js';
+import ShowMoreBtnView from './view/show-more-btn.js';
 import FilmCardView from './view/film-card.js';
 import FilmDetailsView from './view/film-details.js';
 import FooterStatistic from './view/footer-statistic.js';
+import NoFilms from './view/no-films.js';
 
 const FILM_COUNT = 20;
 const SHOW_FILMS = 5;
@@ -29,7 +30,6 @@ const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
 render(siteHeaderElement, new RankView().getElement());
 render(siteMainElement, new FilterView(filters).getElement());
-render(siteMainElement, new SortingView().getElement());
 render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES).getElement());
 
 const renderFilmEdit = (film) => {
@@ -41,8 +41,18 @@ const renderFilmEdit = (film) => {
   const closeFilmDetails = () => {
     document.body.removeChild(filmEditComponent.getElement());
     document.body.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', onEscKeyDown);
   };
 
+  function onEscKeyDown (evt) {
+    if (evt.code === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      closeFilmDetails();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  }
+
+  document.addEventListener('keydown', onEscKeyDown );
 
   filmEditComponent.getElement().querySelector('.film-details__close-btn')
     .addEventListener('click', () => closeFilmDetails());
@@ -63,6 +73,7 @@ const renderFilm = (filmListElement, film) => {
 
 const renderFilmsBoard = () => {
   render(siteMainElement, new FilmsBoardView().getElement());
+  render(siteMainElement, new SortingView().getElement());
 
   const filmsBoard = siteMainElement.querySelector('.films');
   render(filmsBoard, new FilmsListView().getElement());
@@ -113,4 +124,9 @@ const renderFilmsBoard = () => {
   renderFilms();
 };
 
-renderFilmsBoard();
+if (!films.length) {
+  render(siteMainElement, new NoFilms().getElement());
+} else {
+  renderFilmsBoard();
+}
+
