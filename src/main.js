@@ -44,11 +44,15 @@ const renderFilmEdit = (film) => {
     document.body.classList.remove('hide-overflow');
   };
 
-  document.addEventListener('keydown', (evt) => {
+  function onEscKeyDown (evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
       closeFilmDetails();
+      document.removeEventListener('keydown', onEscKeyDown);
     }
-  }, { once: true });
+  }
+
+  document.addEventListener('keydown', onEscKeyDown );
 
   filmEditComponent.getElement().querySelector('.film-details__close-btn')
     .addEventListener('click', () => closeFilmDetails());
