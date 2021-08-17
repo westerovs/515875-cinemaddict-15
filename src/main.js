@@ -30,7 +30,6 @@ const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
 render(siteHeaderElement, new RankView().getElement());
 render(siteMainElement, new FilterView(filters).getElement());
-render(siteMainElement, new SortingView().getElement());
 render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES).getElement());
 
 const renderFilmEdit = (film) => {
@@ -42,6 +41,7 @@ const renderFilmEdit = (film) => {
   const closeFilmDetails = () => {
     document.body.removeChild(filmEditComponent.getElement());
     document.body.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', onEscKeyDown);
   };
 
   function onEscKeyDown (evt) {
@@ -73,6 +73,7 @@ const renderFilm = (filmListElement, film) => {
 
 const renderFilmsBoard = () => {
   render(siteMainElement, new FilmsBoardView().getElement());
+  render(siteMainElement, new SortingView().getElement());
 
   const filmsBoard = siteMainElement.querySelector('.films');
   render(filmsBoard, new FilmsListView().getElement());
