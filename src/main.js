@@ -1,6 +1,6 @@
 import { generateFilm } from './mock/film.js';
 import { toFiltersCount } from './mock/filter.js';
-import { render } from './utils/utils.js';
+import { render } from './utils/render.js';
 
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
