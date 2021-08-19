@@ -2,6 +2,7 @@ import { generateFilm } from './mock/film.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils/utils.js';
 
+import Abstract from './view/abstract.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import SortingView from './view/sort.js';
