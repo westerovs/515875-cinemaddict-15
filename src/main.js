@@ -72,8 +72,8 @@ const renderFilm = (filmListElement, film) => {
 };
 
 const renderFilmsBoard = () => {
-  render(siteMainElement, new FilmsBoardView().getElement());
   render(siteMainElement, new SortingView().getElement());
+  render(siteMainElement, new FilmsBoardView().getElement());
 
   const filmsBoard = siteMainElement.querySelector('.films');
   render(filmsBoard, new FilmsListView().getElement());
