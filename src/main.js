@@ -48,7 +48,6 @@ const renderFilmEdit = (film) => {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       closeFilmDetails();
-      document.removeEventListener('keydown', onEscKeyDown);
     }
   }
 
