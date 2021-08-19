@@ -1,6 +1,6 @@
 import { createElement } from '../utils/utils.js';
 
-class Abstract {
+export default class Abstract {
   constructor() {
     if (new.target === Abstract) {
       throw Error('Нельзя создать экземпляр класса. Только наследование !');
@@ -9,8 +9,8 @@ class Abstract {
     this._elem = null;
   }
 
-  getTemplate(element) {
-    this._elem = element;
+  getTemplate() {
+    throw new Error('Абстрактный метод должен вызываться только у потомков');
   }
 
   getElement() {

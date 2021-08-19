@@ -1,5 +1,5 @@
 import { isDay } from '../utils/days.js';
-import { createElement } from '../utils/utils.js';
+import Abstract from './abstract.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -187,26 +187,13 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends Abstract {
   constructor(film) {
-    this._elem = null;
+    super();
     this._film = film;
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
-
-  getElement() {
-    if (!this._elem) {
-      this._elem = createElement(this.getTemplate());
-    }
-
-    return this._elem;
-  }
-
-  remove() {
-    this._elem = null;
-  }
 }
-
