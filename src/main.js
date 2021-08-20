@@ -53,19 +53,13 @@ const renderFilmEdit = (film) => {
 
   document.addEventListener('keydown', onEscKeyDown );
 
-  filmEditComponent.getElement().querySelector('.film-details__close-btn')
-    .addEventListener('click', () => closeFilmDetails());
+  filmEditComponent.setClickHandler(closeFilmDetails);
 };
 
 const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCardView(film);
-  const poster = filmComponent.getElement().querySelector('.film-card__poster');
-  const title = filmComponent.getElement().querySelector('.film-card__title');
-  const comments = filmComponent.getElement().querySelector('.film-card__comments');
 
-  poster.addEventListener('click', () => renderFilmEdit(film));
-  title.addEventListener('click', () => renderFilmEdit(film));
-  comments.addEventListener('click', () => renderFilmEdit(film));
+  filmComponent.setClickHandler(renderFilmEdit);
 
   render(filmListElement, filmComponent.getElement());
 };
