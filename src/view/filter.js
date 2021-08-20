@@ -1,4 +1,4 @@
-import { createElement } from '../utils/utils.js';
+import Abstract from './abstract.js';
 
 const createFilterTemplate = (filters) => {
   const { watchlist, watched, favorite } = filters;
@@ -16,25 +16,13 @@ const createFilterTemplate = (filters) => {
   );
 };
 
-export default class Filter {
+export default class Filter extends Abstract {
   constructor(filters) {
-    this._elem = null;
+    super();
     this._filters = filters;
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._elem) {
-      this._elem = createElement(this.getTemplate());
-    }
-
-    return this._elem;
-  }
-
-  remove() {
-    this._elem = null;
   }
 }

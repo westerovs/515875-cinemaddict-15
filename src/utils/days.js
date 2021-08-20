@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import isToday  from 'dayjs/plugin/isToday';
 import isYesterday   from 'dayjs/plugin/isYesterday';
-import { getRandomNumber } from './utils.js';
+import { getRandomNumber } from './random.js';
 
 dayjs.extend(isToday );
 dayjs.extend(isYesterday  );

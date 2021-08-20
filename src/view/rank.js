@@ -1,4 +1,5 @@
-import { createElement, getRandomNumber } from '../utils/utils.js';
+import Abstract from './abstract.js';
+import { getRandomNumber } from '../utils/random.js';
 
 const viewed = getRandomNumber(0, 31);
 
@@ -18,24 +19,8 @@ const createRankTemplate = () => {
   );
 };
 
-export default class Rank {
-  constructor() {
-    this._elem = null;
-  }
-
+export default class Rank extends Abstract {
   getTemplate() {
     return createRankTemplate();
-  }
-
-  getElement() {
-    if (!this._elem) {
-      this._elem = createElement(this.getTemplate());
-    }
-
-    return this._elem;
-  }
-
-  remove() {
-    this._elem = null;
   }
 }

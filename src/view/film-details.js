@@ -1,5 +1,5 @@
 import { isDay } from '../utils/days.js';
-import { createElement } from '../utils/utils.js';
+import Abstract from './abstract.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -187,26 +187,25 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends Abstract {
   constructor(film) {
-    this._elem = null;
+    super();
     this._film = film;
+    this._onClickHandler = this._onClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._elem) {
-      this._elem = createElement(this.getTemplate());
-    }
-
-    return this._elem;
+  _onClickHandler() {
+    this._callback.click();
   }
 
-  remove() {
-    this._elem = null;
+  setClickHandler(params) {
+    this._callback.click = params;
+    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
+
+    closeBtn.addEventListener('click', this._onClickHandler);
   }
 }
-

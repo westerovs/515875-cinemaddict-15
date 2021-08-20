@@ -1,4 +1,4 @@
-import { getRandomNumber, getRandomItem } from '../utils/utils.js';
+import { getRandomNumber, getRandomItem } from '../utils/random.js';
 import { getRandomDateComment } from '../utils/days.js';
 
 const emotion = [
