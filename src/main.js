@@ -28,9 +28,9 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-render(siteHeaderElement, new RankView().getElement());
-render(siteMainElement, new FilterView(filters).getElement());
-render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES).getElement());
+render(siteHeaderElement, new RankView());
+render(siteMainElement, new FilterView(filters));
+render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES));
 
 const renderFilmEdit = (film) => {
   const filmEditComponent = new FilmDetailsView(film);
@@ -61,15 +61,15 @@ const renderFilm = (filmListElement, film) => {
 
   filmComponent.setClickHandler(renderFilmEdit);
 
-  render(filmListElement, filmComponent.getElement());
+  render(filmListElement, filmComponent);
 };
 
 const renderFilmsBoard = () => {
-  render(siteMainElement, new SortingView().getElement());
-  render(siteMainElement, new FilmsBoardView().getElement());
+  render(siteMainElement, new SortingView());
+  render(siteMainElement, new FilmsBoardView());
 
   const filmsBoard = siteMainElement.querySelector('.films');
-  render(filmsBoard, new FilmsListView().getElement());
+  render(filmsBoard, new FilmsListView());
 
   const filmsListMain = filmsBoard.querySelector('.films-list--main');
   const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
@@ -81,7 +81,7 @@ const renderFilmsBoard = () => {
 
     const renderExtraFilms = (title) => {
       const filmListExtra = new FilmsListExtraView(title);
-      render(filmsBoard, filmListExtra.getElement());
+      render(filmsBoard, filmListExtra);
 
       const filmListExtraContainer = filmListExtra.getElement().querySelector('.films-list__container');
       filmsExtra.forEach((film) => renderFilm(filmListExtraContainer, film));
@@ -94,7 +94,7 @@ const renderFilmsBoard = () => {
   // show more cards
   if (films.length > SHOW_FILMS) {
     const btnShowMoreComponent = new ShowMoreBtnView();
-    render(filmsListMain, btnShowMoreComponent.getElement());
+    render(filmsListMain, btnShowMoreComponent);
 
     let currentPos = SHOW_FILMS;
 
@@ -118,7 +118,7 @@ const renderFilmsBoard = () => {
 };
 
 if (!films.length) {
-  render(siteMainElement, new NoFilms().getElement());
+  render(siteMainElement, new NoFilms());
 } else {
   renderFilmsBoard();
 }
