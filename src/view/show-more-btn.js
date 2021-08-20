@@ -5,7 +5,23 @@ export const createShowMoreTemplate = () => (
 );
 
 export default class ShowMoreBtn extends Abstract {
+  constructor() {
+    super();
+    this._callback = {};
+    this._onClickHandler = this._onClickHandler.bind(this);
+  }
+
   getTemplate() {
     return createShowMoreTemplate();
+  }
+
+  _onClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
+  }
+
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().addEventListener('click', this._onClickHandler);
   }
 }

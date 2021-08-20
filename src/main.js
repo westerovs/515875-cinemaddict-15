@@ -99,9 +99,9 @@ const renderFilmsBoard = () => {
 
   // show more cards
   if (films.length > SHOW_FILMS) {
-    render(filmsListMain, new ShowMoreBtnView().getElement());
+    const btnShowMore = new ShowMoreBtnView();
+    render(filmsListMain, btnShowMore.getElement());
 
-    const btnShowMore = filmsListMain.querySelector('.films-list__show-more');
     let currentPos = SHOW_FILMS;
 
     const showMoreCards = () => {
@@ -117,7 +117,8 @@ const renderFilmsBoard = () => {
       }
     };
 
-    btnShowMore.addEventListener('click', showMoreCards);
+    btnShowMore.getElement().addEventListener('click', showMoreCards);
+    btnShowMore.setClickHandler(showMoreCards);
   }
 
   renderFilms();

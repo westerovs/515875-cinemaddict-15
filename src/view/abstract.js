@@ -7,10 +7,11 @@ export default class Abstract {
     }
 
     this._elem = null;
+    // this._callback = {};
   }
 
   getTemplate() {
-    throw new Error('Абстрактный метод должен вызываться только у потомков');
+    throw new Error('Абстрактный метод должен вызываться только у потомков: getTemplate');
   }
 
   getElement() {

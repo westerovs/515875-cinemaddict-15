@@ -57,4 +57,8 @@ export default class FilmCard extends Abstract {
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
+
+  setHandleClick() {
+
+  }
 }
