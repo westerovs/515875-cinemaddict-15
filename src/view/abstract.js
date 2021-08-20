@@ -7,7 +7,7 @@ export default class Abstract {
     }
 
     this._elem = null;
-    // this._callback = {};
+    this._callback = {};
   }
 
   getTemplate() {
@@ -22,7 +22,8 @@ export default class Abstract {
     return this._elem;
   }
 
-  remove() {
+  removeElement() {
+    this._elem.remove();
     this._elem = null;
   }
 }

@@ -7,7 +7,6 @@ export const createShowMoreTemplate = () => (
 export default class ShowMoreBtn extends Abstract {
   constructor() {
     super();
-    this._callback = {};
     this._onClickHandler = this._onClickHandler.bind(this);
   }
 
@@ -15,8 +14,7 @@ export default class ShowMoreBtn extends Abstract {
     return createShowMoreTemplate();
   }
 
-  _onClickHandler(evt) {
-    evt.preventDefault();
+  _onClickHandler() {
     this._callback.click();
   }
 

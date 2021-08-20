@@ -99,8 +99,8 @@ const renderFilmsBoard = () => {
 
   // show more cards
   if (films.length > SHOW_FILMS) {
-    const btnShowMore = new ShowMoreBtnView();
-    render(filmsListMain, btnShowMore.getElement());
+    const btnShowMoreComponent = new ShowMoreBtnView();
+    render(filmsListMain, btnShowMoreComponent.getElement());
 
     let currentPos = SHOW_FILMS;
 
@@ -112,13 +112,12 @@ const renderFilmsBoard = () => {
       currentPos += SHOW_FILMS;
 
       if (currentPos >= films.length)  {
-        btnShowMore.removeEventListener('click', showMoreCards);
-        btnShowMore.remove();
+        btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
+        btnShowMoreComponent.removeElement();
       }
     };
 
-    btnShowMore.getElement().addEventListener('click', showMoreCards);
-    btnShowMore.setClickHandler(showMoreCards);
+    btnShowMoreComponent.setClickHandler(showMoreCards);
   }
 
   renderFilms();
