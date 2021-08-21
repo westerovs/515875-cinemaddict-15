@@ -26,9 +26,4 @@ render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES));
 
 const moviesPresenter = new MoviesPresenter(siteMainElement);
 
-if (!films.length) {
-  moviesPresenter.renderNoFilms();
-} else {
-  moviesPresenter.init(films, filmsExtra);
-}
-
+moviesPresenter.init(films, filmsExtra);

@@ -26,14 +26,14 @@ export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
 
-    this._sortComponent = new SortingView;
-    this._boardComponent = new FilmsBoardView;
-    this._filmsListComponent = new FilmsListView;
-    this._filmListExtraComponent = new FilmsListExtraView;
-    this._showMoreComponent = new ShowMoreBtnView;
-    this._filmCardComponent = new FilmCardView;
-    this._filmCardDetailsComponent = new FilmDetailsView;
-    this._noFilmsComponent = new NoFilmsView;
+    this._sortComponent = new SortingView();
+    this._boardComponent = new FilmsBoardView();
+    this._filmsListComponent = new FilmsListView();
+    this._filmListExtraComponent = new FilmsListExtraView();
+    this._showMoreComponent = new ShowMoreBtnView();
+    this._filmCardComponent = new FilmCardView();
+    this._filmCardDetailsComponent = new FilmDetailsView();
+    this._noFilmsComponent = new NoFilmsView();
 
     this.films = null;
     this.filmsExtra = null;
@@ -135,10 +135,18 @@ export default class Movies {
     }
   }
 
+  _isRenderMoviesBoard() {
+    if (!this.films.length) {
+      this.renderNoFilms();
+    } else {
+      this._renderFilmsBoard()
+    }
+  }
+
   init(films, filmsExtra) {
     this.films = films;
     this.filmsExtra = filmsExtra;
 
-    this._renderFilmsBoard();
+    this._isRenderMoviesBoard()
   }
 }
