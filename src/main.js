@@ -124,6 +124,6 @@ if (!films.length) {
   render(siteMainElement, new NoFilms());
 } else {
   // renderFilmsBoard();
-  moviesPresenter.init();
+  moviesPresenter.init(films, filmsExtra);
 }
 
