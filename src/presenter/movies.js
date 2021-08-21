@@ -101,42 +101,40 @@ export default class Movies {
     const filmsListMain = filmsBoard.querySelector('.films-list--main');
     const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    // show more cards
-    // if (films.length > SHOW_FILMS) {
-    //   const btnShowMoreComponent = new ShowMoreBtnView();
-    //   render(filmsListMain, btnShowMoreComponent);
-    //
-    //   let currentPos = SHOW_FILMS;
-    //
-    //   const showMoreCards = () => {
-    //     films
-    //       .slice(currentPos, currentPos + SHOW_FILMS)
-    //       .forEach((film) => renderFilm(filmsListMainContainer, film));
-    //
-    //     currentPos += SHOW_FILMS;
-    //
-    //     if (currentPos >= films.length)  {
-    //       btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
-    //       btnShowMoreComponent.removeElement();
-    //     }
-    //   };
-    //
-    //   btnShowMoreComponent.setClickHandler(showMoreCards);
-    // }
-    //
-
     this._renderFilms(filmsListMainContainer)
     this._renderFilmsExtra(filmsBoard, 'Top rated');
     this._renderFilmsExtra(filmsBoard, 'Most commented');
+
+    this._renderLoadMoreButton(filmsListMain, filmsListMainContainer)
   }
 
   _renderNoFilms() {
     // Метод для рендеринга заглушки
   }
 
-  _renderLoadMoreButton() {
-    // Метод, куда уйдёт логика по отрисовке кнопки допоказа задач,
-    // сейчас в main.js является частью renderBoard
+  _renderLoadMoreButton(filmsListMain, filmsListMainContainer) {
+    // show more cards
+    if (this.films.length > SHOW_FILMS) {
+      const btnShowMoreComponent = new ShowMoreBtnView();
+      render(filmsListMain, btnShowMoreComponent);
+
+      let currentPos = SHOW_FILMS;
+
+      const showMoreCards = () => {
+        this.films
+          .slice(currentPos, currentPos + SHOW_FILMS)
+          .forEach((film) => this._renderFilm(filmsListMainContainer, film));
+
+        currentPos += SHOW_FILMS;
+
+        if (currentPos >= this.films.length)  {
+          btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
+          btnShowMoreComponent.removeElement();
+        }
+      };
+
+      btnShowMoreComponent.setClickHandler(showMoreCards);
+    }
   }
 
   init(films, filmsExtra) {
