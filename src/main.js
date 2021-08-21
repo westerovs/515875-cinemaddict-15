@@ -6,7 +6,6 @@ import MoviesPresenter from './presenter/movies.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import FooterStatistic from './view/footer-statistic.js';
-import NoFilms from './view/no-films.js';
 
 const FILM_COUNT = 20;
 const SHOW_FILMS_EXTRA = 2;
@@ -28,7 +27,7 @@ render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES));
 const moviesPresenter = new MoviesPresenter(siteMainElement);
 
 if (!films.length) {
-  render(siteMainElement, new NoFilms());
+  moviesPresenter.renderNoFilms();
 } else {
   moviesPresenter.init(films, filmsExtra);
 }

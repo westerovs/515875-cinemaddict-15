@@ -108,8 +108,8 @@ export default class Movies {
     this._renderLoadMoreButton(filmsListMain, filmsListMainContainer)
   }
 
-  _renderNoFilms() {
-    // Метод для рендеринга заглушки
+  renderNoFilms() {
+    render(this._filmsContainer, new NoFilms());
   }
 
   _renderLoadMoreButton(filmsListMain, filmsListMainContainer) {
