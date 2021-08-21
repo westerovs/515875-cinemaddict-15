@@ -202,8 +202,8 @@ export default class FilmDetails extends Abstract {
     this._callback.click();
   }
 
-  setClickHandler(params) {
-    this._callback.click = params;
+  setClickHandler(callback) {
+    this._callback.click = callback;
     const closeBtn = this.getElement().querySelector('.film-details__close-btn');
 
     closeBtn.addEventListener('click', this._onClickHandler);
