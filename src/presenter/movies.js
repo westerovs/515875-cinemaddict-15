@@ -41,8 +41,30 @@ export default class Movies {
     render(this._filmsContainer, new SortingView());
   }
 
-  _renderFilmEdit() {
+  _renderFilmEdit(film) {
     console.log('renderFilmEdit...');
+
+    const filmEditComponent = new FilmDetailsView(film);
+
+    document.body.appendChild(filmEditComponent.getElement());
+    document.body.classList.add('hide-overflow');
+
+    const closeFilmDetails = () => {
+      document.body.removeChild(filmEditComponent.getElement());
+      document.body.classList.remove('hide-overflow');
+      document.removeEventListener('keydown', onEscKeyDown);
+    };
+
+    function onEscKeyDown (evt) {
+      if (evt.code === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        closeFilmDetails();
+      }
+    }
+
+    document.addEventListener('keydown', onEscKeyDown );
+
+    filmEditComponent.setClickHandler(closeFilmDetails);
   }
 
   _renderFilm(filmListElement, film) {
@@ -54,22 +76,9 @@ export default class Movies {
 
   _renderFilms(container) {
     // Метод для отрисовки группы фильмов за раз
-    console.log('renderFilmsBoard...');
-
     for (let i = 0; i < Math.min(SHOW_FILMS, this.films.length); i++) {
       this._renderFilm(container, this.films[i]);
     }
-
-    // const renderExtraFilms = (title) => {
-    //   const filmListExtra = new FilmsListExtraView(title);
-    //   render(filmsBoard, filmListExtra);
-    //
-    //   const filmListExtraContainer = filmListExtra.getElement().querySelector('.films-list__container');
-    //   this.filmsExtra.forEach((film) => this._renderFilm(filmListExtraContainer, film));
-    // };
-    //
-    // renderExtraFilms('Top rated');
-    // renderExtraFilms('Most commented');
   }
 
   _renderFilmsExtra(container, title) {
@@ -78,11 +87,7 @@ export default class Movies {
 
     const filmListExtraContainer = filmListExtra.getElement().querySelector('.films-list__container');
     this.filmsExtra.forEach((film) => this._renderFilm(filmListExtraContainer, film));
-
-    // renderExtraFilms('Top rated');
-    // renderExtraFilms('Most commented');
   }
-
 
   _renderFilmsBoard() {
     console.log('renderFilmsBoard...');
