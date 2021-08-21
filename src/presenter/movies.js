@@ -1,12 +1,7 @@
 /* eslint-disable */
 
-import { generateFilm } from '../mock/film.js';
-import { toFiltersCount } from '../mock/filter.js';
 import { render } from '../utils/render.js';
 
-import filmBoardView from '../view/film-board.js';
-import RankView from '../view/rank.js';
-import FilterView from '../view/filter.js';
 import SortingView from '../view/sort.js';
 import FilmsBoardView from '../view/film-board.js';
 import FilmsListView from '../view/films-list.js';
@@ -14,8 +9,7 @@ import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
-import FooterStatistic from '../view/footer-statistic.js';
-import NoFilms from '../view/no-films.js';
+import NoFilmsView from '../view/no-films.js';
 
 /*
 *  Конструктор презентера должен принимать необходимые данные.
@@ -31,19 +25,25 @@ const SHOW_FILMS = 5;
 export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
-    this._boardComponent = filmBoardView;
+
+    this._sortComponent = new SortingView;
+    this._boardComponent = new FilmsBoardView;
+    this._filmsListComponent = new FilmsListView;
+    this._filmListExtraComponent = new FilmsListExtraView;
+    this._showMoreComponent = new ShowMoreBtnView;
+    this._filmCardComponent = new FilmCardView;
+    this._filmCardDetailsComponent = new FilmDetailsView;
+    this._noFilmsComponent = new NoFilmsView;
+
     this.films = null;
     this.filmsExtra = null;
   }
 
   _renderSort() {
-    // Метод для рендеринга сортировки
-    render(this._filmsContainer, new SortingView());
+    render(this._filmsContainer, this._sortComponent);
   }
 
   _renderFilmEdit(film) {
-    console.log('renderFilmEdit...');
-
     const filmEditComponent = new FilmDetailsView(film);
 
     document.body.appendChild(filmEditComponent.getElement());
@@ -90,32 +90,30 @@ export default class Movies {
   }
 
   _renderFilmsBoard() {
-    console.log('renderFilmsBoard...');
-
-    this._renderSort()
-    render(this._filmsContainer, new FilmsBoardView());
+    this._renderSort();
+    render(this._filmsContainer, this._boardComponent);
 
     const filmsBoard = this._filmsContainer.querySelector('.films');
-    render(filmsBoard, new FilmsListView());
+    render(filmsBoard, this._filmsListComponent);
 
     const filmsListMain = filmsBoard.querySelector('.films-list--main');
     const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    this._renderFilms(filmsListMainContainer)
+    this._renderFilms(filmsListMainContainer);
     this._renderFilmsExtra(filmsBoard, 'Top rated');
     this._renderFilmsExtra(filmsBoard, 'Most commented');
 
-    this._renderLoadMoreButton(filmsListMain, filmsListMainContainer)
+    this._renderLoadMoreButton(filmsListMain, filmsListMainContainer);
   }
 
   renderNoFilms() {
-    render(this._filmsContainer, new NoFilms());
+    render(this._filmsContainer, this._noFilmsComponent);
   }
 
   _renderLoadMoreButton(filmsListMain, filmsListMainContainer) {
     // show more cards
     if (this.films.length > SHOW_FILMS) {
-      const btnShowMoreComponent = new ShowMoreBtnView();
+      const btnShowMoreComponent = this._showMoreComponent;
       render(filmsListMain, btnShowMoreComponent);
 
       let currentPos = SHOW_FILMS;
