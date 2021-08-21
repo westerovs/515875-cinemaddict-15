@@ -2,7 +2,7 @@ import { generateFilm } from './mock/film.js';
 import { toFiltersCount } from './mock/filter.js';
 import { render } from './utils/render.js';
 
-import Movies from './presenter/movies.js';
+import MoviesPresenter from './presenter/movies.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import SortingView from './view/sort.js';
@@ -118,9 +118,12 @@ const renderFilmsBoard = () => {
   renderFilms();
 };
 
+const moviesPresenter = new MoviesPresenter(siteMainElement);
+
 if (!films.length) {
   render(siteMainElement, new NoFilms());
 } else {
-  renderFilmsBoard();
+  // renderFilmsBoard();
+  moviesPresenter.init();
 }
 
