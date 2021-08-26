@@ -1,5 +1,3 @@
-// /* eslint-disable */
-
 import { render } from '../utils/render.js';
 
 import SortView from '../view/sort.js';
@@ -7,9 +5,8 @@ import FilmsBoardView from '../view/film-board.js';
 import FilmsListView from '../view/films-list.js';
 import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
-import FilmCardView from '../view/film-card.js';
-import FilmDetailsView from '../view/film-details.js';
 import NoFilmsView from '../view/no-films.js';
+import FilmPresenter from './film.js';
 
 const SHOW_FILMS = 5;
 
@@ -35,35 +32,9 @@ export default class Movies {
     render(this._filmsContainer, this._sortComponent);
   }
 
-  _renderFilmEdit(film) {
-    const filmEditComponent = new FilmDetailsView(film);
-
-    document.body.appendChild(filmEditComponent.getElement());
-    document.body.classList.add('hide-overflow');
-
-    const closeFilmDetails = () => {
-      document.body.removeChild(filmEditComponent.getElement());
-      document.body.classList.remove('hide-overflow');
-      document.removeEventListener('keydown', onEscKeyDown);
-    };
-
-    function onEscKeyDown (evt) {
-      if (evt.code === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        closeFilmDetails();
-      }
-    }
-
-    document.addEventListener('keydown', onEscKeyDown );
-
-    filmEditComponent.setClickHandler(closeFilmDetails);
-  }
-
   _renderFilm(filmListElement, film) {
-    const filmComponent = new FilmCardView(film);
-    filmComponent.setClickHandler(this._renderFilmEdit);
-
-    render(filmListElement, filmComponent);
+    const filmPresenter = new FilmPresenter();
+    filmPresenter.init(filmListElement, film);
   }
 
   _renderFilmsGroup(container, from , to) {
