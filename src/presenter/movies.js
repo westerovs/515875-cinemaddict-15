@@ -29,10 +29,7 @@ export default class Movies {
     this._sortComponent = new SortingView();
     this._boardComponent = new FilmsBoardView();
     this._filmsListComponent = new FilmsListView();
-    this._filmListExtraComponent = new FilmsListExtraView();
     this._showMoreComponent = new ShowMoreBtnView();
-    this._filmCardComponent = new FilmCardView();
-    this._filmCardDetailsComponent = new FilmDetailsView();
     this._noFilmsComponent = new NoFilmsView();
 
     this.films = null;
@@ -106,7 +103,7 @@ export default class Movies {
     this._renderLoadMoreButton(filmsListMain, filmsListMainContainer);
   }
 
-  renderNoFilms() {
+  _renderNoFilms() {
     render(this._filmsContainer, this._noFilmsComponent);
   }
 
@@ -137,7 +134,7 @@ export default class Movies {
 
   _isRenderMoviesBoard() {
     if (!this.films.length) {
-      this.renderNoFilms();
+      this._renderNoFilms();
     } else {
       this._renderFilmsBoard()
     }
