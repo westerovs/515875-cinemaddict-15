@@ -2,7 +2,7 @@
 
 import { render } from '../utils/render.js';
 
-import SortingView from '../view/sort.js';
+import SortView from '../view/sort.js';
 import FilmsBoardView from '../view/film-board.js';
 import FilmsListView from '../view/films-list.js';
 import FilmsListExtraView from '../view/films-list-extra.js';
@@ -11,25 +11,16 @@ import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 import NoFilmsView from '../view/no-films.js';
 
-/*
-*  Конструктор презентера должен принимать необходимые данные.
-*
-*  Разнесите по презентерам всю логику по отрисовке фильмов и кнопки «Show more»,
-*  а также по навешиванию на них обработчиков, из main.js.
-*
-*  В main.js создайте экземпляры презентеров, передайте данные и инициализируйте их.
-* */
-
 const SHOW_FILMS = 5;
 
 export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
 
-    this._sortComponent = new SortingView();
-    this._boardComponent = new FilmsBoardView();
+    this._sortComponent = new SortView();
+    this._filmsBoardComponent = new FilmsBoardView();
     this._filmsListComponent = new FilmsListView();
-    this._showMoreComponent = new ShowMoreBtnView();
+    this._showMoreBtnComponent = new ShowMoreBtnView();
     this._noFilmsComponent = new NoFilmsView();
 
     this.films = null;
@@ -71,11 +62,36 @@ export default class Movies {
     render(filmListElement, filmComponent);
   }
 
-  _renderFilms(container) {
+  _renderFilms(container, from , to) {
     // Метод для отрисовки группы фильмов за раз
-    for (let i = 0; i < Math.min(SHOW_FILMS, this.films.length); i++) {
-      this._renderFilm(container, this.films[i]);
+    this.films
+      .slice(from, to)
+      .forEach((film) => this._renderFilm(container, film));
+  }
+
+  _renderFilmList() {
+    // render доски фильмов
+    render(this._filmsContainer, this._filmsBoardComponent);
+    const filmsBoard = this._filmsContainer.querySelector('.films');
+
+    // render контейнера для фильмов
+    render(filmsBoard, this._filmsListComponent);
+    const filmsListMain = filmsBoard.querySelector('.films-list--main');
+    const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
+
+    this._renderFilms(filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsExtra(filmsBoard, 'Top rated');
+    this._renderFilmsExtra(filmsBoard, 'Most commented');
+
+    // show more cards
+    if (this.films.length > SHOW_FILMS) {
+      this._renderLoadMoreButton(filmsListMain, filmsListMainContainer);
     }
+  }
+
+  _renderNoFilms() {
+    // метод для рендеринга заглушки
+    render(this._filmsContainer, this._noFilmsComponent);
   }
 
   _renderFilmsExtra(container, title) {
@@ -86,64 +102,44 @@ export default class Movies {
     this.filmsExtra.forEach((film) => this._renderFilm(filmListExtraContainer, film));
   }
 
-  _renderFilmsBoard() {
-    this._renderSort();
-    render(this._filmsContainer, this._boardComponent);
-
-    const filmsBoard = this._filmsContainer.querySelector('.films');
-    render(filmsBoard, this._filmsListComponent);
-
-    const filmsListMain = filmsBoard.querySelector('.films-list--main');
-    const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
-
-    this._renderFilms(filmsListMainContainer);
-    this._renderFilmsExtra(filmsBoard, 'Top rated');
-    this._renderFilmsExtra(filmsBoard, 'Most commented');
-
-    this._renderLoadMoreButton(filmsListMain, filmsListMainContainer);
-  }
-
-  _renderNoFilms() {
-    render(this._filmsContainer, this._noFilmsComponent);
-  }
-
-  _renderLoadMoreButton(filmsListMain, filmsListMainContainer) {
-    // show more cards
-    if (this.films.length > SHOW_FILMS) {
-      const btnShowMoreComponent = this._showMoreComponent;
-      render(filmsListMain, btnShowMoreComponent);
-
-      let currentPos = SHOW_FILMS;
-
-      const showMoreCards = () => {
-        this.films
-          .slice(currentPos, currentPos + SHOW_FILMS)
-          .forEach((film) => this._renderFilm(filmsListMainContainer, film));
-
-        currentPos += SHOW_FILMS;
-
-        if (currentPos >= this.films.length)  {
-          btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
-          btnShowMoreComponent.removeElement();
-        }
-      };
-
-      btnShowMoreComponent.setClickHandler(showMoreCards);
-    }
-  }
-
-  _isRenderMoviesBoard() {
+  // метод для инициализации начала работы модуля
+  _renderBoard() {
+    // если фильмов нет
     if (!this.films.length) {
       this._renderNoFilms();
-    } else {
-      this._renderFilmsBoard()
+      return;
     }
+
+    this._renderSort();
+    this._renderFilmList();
+  }
+
+  _renderLoadMoreButton(filmsList, filmsListMainContainer) {
+    const btnShowMoreComponent = this._showMoreBtnComponent;
+    render(filmsList, btnShowMoreComponent);
+
+    // !!! нужно знать сколько уже отрисовано
+    let currentPos = SHOW_FILMS;
+
+    const showMoreCards = () => {
+      this._renderFilms(filmsListMainContainer, currentPos, currentPos + SHOW_FILMS);
+
+      currentPos += SHOW_FILMS;
+
+      // удаление кнопки
+      if (currentPos >= this.films.length) {
+        btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
+        btnShowMoreComponent.removeElement();
+      }
+    };
+
+    btnShowMoreComponent.setClickHandler(showMoreCards);
   }
 
   init(films, filmsExtra) {
     this.films = films;
     this.filmsExtra = filmsExtra;
 
-    this._isRenderMoviesBoard()
+    this._renderBoard()
   }
 }
