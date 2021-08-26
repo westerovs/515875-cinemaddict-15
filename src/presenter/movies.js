@@ -62,14 +62,14 @@ export default class Movies {
     render(filmListElement, filmComponent);
   }
 
-  _renderFilms(container, from , to) {
+  _renderFilmsGroup(container, from , to) {
     // Метод для отрисовки группы фильмов за раз
     this.films
       .slice(from, to)
       .forEach((film) => this._renderFilm(container, film));
   }
 
-  _renderFilmList() {
+  _renderFilmContainer() {
     // render доски фильмов
     render(this._filmsContainer, this._filmsBoardComponent);
     const filmsBoard = this._filmsContainer.querySelector('.films');
@@ -79,7 +79,7 @@ export default class Movies {
     const filmsListMain = filmsBoard.querySelector('.films-list--main');
     const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    this._renderFilms(filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsGroup(filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
     this._renderFilmsExtra(filmsBoard, 'Top rated');
     this._renderFilmsExtra(filmsBoard, 'Most commented');
 
@@ -111,7 +111,7 @@ export default class Movies {
     }
 
     this._renderSort();
-    this._renderFilmList();
+    this._renderFilmContainer();
   }
 
   _renderLoadMoreButton(filmsList, filmsListMainContainer) {
@@ -122,7 +122,7 @@ export default class Movies {
     let currentPos = SHOW_FILMS;
 
     const showMoreCards = () => {
-      this._renderFilms(filmsListMainContainer, currentPos, currentPos + SHOW_FILMS);
+      this._renderFilmsGroup(filmsListMainContainer, currentPos, currentPos + SHOW_FILMS);
 
       currentPos += SHOW_FILMS;
 
@@ -137,8 +137,8 @@ export default class Movies {
   }
 
   init(films, filmsExtra) {
-    this.films = films;
-    this.filmsExtra = filmsExtra;
+    this.films = films.slice();
+    this.filmsExtra = filmsExtra.slice();
 
     this._renderBoard()
   }
