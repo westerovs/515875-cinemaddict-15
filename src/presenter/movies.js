@@ -1,4 +1,4 @@
-/* eslint-disable */
+// /* eslint-disable */
 
 import { render } from '../utils/render.js';
 
@@ -25,6 +25,10 @@ export default class Movies {
 
     this.films = null;
     this.filmsExtra = null;
+    this.renderedFilmsCount = SHOW_FILMS;
+    this.filmsListMainContainer = null;
+
+    this._handlerLoadMoreBtnClick = this._handlerLoadMoreBtnClick.bind(this);
   }
 
   _renderSort() {
@@ -77,15 +81,15 @@ export default class Movies {
     // render контейнера для фильмов
     render(filmsBoard, this._filmsListComponent);
     const filmsListMain = filmsBoard.querySelector('.films-list--main');
-    const filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
+    this.filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    this._renderFilmsGroup(filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsGroup(this.filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
     this._renderFilmsExtra(filmsBoard, 'Top rated');
     this._renderFilmsExtra(filmsBoard, 'Most commented');
 
     // show more cards
     if (this.films.length > SHOW_FILMS) {
-      this._renderLoadMoreButton(filmsListMain, filmsListMainContainer);
+      this._renderLoadMoreBtn(filmsListMain);
     }
   }
 
@@ -114,32 +118,28 @@ export default class Movies {
     this._renderFilmContainer();
   }
 
-  _renderLoadMoreButton(filmsList, filmsListMainContainer) {
-    const btnShowMoreComponent = this._showMoreBtnComponent;
-    render(filmsList, btnShowMoreComponent);
+  _handlerLoadMoreBtnClick() {
+    this._renderFilmsGroup(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + SHOW_FILMS);
 
-    // !!! нужно знать сколько уже отрисовано
-    let currentPos = SHOW_FILMS;
+    this.renderedFilmsCount += SHOW_FILMS;
 
-    const showMoreCards = () => {
-      this._renderFilmsGroup(filmsListMainContainer, currentPos, currentPos + SHOW_FILMS);
+    // удаление кнопки
+    if (this.renderedFilmsCount >= this.films.length) {
+      this._showMoreBtnComponent.getElement().removeEventListener('click', this._handlerLoadMoreBtnClick);
+      this._showMoreBtnComponent.removeElement();
+    }
+  }
 
-      currentPos += SHOW_FILMS;
+  _renderLoadMoreBtn(filmsList) {
+    render(filmsList, this._showMoreBtnComponent);
 
-      // удаление кнопки
-      if (currentPos >= this.films.length) {
-        btnShowMoreComponent.getElement().removeEventListener('click', showMoreCards);
-        btnShowMoreComponent.removeElement();
-      }
-    };
-
-    btnShowMoreComponent.setClickHandler(showMoreCards);
+    this._showMoreBtnComponent.setClickHandler(this._handlerLoadMoreBtnClick);
   }
 
   init(films, filmsExtra) {
     this.films = films.slice();
     this.filmsExtra = filmsExtra.slice();
 
-    this._renderBoard()
+    this._renderBoard();
   }
 }
