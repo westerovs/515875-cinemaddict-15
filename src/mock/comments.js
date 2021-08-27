@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { getRandomNumber, getRandomItem } from '../utils/random.js';
 import { getRandomDateComment } from '../utils/days.js';
 
@@ -32,8 +33,10 @@ const filmDates = [
   getRandomDateComment(),
 ];
 
+const getId = () => nanoid();
+
 const filmComments = () => ({
-  id: getRandomNumber(0, 999),
+  id: getId(),
   author: getRandomItem(filmAuthor),
   comment: getRandomItem(filmDesc),
   date: getRandomItem(filmDates),

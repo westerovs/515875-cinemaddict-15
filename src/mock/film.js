@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 import { getRandomNumber, getRandomItem, shuffleArr } from '../utils/random.js';
 import { getRandomDate } from '../utils/days.js';
 import { COUNTRIES, GENRES } from '../const.js';
@@ -83,7 +84,7 @@ const getGenres = () => shuffleArr(GENRES).slice(0, getRandomNumber(1, GENRES.le
 
 const getAgeRating = () => getRandomNumber(6, 18);
 
-const getId = () => getRandomNumber(0, 999);
+const getId = () => nanoid();
 
 const generateFilm = () => ({
   id: getId(),
