@@ -109,7 +109,7 @@ export default class Movies {
 
   init(films, filmsExtra) {
     this.films = films.slice();
-    this.filmsExtra = filmsExtra.slice();
+    this.filmsExtra = filmsExtra.slice();/**/
 
     this._renderBoard();
   }
