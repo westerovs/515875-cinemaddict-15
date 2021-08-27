@@ -31,8 +31,22 @@ const createElement = (template) => {
   return element.firstChild;
 };
 
+/*
+  отрисовкой в DOM занимается не абстрактный класс и не компонент, а utils.
+  Поэтому utils и должна удалять из DOM.
+*/
+const removeComponent = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error('Возможно удалять только компоненты!');
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};
+
 export {
   renderPosition,
   render,
-  createElement
+  createElement,
+  removeComponent
 };

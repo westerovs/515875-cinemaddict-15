@@ -1,4 +1,4 @@
-import { render } from '../utils/render.js';
+import { render, removeComponent } from '../utils/render.js';
 
 import SortView from '../view/sort.js';
 import FilmsBoardView from '../view/film-board.js';
@@ -97,7 +97,7 @@ export default class Movies {
     // удаление кнопки
     if (this.renderedFilmsCount >= this.films.length) {
       this._showMoreBtnComponent.getElement().removeEventListener('click', this._handlerLoadMoreBtnClick);
-      this._showMoreBtnComponent.removeElement();
+      removeComponent(this._showMoreBtnComponent);
     }
   }
 
