@@ -7,7 +7,7 @@ import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import FooterStatistic from './view/footer-statistic.js';
 
-const FILM_COUNT = 6;
+const FILM_COUNT = 20;
 const SHOW_FILMS_EXTRA = 2;
 const TOTAL_MOVIES = 9999;
 

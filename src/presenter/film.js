@@ -11,8 +11,13 @@ export default class Film {
     this._showFilmDetails = this._showFilmDetails.bind(this)
     this._closeFilmDetails = this._closeFilmDetails.bind(this)
     this._onEscKeyDown = this._onEscKeyDown.bind(this)
+
+    this._handleWatchListClick = this._handleWatchListClick.bind(this)
+    this._handleWatchedClick = this._handleWatchedClick.bind(this)
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this)
   }
 
+  // *** details ***
   _showFilmDetails() {
     document.body.appendChild(this.filmDetailsComponent.getElement());
     document.body.classList.add('hide-overflow');
@@ -27,15 +32,32 @@ export default class Film {
     document.removeEventListener('keydown', this._onEscKeyDown);
   }
 
-  _onEscKeyDown (evt) {
+  _onEscKeyDown(evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._closeFilmDetails();
     }
   }
 
+  // *** controls ***
+  _handleWatchListClick() {
+    console.log('WatchListClick')
+  }
+
+  _handleWatchedClick() {
+    console.log('WatchedClick')
+  }
+
+  _handleFavoriteClick() {
+    console.log('FavoriteClick')
+  }
+
   _renderFilm(filmListElement) {
-    this.filmComponent.setClickHandler(this._showFilmDetails);
+    this.filmComponent.setFilmDetailsClickHandler(this._showFilmDetails);
+
+    this.filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this.filmComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this.filmComponent.setWatchedClickHandler(this._handleWatchedClick);
 
     render(filmListElement, this.filmComponent);
   }
