@@ -31,10 +31,7 @@ const createElement = (template) => {
   return element.firstChild;
 };
 
-/*
-  отрисовкой в DOM занимается не абстрактный класс и не компонент, а utils.
-  Поэтому utils и должна удалять из DOM.
-*/
+// Отрисовкой в DOM занимается не абстрактный класс, а utils. Поэтому utils и удаляет
 const removeComponent = (component) => {
   if (!(component instanceof Abstract)) {
     throw new Error('Возможно удалять только компоненты!');
@@ -60,10 +57,29 @@ const updateItems = (items, updateItem) => {
   ];
 };
 
+const replace = (newChild, oldChild) => {
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof Abstract) {
+    newChild = newChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || newChild === null) {
+    throw new Error('Возможно заменять только компоненты!');
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
 export {
   renderPosition,
   render,
   createElement,
   removeComponent,
-  updateItems
+  updateItems,
+  replace
 };

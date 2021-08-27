@@ -35,11 +35,10 @@ export default class Movies {
     render(this._filmsContainer, this._sortComponent);
   }
 
-  _renderFilm(filmListElement, film) {
-    const filmPresenter = new FilmPresenter(this._handlerFilmsUpdate); // принимает ф-цию перерендера
-    filmPresenter.init(filmListElement, film);
+  _renderFilm(container, film) {
+    const filmPresenter = new FilmPresenter(container, this._handlerFilmsUpdate); // принимает ф-цию перерендера
+    filmPresenter.init(film);
     this.filmPresenter.set(film.id, filmPresenter); // в map записывает ключ: id и film
-    // console.log(this.filmPresenter.get(film.id));
   }
 
   _renderFilmsGroup(container, from , to) {
@@ -116,7 +115,7 @@ export default class Movies {
   // при вызове метода, будет реагировать на изменения контроллов карточки фильма
   // как только изменились данные, нужно изменить представление
     this.films = updateItems(this.films, updateFilm); // обновляем моки
-    this.filmPresenter.get(updateFilm.id).init(this.filmsListMainContainer, updateFilm); // перерисовываем данные
+    this.filmPresenter.get(updateFilm.id).init(updateFilm); // перерисовываем данные
   }
 
   init(films, filmsExtra) {

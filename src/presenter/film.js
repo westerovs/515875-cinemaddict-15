@@ -1,9 +1,11 @@
-import { render } from '../utils/render.js';
+/* eslint-disable */
+import { removeComponent, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
 export default class Film {
-  constructor(changeDataFilm) {
+  constructor(filmContainer, changeDataFilm) {
+    this.filmContainer = filmContainer;
     this._changeDataFilm = changeDataFilm;
 
     this.film = null;
@@ -85,15 +87,21 @@ export default class Film {
   }
 
   // главный метод для начала работы модуля
-  _renderFilm(filmListElement) {
+  _renderFilm() {
     this.filmComponent.setFilmDetailsClickHandler(this._showFilmDetails);
 
-    render(filmListElement, this.filmComponent);
+    render(this.filmContainer, this.filmComponent);
   }
 
-  init(filmListElement, film) {
+
+
+  init(film) {
     this.film = film;
 
+    const prevFilmComponent = this.filmComponent;
+    const prevFilmDetailsComponent = this.filmDetailsComponent;
+
+    // сперва создаются вюьхи, потом пересоздаются
     this.filmComponent = new FilmCardView(film);
     this.filmDetailsComponent = new FilmDetailsView(film);
 
@@ -101,6 +109,19 @@ export default class Film {
     this.filmComponent.setWatchListClickHandler(this._handleWatchListClick);
     this.filmComponent.setWatchedClickHandler(this._handleWatchedClick);
 
-    this._renderFilm(filmListElement, film);
+    // если первый запуск, то...
+    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
+      this._renderFilm(this.filmContainer, film);
+      return;
+    }
+
+    console.log('reInit');
+    // если init был, то нужно не отрисовать, а заменить...
+    if (this.filmContainer.contains(prevFilmComponent.getElement())) {
+      replace(this.filmComponent, prevFilmComponent);
+    }
+
+    removeComponent(prevFilmComponent)
+    removeComponent(prevFilmDetailsComponent)
   }
 }
