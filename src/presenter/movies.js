@@ -39,6 +39,7 @@ export default class Movies {
     const filmPresenter = new FilmPresenter(this._handlerFilmsUpdate); // принимает ф-цию перерендера
     filmPresenter.init(filmListElement, film);
     this.filmPresenter.set(film.id, filmPresenter); // в map записывает ключ: id и film
+    // console.log(this.filmPresenter.get(film.id));
   }
 
   _renderFilmsGroup(container, from , to) {

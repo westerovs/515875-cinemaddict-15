@@ -45,9 +45,9 @@ export default class Film {
   _handleWatchListClick() {
     // передаём объект задачи с изменённым свойством
     const userDetails = {
-      isWatchlist: !this.film.userDetails.isFavorite, // меняем на противоположное
-      isAlreadyWatched: this.film.userDetails.isFavorite,
-      isWatchingDate: this.film.userDetails.isFavorite,
+      isWatchlist: !this.film.userDetails.isWatchlist,
+      isAlreadyWatched: this.film.userDetails.isAlreadyWatched,
+      isWatchingDate: this.film.userDetails.isWatchingDate,
       isFavorite: this.film.userDetails.isFavorite,
     };
 
@@ -59,9 +59,9 @@ export default class Film {
   _handleWatchedClick() {
     // передаём объект задачи с изменённым свойством
     const userDetails = {
-      isWatchlist: this.film.userDetails.isFavorite,
-      isAlreadyWatched: !this.film.userDetails.isFavorite, // меняем на противоположное
-      isWatchingDate: this.film.userDetails.isFavorite,
+      isWatchlist: this.film.userDetails.isWatchlist,
+      isAlreadyWatched: !this.film.userDetails.isAlreadyWatched,
+      isWatchingDate: this.film.userDetails.isWatchingDate,
       isFavorite: this.film.userDetails.isFavorite,
     };
 
@@ -73,10 +73,10 @@ export default class Film {
   _handleFavoriteClick() {
     // передаём объект задачи с изменённым свойством
     const userDetails = {
-      isWatchlist: this.film.userDetails.isFavorite,
-      isAlreadyWatched: this.film.userDetails.isFavorite,
-      isWatchingDate: this.film.userDetails.isFavorite,
-      isFavorite: !this.film.userDetails.isFavorite, // меняем на противоположное
+      isWatchlist: this.film.userDetails.isWatchlist,
+      isAlreadyWatched: this.film.userDetails.isAlreadyWatched,
+      isWatchingDate: this.film.userDetails.isWatchingDate,
+      isFavorite: !this.film.userDetails.isFavorite,
     };
 
     const updateFilm = Object.assign({}, this.film, { userDetails });
