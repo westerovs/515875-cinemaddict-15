@@ -1,4 +1,4 @@
-import { render, removeComponent } from '../utils/render.js';
+import { render, removeComponent, updateItems } from '../utils/render.js';
 
 import SortView from '../view/sort.js';
 import FilmsBoardView from '../view/film-board.js';
@@ -6,6 +6,7 @@ import FilmsListView from '../view/films-list.js';
 import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
 import NoFilmsView from '../view/no-films.js';
+
 import FilmPresenter from './film.js';
 
 const SHOW_FILMS = 5;
@@ -20,12 +21,14 @@ export default class Movies {
     this._showMoreBtnComponent = new ShowMoreBtnView();
     this._noFilmsComponent = new NoFilmsView();
 
+    this.filmPresenter = new Map();
     this.films = null;
     this.filmsExtra = null;
     this.renderedFilmsCount = SHOW_FILMS;
     this.filmsListMainContainer = null;
 
     this._handlerLoadMoreBtnClick = this._handlerLoadMoreBtnClick.bind(this);
+    this._handlerFilmsUpdate = this._handlerFilmsUpdate.bind(this);
   }
 
   _renderSort() {
@@ -33,8 +36,9 @@ export default class Movies {
   }
 
   _renderFilm(filmListElement, film) {
-    const filmPresenter = new FilmPresenter();
+    const filmPresenter = new FilmPresenter(this._handlerFilmsUpdate); // принимает ф-цию перерендера
     filmPresenter.init(filmListElement, film);
+    this.filmPresenter.set(film.id, filmPresenter); // в map записывает ключ: id и film
   }
 
   _renderFilmsGroup(container, from , to) {
@@ -77,7 +81,7 @@ export default class Movies {
     this.filmsExtra.forEach((film) => this._renderFilm(filmListExtraContainer, film));
   }
 
-  // метод для инициализации начала работы модуля
+  // главный метод для начала работы модуля
   _renderBoard() {
     // если фильмов нет
     if (!this.films.length) {
@@ -87,6 +91,12 @@ export default class Movies {
 
     this._renderSort();
     this._renderFilmContainer();
+  }
+
+  _renderLoadMoreBtn(filmsList) {
+    render(filmsList, this._showMoreBtnComponent);
+
+    this._showMoreBtnComponent.setClickHandler(this._handlerLoadMoreBtnClick);
   }
 
   _handlerLoadMoreBtnClick() {
@@ -101,15 +111,16 @@ export default class Movies {
     }
   }
 
-  _renderLoadMoreBtn(filmsList) {
-    render(filmsList, this._showMoreBtnComponent);
-
-    this._showMoreBtnComponent.setClickHandler(this._handlerLoadMoreBtnClick);
+  _handlerFilmsUpdate(updateFilm) {
+  // при вызове метода, будет реагировать на изменения контроллов карточки фильма
+  // как только изменились данные, нужно изменить представление
+    this.films = updateItems(this.films, updateFilm); // обновляем моки
+    this.filmPresenter.get(updateFilm.id).init(this.filmsListMainContainer, updateFilm); // перерисовываем данные
   }
 
   init(films, filmsExtra) {
     this.films = films.slice();
-    this.filmsExtra = filmsExtra.slice();/**/
+    this.filmsExtra = filmsExtra.slice();
 
     this._renderBoard();
   }

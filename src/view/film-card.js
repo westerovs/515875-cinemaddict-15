@@ -2,7 +2,7 @@ import Abstract from './abstract.js';
 
 const createFilmCardTemplate = (film) => {
   const { id, comments, filmInfo, userDetails } = film;
-  const { watchlist, alreadyWatched, favorite } = userDetails;
+  const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
   const {
     title,
     totalRating,
@@ -32,15 +32,15 @@ const createFilmCardTemplate = (film) => {
 
       <div class="film-card__controls">
         <button class="film-card__controls-item film-card__controls-item--add-to-watchlist
-          ${ watchlist ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watchlist">
+          ${ isWatchlist ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watchlist">
           Add to watchlist
         </button>
         <button class="film-card__controls-item film-card__controls-item--mark-as-watched
-          ${ alreadyWatched ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watched">
+          ${ isAlreadyWatched ? 'film-card__controls-item--active' : ''}" type="button" title="Add to watched">
           Mark as watched
         </button>
         <button class="film-card__controls-item film-card__controls-item--favorite
-          ${ favorite ? 'film-card__controls-item--active' : ''}" type="button" title="Add to favorite">
+          ${ isFavorite ? 'film-card__controls-item--active' : ''}" type="button" title="Add to favorite">
           Mark as favorite
         </button>
       </div>

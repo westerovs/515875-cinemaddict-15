@@ -107,10 +107,10 @@ const generateFilm = () => ({
     description: getDescriptions(),
   },
   userDetails: {
-    watchlist: generateRandomBoolean(),
-    alreadyWatched: generateRandomBoolean(),
-    watchingDate: getRandomDate(),
-    favorite: generateRandomBoolean(),
+    isWatchlist: generateRandomBoolean(),
+    isAlreadyWatched: generateRandomBoolean(),
+    isWatchingDate: getRandomDate(),
+    isFavorite: generateRandomBoolean(),
   },
 });
 
