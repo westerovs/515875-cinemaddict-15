@@ -14,6 +14,7 @@ const SHOW_FILMS = 5;
 export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
+    this.filmPresenter = new Map();
 
     this._sortComponent = new SortView();
     this._filmsBoardComponent = new FilmsBoardView();
@@ -21,7 +22,6 @@ export default class Movies {
     this._showMoreBtnComponent = new ShowMoreBtnView();
     this._noFilmsComponent = new NoFilmsView();
 
-    this.filmPresenter = new Map();
     this.films = null;
     this.filmsExtra = null;
     this.renderedFilmsCount = SHOW_FILMS;
@@ -81,18 +81,6 @@ export default class Movies {
     this.filmsExtra.forEach((film) => this._renderFilm(filmListExtraContainer, film));
   }
 
-  // главный метод для начала работы модуля
-  _renderBoard() {
-    // если фильмов нет
-    if (!this.films.length) {
-      this._renderNoFilms();
-      return;
-    }
-
-    this._renderSort();
-    this._renderFilmContainer();
-  }
-
   _renderLoadMoreBtn(filmsList) {
     render(filmsList, this._showMoreBtnComponent);
 
@@ -112,10 +100,22 @@ export default class Movies {
   }
 
   _handlerFilmsUpdate(updateFilm) {
-  // при вызове метода, будет реагировать на изменения контроллов карточки фильма
-  // как только изменились данные, нужно изменить представление
+    // при вызове метода, будет реагировать на изменения контроллов карточки фильма
+    // как только изменились данные, нужно изменить представление
     this.films = updateItems(this.films, updateFilm); // обновляем моки
     this.filmPresenter.get(updateFilm.id).init(updateFilm); // перерисовываем данные
+  }
+
+  // главный метод для начала работы модуля
+  _renderBoard() {
+    // если фильмов нет
+    if (!this.films.length) {
+      this._renderNoFilms();
+      return;
+    }
+
+    this._renderSort();
+    this._renderFilmContainer();
   }
 
   init(films, filmsExtra) {

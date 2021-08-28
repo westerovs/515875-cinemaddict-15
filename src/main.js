@@ -12,6 +12,7 @@ const SHOW_FILMS_EXTRA = 2;
 const TOTAL_MOVIES = 9999;
 
 const films = new Array(FILM_COUNT).fill('').map(() => generateFilm());
+// todo экстра фильмы дублируются
 const filmsExtra = new Array(SHOW_FILMS_EXTRA).fill('').map(generateFilm);
 const filters = toFiltersCount(films);
 

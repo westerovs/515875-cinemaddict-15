@@ -67,16 +67,16 @@ export default class FilmCard extends Abstract {
     this._callback.clickDetails(this._film);
   }
 
-  _favoriteClickHandler() {
-    this._callback.clickFavorite(this._film);
-  }
-
   _watchListClickHandler() {
     this._callback.clickwatchList(this._film);
   }
 
   _watchedClickHandler() {
     this._callback.clickWatched(this._film);
+  }
+
+  _favoriteClickHandler() {
+    this._callback.clickFavorite(this._film);
   }
 
   setFilmDetailsClickHandler(callback) {
@@ -91,6 +91,7 @@ export default class FilmCard extends Abstract {
     comments.addEventListener('click', this._showFilmDetailsClickHandler);
   }
 
+  // *** ↓ handle controls ↓ ***
   setWatchListClickHandler(callback) {
     this._callback.clickwatchList = callback;
 
