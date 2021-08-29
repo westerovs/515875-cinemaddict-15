@@ -206,15 +206,15 @@ export default class FilmDetails extends Abstract {
   }
 
   _watchListClickHandler() {
-    this._callback.clickwatchList(this._film);
+    this._callback.clickwatchList();
   }
 
   _watchedClickHandler() {
-    this._callback.clickWatched(this._film);
+    this._callback.clickWatched();
   }
 
   _favoriteClickHandler() {
-    this._callback.clickFavorite(this._film);
+    this._callback.clickFavorite();
   }
 
   setToCloseClickHandler(callback) {

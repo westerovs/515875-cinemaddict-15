@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
@@ -16,10 +15,6 @@ export default class Film {
     this._closeFilmDetails = this._closeFilmDetails.bind(this);
     this._onEscCloseFilmDetails = this._onEscCloseFilmDetails.bind(this);
 
-    // *** ↓ handle details controls ↓ ***
-    this._handleDetailsWatchListClick = this._handleDetailsWatchListClick.bind(this);
-    this._handleDetailsWatchedClick = this._handleDetailsWatchedClick.bind(this);
-    this._handleDetailsFavoriteClick = this._handleDetailsFavoriteClick.bind(this);
     // *** ↓ handle controls ↓ ***
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
@@ -36,8 +31,34 @@ export default class Film {
     this.filmCardComponent    = new FilmCardView(film);
     this.filmDetailsComponent = new FilmDetailsView(film);
 
-    // set show popUp
-    this.filmCardComponent.setFilmDetailsClickHandler(this._showFilmDetails);
+    this._addHandlers();
+
+    // [1] -------------------- если первый init
+    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
+      this._renderFilm(this.filmContainer, film);
+      return;
+    }
+
+    // [2] -------------------- если init был, то нужно не рендерить, а заменить...
+    if (this.filmContainer.contains(prevFilmComponent.getElement())) {
+      replace(this.filmCardComponent, prevFilmComponent);
+    }
+    if (document.contains(prevFilmDetailsComponent.getElement())) {
+      replace(this.filmDetailsComponent, prevFilmDetailsComponent);
+      this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
+    }
+
+    removeComponent(prevFilmComponent);
+    removeComponent(prevFilmDetailsComponent);
+  }
+
+  // главный метод для начала работы модуля
+  _renderFilm() {
+    render(this.filmContainer, this.filmCardComponent);
+  }
+
+  _addHandlers() {
+    this.filmCardComponent.setShowFilmDetailsClickHandler(this._showFilmDetails);
 
     // *** ↓ set handle details controls ↓ ***
     this.filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
@@ -47,30 +68,6 @@ export default class Film {
     this.filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
     this.filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this.filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    // [1] -------------------- если первый запуск, то... --------------------
-    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
-      // console.log('INIT...')
-      this._renderFilm(this.filmContainer, film);
-      return;
-    }
-
-    // [2] -------------------- reInit --------------------
-    //  если init был, то нужно не отрисовать, а заменить...
-    if (this.filmContainer.contains(prevFilmComponent.getElement())) {
-      console.log('reInit...')
-      replace(this.filmCardComponent, prevFilmComponent);
-    }
-
-    removeComponent(prevFilmComponent)
-    // removeComponent(prevFilmDetailsComponent)
-  }
-
-  // главный метод для начала работы модуля
-  _renderFilm() {
-    // this.filmCardComponent.setFilmDetailsClickHandler(this._showFilmDetails);
-
-    render(this.filmContainer, this.filmCardComponent);
   }
 
   // *** ↓ film details ↓ ***
@@ -83,8 +80,7 @@ export default class Film {
   }
 
   _closeFilmDetails() {
-    // document.body.removeChild(this.filmDetailsComponent);
-    removeComponent(this.filmDetailsComponent)
+    document.body.removeChild(this.filmDetailsComponent.getElement());
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
   }
@@ -94,19 +90,6 @@ export default class Film {
       evt.preventDefault();
       this._closeFilmDetails();
     }
-  }
-
-  // *** ↓ handle details controls ↓ ***
-  _handleDetailsWatchListClick() {
-    console.log('click 1')
-  }
-
-  _handleDetailsWatchedClick() {
-    console.log('click 2')
-  }
-
-  _handleDetailsFavoriteClick() {
-    console.log('click 3')
   }
 
   // *** ↓ handle controls ↓ ***

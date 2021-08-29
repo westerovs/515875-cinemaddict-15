@@ -68,18 +68,18 @@ export default class FilmCard extends Abstract {
   }
 
   _watchListClickHandler() {
-    this._callback.clickwatchList(this._film);
+    this._callback.clickwatchList();
   }
 
   _watchedClickHandler() {
-    this._callback.clickWatched(this._film);
+    this._callback.clickWatched();
   }
 
-  _favoriteClickHandler(e) {
-    this._callback.clickFavorite(this._film);
+  _favoriteClickHandler() {
+    this._callback.clickFavorite();
   }
 
-  setFilmDetailsClickHandler(callback) {
+  setShowFilmDetailsClickHandler(callback) {
     this._callback.clickDetails = callback;
 
     const poster = this.getElement().querySelector('.film-card__poster');
