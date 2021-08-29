@@ -4,12 +4,12 @@ import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
 export default class Film {
-  constructor(filmContainer, changeDataFilm) {
+  constructor(filmContainer, _handlerFilmsUpdate) {
     this.filmContainer = filmContainer;
-    this._changeDataFilm = changeDataFilm;
+    this._handlerFilmsUpdate = _handlerFilmsUpdate;
 
     this.film = null;
-    this.filmComponent = null;
+    this.filmCardComponent = null;
     this.filmDetailsComponent = null;
 
     this._showFilmDetails = this._showFilmDetails.bind(this);
@@ -20,11 +20,57 @@ export default class Film {
     this._handleDetailsWatchListClick = this._handleDetailsWatchListClick.bind(this);
     this._handleDetailsWatchedClick = this._handleDetailsWatchedClick.bind(this);
     this._handleDetailsFavoriteClick = this._handleDetailsFavoriteClick.bind(this);
-
     // *** ↓ handle controls ↓ ***
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+  }
+
+  init(film) {
+    this.film = film;
+
+    const prevFilmComponent = this.filmCardComponent;
+    const prevFilmDetailsComponent = this.filmDetailsComponent;
+
+    // сперва создаются вюьхи, потом пересоздаются
+    this.filmCardComponent    = new FilmCardView(film);
+    this.filmDetailsComponent = new FilmDetailsView(film);
+
+    // set show popUp
+    this.filmCardComponent.setFilmDetailsClickHandler(this._showFilmDetails);
+
+    // *** ↓ set handle details controls ↓ ***
+    this.filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this.filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this.filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    // // *** ↓ set handle controls ↓ ***
+    this.filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this.filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this.filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    // [1] -------------------- если первый запуск, то... --------------------
+    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
+      // console.log('INIT...')
+      this._renderFilm(this.filmContainer, film);
+      return;
+    }
+
+    // [2] -------------------- reInit --------------------
+    //  если init был, то нужно не отрисовать, а заменить...
+    if (this.filmContainer.contains(prevFilmComponent.getElement())) {
+      console.log('reInit...')
+      replace(this.filmCardComponent, prevFilmComponent);
+    }
+
+    removeComponent(prevFilmComponent)
+    // removeComponent(prevFilmDetailsComponent)
+  }
+
+  // главный метод для начала работы модуля
+  _renderFilm() {
+    // this.filmCardComponent.setFilmDetailsClickHandler(this._showFilmDetails);
+
+    render(this.filmContainer, this.filmCardComponent);
   }
 
   // *** ↓ film details ↓ ***
@@ -73,9 +119,9 @@ export default class Film {
       isFavorite: this.film.userDetails.isFavorite,
     };
 
-    const updateFilm = Object.assign({}, this.film, { userDetails });
+    const updatedFilm = Object.assign({}, this.film, { userDetails });
 
-    this._changeDataFilm(updateFilm);
+    this._handlerFilmsUpdate(updatedFilm);
   }
 
   _handleWatchedClick() {
@@ -87,9 +133,9 @@ export default class Film {
       isFavorite: this.film.userDetails.isFavorite,
     };
 
-    const updateFilm = Object.assign({}, this.film, { userDetails });
+    const updatedFilm = Object.assign({}, this.film, { userDetails });
 
-    this._changeDataFilm(updateFilm);
+    this._handlerFilmsUpdate(updatedFilm);
   }
 
   _handleFavoriteClick() {
@@ -101,54 +147,8 @@ export default class Film {
       isFavorite: !this.film.userDetails.isFavorite,
     };
 
-    const updateFilm = Object.assign({}, this.film, { userDetails });
+    const updatedFilm = Object.assign({}, this.film, { userDetails });
 
-    this._changeDataFilm(updateFilm);
-  }
-
-  // главный метод для начала работы модуля
-  _renderFilm() {
-    // this.filmComponent.setFilmDetailsClickHandler(this._showFilmDetails);
-
-    render(this.filmContainer, this.filmComponent);
-  }
-
-  init(film) {
-    this.film = film;
-
-    const prevFilmComponent = this.filmComponent;
-    const prevFilmDetailsComponent = this.filmDetailsComponent;
-
-    // сперва создаются вюьхи, потом пересоздаются
-    this.filmComponent = new FilmCardView(film);
-    this.filmDetailsComponent = new FilmDetailsView(film);
-
-    // set show popUp
-    this.filmComponent.setFilmDetailsClickHandler(this._showFilmDetails);
-
-    // *** ↓ set handle details controls ↓ ***
-    this.filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this.filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this.filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    // *** ↓ set handle controls ↓ ***
-    this.filmComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this.filmComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this.filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    // [1] если первый запуск, то...
-    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
-      this._renderFilm(this.filmContainer, film);
-      return;
-    }
-
-    // [2] если init был, то нужно не отрисовать, а заменить...
-    console.log('reInit');
-    if (this.filmContainer.contains(prevFilmComponent.getElement())) {
-      replace(this.filmComponent, prevFilmComponent);
-    }
-
-    removeComponent(prevFilmComponent)
-    removeComponent(prevFilmDetailsComponent)
+    this._handlerFilmsUpdate(updatedFilm);
   }
 }

@@ -75,7 +75,7 @@ export default class FilmCard extends Abstract {
     this._callback.clickWatched(this._film);
   }
 
-  _favoriteClickHandler() {
+  _favoriteClickHandler(e) {
     this._callback.clickFavorite(this._film);
   }
 

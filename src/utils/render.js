@@ -42,7 +42,7 @@ const removeComponent = (component) => {
 };
 
 // сравнивает id объектов, если они равны, то возвращает изменённый массив
-const updateItems = (items, updateItem) => {
+const update = (items, updateItem) => {
   const index = items.findIndex((item) => item.id === updateItem.id);
 
   // если возвращается -1, то return items
@@ -80,6 +80,6 @@ export {
   render,
   createElement,
   removeComponent,
-  updateItems,
+  update,
   replace
 };

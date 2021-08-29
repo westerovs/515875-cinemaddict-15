@@ -5,15 +5,18 @@ import { render } from './utils/render.js';
 import MoviesPresenter from './presenter/movies.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
-import FooterStatistic from './view/footer-statistic.js';
+import FooterStatisticView from './view/footer-statistic.js';
 
-const FILM_COUNT = 20;
+const FILM_COUNT = 7;
 const SHOW_FILMS_EXTRA = 2;
 const TOTAL_MOVIES = 9999;
 
 const films = new Array(FILM_COUNT).fill('').map(() => generateFilm());
 // todo экстра фильмы дублируются
-const filmsExtra = new Array(SHOW_FILMS_EXTRA).fill('').map(generateFilm);
+const filmsExtra = {
+  topRated: new Array(SHOW_FILMS_EXTRA).fill('').map(generateFilm),
+  mostCommented: new Array(SHOW_FILMS_EXTRA).fill('').map(generateFilm),
+};
 const filters = toFiltersCount(films);
 
 const pageBody = document.querySelector('body');
@@ -23,8 +26,7 @@ const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
 render(siteHeaderElement, new RankView());
 render(siteMainElement, new FilterView(filters));
-render(siteFooterStatistics, new FooterStatistic(TOTAL_MOVIES));
+render(siteFooterStatistics, new FooterStatisticView(TOTAL_MOVIES));
 
 const moviesPresenter = new MoviesPresenter(siteMainElement);
-
 moviesPresenter.init(films, filmsExtra);
