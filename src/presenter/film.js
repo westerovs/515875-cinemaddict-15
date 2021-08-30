@@ -1,15 +1,23 @@
+/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  SHOW: 'SHOW',
+};
+
 export default class Film {
-  constructor(filmContainer, _handlerFilmsUpdate) {
+  constructor(filmContainer, handlerFilmsUpdate, handleModeChange) {
     this.filmContainer = filmContainer;
-    this._handlerFilmsUpdate = _handlerFilmsUpdate;
+    this._handlerFilmsUpdate = handlerFilmsUpdate;
+    this._handleModeChange = handleModeChange;
 
     this.film = null;
     this.filmCardComponent = null;
     this.filmDetailsComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._showFilmDetails = this._showFilmDetails.bind(this);
     this._closeFilmDetails = this._closeFilmDetails.bind(this);
@@ -23,6 +31,9 @@ export default class Film {
 
   init(film) {
     this.film = film;
+
+    // this.setMode = this.mode.DEFAULT;
+    // console.log(this.setMode)
 
     const prevFilmComponent = this.filmCardComponent;
     const prevFilmDetailsComponent = this.filmDetailsComponent;
@@ -46,6 +57,16 @@ export default class Film {
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this.filmDetailsComponent, prevFilmDetailsComponent);
       this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      console.log('aga DEFAULT')
+      // replace(this.filmCardComponent, prevFilmComponent);
+    }
+
+    if (this._mode === Mode.SHOW) {
+      console.log('aga SHOW')
+      // replace(this.filmDetailsComponent, prevFilmDetailsComponent);
     }
 
     removeComponent(prevFilmComponent);
@@ -77,18 +98,32 @@ export default class Film {
 
     document.addEventListener('keydown', this._onEscCloseFilmDetails );
     this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
+
+    this._handleModeChange() // если идёт попытка сменить...
+    this._mode = Mode.SHOW;
   }
 
   _closeFilmDetails() {
-    document.body.removeChild(this.filmDetailsComponent.getElement());
+    console.log('close')
+    this.filmDetailsComponent.getElement().remove()
+    // document.body.removeChild(this.filmDetailsComponent.getElement());
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
+
+    this._mode = Mode.DEFAULT;
   }
 
   _onEscCloseFilmDetails(evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._closeFilmDetails();
+    }
+  }
+
+  resetView() {
+    // сбрасывает view в режим по умолчанию
+    if (this._mode !== Mode.DEFAULT) {
+      this._closeFilmDetails()
     }
   }
 
