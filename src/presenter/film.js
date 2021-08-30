@@ -1,22 +1,16 @@
 import { removeComponent, render, replace } from '../utils/render.js';
+import { observer } from '../utils/observer.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
-const FilmMode = {
-  DEFAULT: 'DEFAULT',
-  SHOW_DETAILS: 'SHOW_DETAILS',
-};
-
 export default class Film {
-  constructor(filmContainer, handlerFilmsUpdate, handleModeChange) {
+  constructor(filmContainer, handlerFilmsUpdate) {
     this.filmContainer = filmContainer;
     this._handlerFilmsUpdate = handlerFilmsUpdate;
-    this._handleChangeMode = handleModeChange;
 
     this.film = null;
     this.filmCardComponent = null;
     this.filmDetailsComponent = null;
-    this._filmMode = FilmMode.DEFAULT;
 
     this._showFilmDetails = this._showFilmDetails.bind(this);
     this._closeFilmDetails = this._closeFilmDetails.bind(this);
@@ -33,12 +27,12 @@ export default class Film {
 
     const prevFilmComponent = this.filmCardComponent;
     const prevFilmDetailsComponent = this.filmDetailsComponent;
-
     // сперва создаются вюьхи, потом пересоздаются
     this.filmCardComponent    = new FilmCardView(film);
     this.filmDetailsComponent = new FilmDetailsView(film);
 
     this._addHandlers();
+    observer.addObserver(this._closeFilmDetails);
 
     // [1] -------------------- если первый init
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
@@ -79,36 +73,26 @@ export default class Film {
 
   // *** ↓ film details ↓ ***
   _showFilmDetails() {
-    if (this._filmMode === 'SHOW_DETAILS') {return;} // если клик по уже открытой карточке, то return
+    observer.notify(this._closeFilmDetails);
 
     document.body.appendChild(this.filmDetailsComponent.getElement());
     document.body.classList.add('hide-overflow');
 
     document.addEventListener('keydown', this._onEscCloseFilmDetails );
     this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
-
-    this._handleChangeMode(); // если идёт попытка сменить...
-    this._filmMode = FilmMode.SHOW_DETAILS;
   }
 
   _closeFilmDetails() {
+    observer.removeObserver(this._closeFilmDetails);
+
     this.filmDetailsComponent.getElement().remove();
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
-
-    this._filmMode = FilmMode.DEFAULT;
   }
 
   _onEscCloseFilmDetails(evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this._closeFilmDetails();
-    }
-  }
-
-  resetView() {
-    // закрывает все обработчики, кроме активного
-    if (this._filmMode !== FilmMode.DEFAULT) {
       this._closeFilmDetails();
     }
   }
