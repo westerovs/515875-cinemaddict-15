@@ -1,23 +1,22 @@
-/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
-const Mode = {
+const FilmMode = {
   DEFAULT: 'DEFAULT',
-  SHOW: 'SHOW',
+  SHOW_DETAILS: 'SHOW_DETAILS',
 };
 
 export default class Film {
   constructor(filmContainer, handlerFilmsUpdate, handleModeChange) {
     this.filmContainer = filmContainer;
     this._handlerFilmsUpdate = handlerFilmsUpdate;
-    this._handleModeChange = handleModeChange;
+    this._handleChangeMode = handleModeChange;
 
     this.film = null;
     this.filmCardComponent = null;
     this.filmDetailsComponent = null;
-    this._mode = Mode.DEFAULT;
+    this._filmMode = FilmMode.DEFAULT;
 
     this._showFilmDetails = this._showFilmDetails.bind(this);
     this._closeFilmDetails = this._closeFilmDetails.bind(this);
@@ -31,9 +30,6 @@ export default class Film {
 
   init(film) {
     this.film = film;
-
-    // this.setMode = this.mode.DEFAULT;
-    // console.log(this.setMode)
 
     const prevFilmComponent = this.filmCardComponent;
     const prevFilmDetailsComponent = this.filmDetailsComponent;
@@ -57,16 +53,6 @@ export default class Film {
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this.filmDetailsComponent, prevFilmDetailsComponent);
       this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
-    }
-
-    if (this._mode === Mode.DEFAULT) {
-      console.log('aga DEFAULT')
-      // replace(this.filmCardComponent, prevFilmComponent);
-    }
-
-    if (this._mode === Mode.SHOW) {
-      console.log('aga SHOW')
-      // replace(this.filmDetailsComponent, prevFilmDetailsComponent);
     }
 
     removeComponent(prevFilmComponent);
@@ -93,24 +79,24 @@ export default class Film {
 
   // *** ↓ film details ↓ ***
   _showFilmDetails() {
+    if (this._filmMode === 'SHOW_DETAILS') {return;} // если клик по уже открытой карточке, то return
+
     document.body.appendChild(this.filmDetailsComponent.getElement());
     document.body.classList.add('hide-overflow');
 
     document.addEventListener('keydown', this._onEscCloseFilmDetails );
     this.filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
 
-    this._handleModeChange() // если идёт попытка сменить...
-    this._mode = Mode.SHOW;
+    this._handleChangeMode(); // если идёт попытка сменить...
+    this._filmMode = FilmMode.SHOW_DETAILS;
   }
 
   _closeFilmDetails() {
-    console.log('close')
-    this.filmDetailsComponent.getElement().remove()
-    // document.body.removeChild(this.filmDetailsComponent.getElement());
+    this.filmDetailsComponent.getElement().remove();
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
 
-    this._mode = Mode.DEFAULT;
+    this._filmMode = FilmMode.DEFAULT;
   }
 
   _onEscCloseFilmDetails(evt) {
@@ -121,9 +107,9 @@ export default class Film {
   }
 
   resetView() {
-    // сбрасывает view в режим по умолчанию
-    if (this._mode !== Mode.DEFAULT) {
-      this._closeFilmDetails()
+    // закрывает все обработчики, кроме активного
+    if (this._filmMode !== FilmMode.DEFAULT) {
+      this._closeFilmDetails();
     }
   }
 

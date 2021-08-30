@@ -29,7 +29,7 @@ export default class Movies {
 
     this._handlerLoadMoreBtnClick = this._handlerLoadMoreBtnClick.bind(this);
     this._handlerFilmsUpdate = this._handlerFilmsUpdate.bind(this);
-    this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleChangeMode = this._handleChangeMode.bind(this);
   }
 
   init(films, filmsExtra) {
@@ -91,7 +91,7 @@ export default class Movies {
   }
 
   _renderFilmPresenter(filmContainer, film) {
-    const filmPresenter = new FilmPresenter(filmContainer, this._handlerFilmsUpdate, this._handleModeChange); // принимает ф-цию update
+    const filmPresenter = new FilmPresenter(filmContainer, this._handlerFilmsUpdate, this._handleChangeMode); // принимает ф-цию update
     filmPresenter.init(film);
 
     this.filmPresenters.set(film.id, filmPresenter); // в map записывает ключ: id и film
@@ -135,7 +135,7 @@ export default class Movies {
     }
   }
 
-  _handleModeChange() {
+  _handleChangeMode() {
     this.filmPresenters.forEach((presenter) => presenter.resetView());
   }
 
