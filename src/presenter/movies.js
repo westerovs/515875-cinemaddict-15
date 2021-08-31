@@ -13,9 +13,6 @@ import FilmsListView from '../view/films-list.js';
 import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
 import NoFilmsView from '../view/no-films.js';
-// console.log(Films);
-
-// const LOAD_MORE = 5;
 
 export default class Movies {
   constructor(filmsContainer) {
@@ -30,6 +27,7 @@ export default class Movies {
 
     this.films = null;
     this.filmsExtra = {};
+    this.initRendererFilmCount = Films.INIT_COUNT;
     this.renderedFilmsCount = Films.LOAD_MORE;
     this.visibleFilms = Films.LOAD_MORE;
     this.filmsListMainContainer = null;
@@ -70,24 +68,10 @@ export default class Movies {
     render(this._filmsContainer, this._noFilmsComponent);
   }
 
+  // ↓ сортировка ↓
   _renderSort() {
     render(this._filmsContainer, this._sortComponent);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
-  _handlerSortDefault() {
-    this.films = this.defaultSort.slice();
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
-  }
-
-  _handlerSortDate() {
-    this.films.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
-  }
-
-  _handlerSortRating() {
-    this.films.sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handleSortTypeChange(target) {
@@ -95,14 +79,21 @@ export default class Movies {
     this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList());
 
     switch (target.dataset.sortType) {
-      case 'default': this._handlerSortDefault();
+      case 'default':
+        this.films = this.defaultSort.slice();
+        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
-      case 'date': this._handlerSortDate();
+      case 'date':
+        this.films.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
+        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
-      case 'rating': this._handlerSortRating();
+      case 'rating':
+        this.films.sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
+        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
     }
   }
+  // ↑ end сортировка ↑
 
   _renderFilmContainer() {
     // render доски фильмов
@@ -139,7 +130,7 @@ export default class Movies {
   }
 
   _renderAllFilms() {
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(Films.LOAD_MORE, this.films.length));
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(Films.INIT_COUNT, this.films.length));
   }
 
   _renderFilmsExtra(container, type) {
