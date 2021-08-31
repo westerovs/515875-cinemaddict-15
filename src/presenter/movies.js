@@ -1,7 +1,6 @@
 /*
 * главный презентер
 * */
-
 import dayjs from 'dayjs';
 import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
@@ -18,6 +17,10 @@ export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
     this.filmPresenters = new Map(); // запоминаем все созданные презентеры
+    this.filmPresentersExtra = {
+      topRated: new Map(),
+      mostCommented: new Map(),
+    };
 
     this._sortComponent        = new SortView();
     this._filmsBoardComponent  = new FilmsBoardView();
@@ -26,8 +29,7 @@ export default class Movies {
     this._noFilmsComponent     = new NoFilmsView();
 
     this.films = null;
-    this.filmsExtra = {};
-    this.initRendererFilmCount = Films.INIT_COUNT;
+    this.filmsExtra = null;
     this.renderedFilmsCount = Films.LOAD_MORE;
     this.visibleFilms = Films.LOAD_MORE;
     this.filmsListMainContainer = null;
@@ -40,12 +42,7 @@ export default class Movies {
 
   init(films, filmsExtra) {
     this.films = films.slice();
-
-    this.filmsExtra = {
-      topRated: filmsExtra.topRated.slice(),
-      mostCommented :filmsExtra.mostCommented.slice() ,
-    };
-
+    this.filmsExtra = filmsExtra;
     this.defaultSort = films.slice();
 
     this._renderBoard();
@@ -68,7 +65,6 @@ export default class Movies {
     render(this._filmsContainer, this._noFilmsComponent);
   }
 
-  // ↓ сортировка ↓
   _renderSort() {
     render(this._filmsContainer, this._sortComponent);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
@@ -76,7 +72,7 @@ export default class Movies {
 
   _handleSortTypeChange(target) {
     // - Очищаем список
-    this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList());
+    this.filmPresenters.forEach((presenter) => presenter._destroyAll());
 
     switch (target.dataset.sortType) {
       case 'default':
@@ -93,7 +89,6 @@ export default class Movies {
         break;
     }
   }
-  // ↑ end сортировка ↑
 
   _renderFilmContainer() {
     // render доски фильмов
@@ -125,26 +120,36 @@ export default class Movies {
   _renderFilmPresenter(filmContainer, film) {
     const filmPresenter = new FilmPresenter(filmContainer, this._handlerFilmsUpdate); // принимает ф-цию update
     filmPresenter.init(film);
-
     this.filmPresenters.set(film.id, filmPresenter); // в map записывает ключ: id и film
+    this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
+    this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter); // в map записывает ключ: id и film
   }
 
   _renderAllFilms() {
     this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(Films.INIT_COUNT, this.films.length));
   }
 
-  _renderFilmsExtra(container, type) {
-    const filmListExtraComponent = new FilmsListExtraView(type);
+  _renderFilmsExtra(container, name) {
+    const filmListExtraComponent = new FilmsListExtraView(name);
     render(container, filmListExtraComponent);
 
     const filmListExtraContainer = filmListExtraComponent.getElement().querySelector('.films-list__container');
 
-    switch (type) {
+    switch (name) {
       case 'Top rated':
-        this.filmsExtra.topRated.forEach((film) => this._renderFilmPresenter(filmListExtraContainer, film));
+        this.filmsExtra.topRated.forEach((film) => {
+          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate); // принимает ф-цию update
+          filmPresenter.init(film);
+          this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
+        });
         break;
+
       case 'Most commented':
-        this.filmsExtra.mostCommented.forEach((film) => this._renderFilmPresenter(filmListExtraContainer, film));
+        this.filmsExtra.mostCommented.forEach((film) => {
+          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
+          filmPresenter.init(film);
+          this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter);
+        });
         break;
     }
   }
@@ -169,8 +174,9 @@ export default class Movies {
   // Вызывается в Film презентер, принимает обновлённые данные
   _handlerFilmsUpdate(updatedFilm) {
     // при вызове метода, будет реагировать на изменения контроллов карточки фильма
-    // как только изменились данные, нужно изменить представление
     this.films = update(this.films, updatedFilm); // обновляет список фильмов, или возвращает как есть
     this.filmPresenters.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
+    this.filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
+    this.filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
   }
 }

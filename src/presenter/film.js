@@ -1,7 +1,6 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
-
 import { removeComponent, render, replace } from '../utils/render.js';
 import { observer } from '../utils/observer.js';
 import FilmCardView from '../view/film-card.js';
@@ -55,7 +54,6 @@ export default class Film {
 
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
-
   }
 
   // главный метод для начала работы модуля
@@ -146,18 +144,7 @@ export default class Film {
   }
 
   _destroyAll() {
-    // пока нигде не используется, но может пригодиться
     removeComponent(this.filmCardComponent);
     removeComponent(this.filmDetailsComponent);
-  }
-
-  _clearMainFilmList() {
-    const extraList = this.filmCardComponent.getElement().closest('.films-list--extra');
-
-    if (extraList) {
-      return;
-    }
-
-    removeComponent(this.filmCardComponent);
   }
 }

@@ -10,7 +10,7 @@ const generateRandomBoolean = () => !!getRandomNumber(0, 1);
 const titles = [
   'Contact',
   'Rocky',
-  'The rock',
+  'Blue Lagoon',
   'The walking dead',
   'Interstellar',
 ];
