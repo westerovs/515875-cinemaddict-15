@@ -27,6 +27,7 @@ export default class Movies {
     this.films = null;
     this.filmsExtra = {};
     this.renderedFilmsCount = SHOW_FILMS;
+    this.visibleFilms = SHOW_FILMS;
     this.filmsListMainContainer = null;
     this.defaultSort = null;
 
@@ -37,6 +38,7 @@ export default class Movies {
 
   init(films, filmsExtra) {
     this.films = films.slice();
+
     this.filmsExtra = {
       topRated: filmsExtra.topRated.slice(),
       mostCommented :filmsExtra.mostCommented.slice() ,
@@ -76,18 +78,17 @@ export default class Movies {
     // - Очищаем список
     this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
     // - Рендерим список заново
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handlerSortDate() {
     console.log('sort date!!!')
     // - Сортируем задачи
     this.films.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
-
     // - Очищаем список
     this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
     // - Рендерим список заново
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handlerSortRating() {
@@ -97,7 +98,7 @@ export default class Movies {
     // - Очищаем список
     this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
     // - Рендерим список заново
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handleSortTypeChange(target) {
@@ -177,14 +178,13 @@ export default class Movies {
 
   _renderLoadMoreBtn(filmsList) {
     render(filmsList, this._showMoreBtnComponent);
-
     this._showMoreBtnComponent.setClickHandler(this._handlerLoadMoreBtnClick);
   }
 
   _handlerLoadMoreBtnClick() {
     this._renderFilmsFromTo(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + SHOW_FILMS);
-
     this.renderedFilmsCount += SHOW_FILMS;
+    this.visibleFilms = this.filmsListMainContainer.childElementCount;
 
     // удаление кнопки
     if (this.renderedFilmsCount >= this.films.length) {
