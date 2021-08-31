@@ -3,8 +3,8 @@
 * */
 
 import dayjs from 'dayjs';
+import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
-import { clearActiveClass} from '../utils/common.js';
 
 import FilmPresenter from './film.js';
 import SortView from '../view/sort.js';
@@ -13,8 +13,9 @@ import FilmsListView from '../view/films-list.js';
 import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
 import NoFilmsView from '../view/no-films.js';
+// console.log(Films);
 
-const SHOW_FILMS = 5;
+// const LOAD_MORE = 5;
 
 export default class Movies {
   constructor(filmsContainer) {
@@ -29,8 +30,8 @@ export default class Movies {
 
     this.films = null;
     this.filmsExtra = {};
-    this.renderedFilmsCount = SHOW_FILMS;
-    this.visibleFilms = SHOW_FILMS;
+    this.renderedFilmsCount = Films.LOAD_MORE;
+    this.visibleFilms = Films.LOAD_MORE;
     this.filmsListMainContainer = null;
     this.defaultSort = null;
 
@@ -90,26 +91,15 @@ export default class Movies {
   }
 
   _handleSortTypeChange(target) {
-    if (target.classList.contains('sort__button--active')) { return; }
-
-    const sortButtons = this._sortComponent.getElement().querySelectorAll('.sort__button');
-    clearActiveClass(sortButtons, 'sort__button--active');
-
     // - Очищаем список
     this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList());
 
     switch (target.dataset.sortType) {
-      case 'default':
-        target.classList.add('sort__button--active');
-        this._handlerSortDefault();
+      case 'default': this._handlerSortDefault();
         break;
-      case 'date':
-        target.classList.add('sort__button--active');
-        this._handlerSortDate();
+      case 'date': this._handlerSortDate();
         break;
-      case 'rating':
-        target.classList.add('sort__button--active');
-        this._handlerSortRating();
+      case 'rating': this._handlerSortRating();
         break;
     }
   }
@@ -129,7 +119,7 @@ export default class Movies {
     this._renderFilmsExtra(filmsBoard, 'Most commented');
 
     // show more cards
-    if (this.films.length > SHOW_FILMS) {
+    if (this.films.length > Films.LOAD_MORE) {
       this._renderLoadMoreBtn(filmsListMain);
     }
   }
@@ -149,7 +139,7 @@ export default class Movies {
   }
 
   _renderAllFilms() {
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(SHOW_FILMS, this.films.length));
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(Films.LOAD_MORE, this.films.length));
   }
 
   _renderFilmsExtra(container, type) {
@@ -174,8 +164,8 @@ export default class Movies {
   }
 
   _handlerLoadMoreBtnClick() {
-    this._renderFilmsFromTo(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + SHOW_FILMS);
-    this.renderedFilmsCount += SHOW_FILMS;
+    this._renderFilmsFromTo(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + Films.LOAD_MORE);
+    this.renderedFilmsCount += Films.LOAD_MORE;
     this.visibleFilms = this.filmsListMainContainer.childElementCount;
 
     // удаление кнопки

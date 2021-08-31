@@ -20,13 +20,20 @@ export default class Sort extends Abstract {
     return createSortingTemplate();
   }
 
-  _sortTypeChangeHandler(e) {
-    if (e.target !== e.target.closest('A')) { return; }
-    this._callback.sotrCallback(e.target);
+  _sortTypeChangeHandler(evt) {
+    if (evt.target !== evt.target.closest('A')) { return; }
+    if (evt.target.classList.contains('sort__button--active')) { return; }
+
+    if (!evt.target.classList.contains('sort__button--active')) {
+      this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
+      evt.target.classList.add('sort__button--active');
+    }
+
+    this._callback.sortCallback(evt.target);
   }
 
   setSortTypeChangeHandler(callback) {
-    this._callback.sotrCallback = callback;
+    this._callback.sortCallback = callback;
     this.getElement().addEventListener('click', this._sortTypeChangeHandler);
   }
 }
