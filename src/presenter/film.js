@@ -86,8 +86,6 @@ export default class Film {
   }
 
   _closeFilmDetails() {
-    observer.removeObserver(this._closeFilmDetails);
-
     this.filmDetailsComponent.getElement().remove();
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
