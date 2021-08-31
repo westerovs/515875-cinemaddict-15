@@ -1,3 +1,7 @@
+/*
+* Методы разного рандома
+* */
+
 const getRandomNumber = (min = 0, max) => Math.round(Math.random() * (max - min) + min);
 
 const getRandomItem = (items, min = 0) => items[getRandomNumber(min, items.length - 1)];

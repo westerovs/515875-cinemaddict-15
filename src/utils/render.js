@@ -1,3 +1,7 @@
+/*
+* Методы для работы с DOM
+* */
+
 import Abstract from '../view/abstract.js';
 
 const renderPosition = {

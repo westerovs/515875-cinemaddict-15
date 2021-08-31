@@ -1,9 +1,12 @@
-/* eslint-disable */
-import { render, removeComponent, update } from '../utils/render.js';
+/*
+* главный презентер
+* */
+
 import dayjs from 'dayjs';
+import { render, removeComponent, update } from '../utils/render.js';
+import { clearActiveClass} from '../utils/common.js';
 
 import FilmPresenter from './film.js';
-
 import SortView from '../view/sort.js';
 import FilmsBoardView from '../view/film-board.js';
 import FilmsListView from '../view/films-list.js';
@@ -72,53 +75,42 @@ export default class Movies {
   }
 
   _handlerSortDefault() {
-    console.log('sort default!!!')
-    // - Сортируем задачи
     this.films = this.defaultSort.slice();
-    // - Очищаем список
-    this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
-    // - Рендерим список заново
     this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handlerSortDate() {
-    console.log('sort date!!!')
-    // - Сортируем задачи
     this.films.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
-    // - Очищаем список
-    this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
-    // - Рендерим список заново
     this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handlerSortRating() {
-    console.log('sort rating!!!')
-    // - Сортируем задачи
     this.films.sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
-    // - Очищаем список
-    this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList())
-    // - Рендерим список заново
     this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
   _handleSortTypeChange(target) {
-    if (target.classList.contains('sort__button--active')) return;
+    if (target.classList.contains('sort__button--active')) { return; }
 
-    this._sortComponent.getElement().querySelectorAll('.sort__button')
-      .forEach((it) => it.classList.remove('sort__button--active'));
+    const sortButtons = this._sortComponent.getElement().querySelectorAll('.sort__button');
+    clearActiveClass(sortButtons, 'sort__button--active');
 
-    // проверка
-    if (target.dataset.sortType === 'default') {
-      target.classList.add('sort__button--active')
-      this._handlerSortDefault();
-    }
-    if (target.dataset.sortType === 'date') {
-      target.classList.add('sort__button--active')
-      this._handlerSortDate();
-    }
-    if (target.dataset.sortType === 'rating') {
-      target.classList.add('sort__button--active')
-      this._handlerSortRating();
+    // - Очищаем список
+    this.filmPresenters.forEach((presenter) => presenter._clearMainFilmList());
+
+    switch (target.dataset.sortType) {
+      case 'default':
+        target.classList.add('sort__button--active');
+        this._handlerSortDefault();
+        break;
+      case 'date':
+        target.classList.add('sort__button--active');
+        this._handlerSortDate();
+        break;
+      case 'rating':
+        target.classList.add('sort__button--active');
+        this._handlerSortRating();
+        break;
     }
   }
 

@@ -1,3 +1,7 @@
+/*
+* дополнительный презентер, отвечает за обработку карточки фильма
+* */
+
 import { removeComponent, render, replace } from '../utils/render.js';
 import { observer } from '../utils/observer.js';
 import FilmCardView from '../view/film-card.js';
@@ -142,6 +146,7 @@ export default class Film {
   }
 
   _destroyAll() {
+    // пока нигде не используется, но может пригодиться
     removeComponent(this.filmCardComponent);
     removeComponent(this.filmDetailsComponent);
   }
