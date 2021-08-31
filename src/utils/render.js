@@ -31,8 +31,55 @@ const createElement = (template) => {
   return element.firstChild;
 };
 
+// Отрисовкой в DOM занимается не абстрактный класс, а utils. Поэтому utils и удаляет
+const removeComponent = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error('Возможно удалять только компоненты!');
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};
+
+// сравнивает id объектов, если они равны, то возвращает изменённый массив
+const update = (items, updateItem) => {
+  const index = items.findIndex((item) => item.id === updateItem.id);
+
+  // если возвращается -1, то return items
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    updateItem,
+    ...items.slice(index + 1),
+  ];
+};
+
+const replace = (newChild, oldChild) => {
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof Abstract) {
+    newChild = newChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || newChild === null) {
+    throw new Error('Возможно заменять только компоненты!');
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
 export {
   renderPosition,
   render,
-  createElement
+  createElement,
+  removeComponent,
+  update,
+  replace
 };

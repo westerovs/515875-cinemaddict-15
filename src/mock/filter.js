@@ -1,14 +1,14 @@
 const toFiltersCount = (films) => {
   const all = films.length;
-  const watchlist = films.filter((it) => it.userDetails.watchlist).length;
-  const watched = films.filter((it) => it.userDetails.alreadyWatched).length;
-  const favorite = films.filter((it) => it.userDetails.favorite).length;
+  const isWatchlist = films.filter((it) => it.userDetails.isWatchlist).length;
+  const isWatched = films.filter((it) => it.userDetails.isAlreadyWatched).length;
+  const isFavorite = films.filter((it) => it.userDetails.isFavorite).length;
 
   return {
     all,
-    watchlist,
-    watched,
-    favorite,
+    isWatchlist,
+    isWatched,
+    isFavorite,
   };
 };
 

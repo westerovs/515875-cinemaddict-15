@@ -40,7 +40,7 @@ const createGenreTemplate = (genre) => {
 
 const createFilmDetailsTemplate = (film) => {
   const { id, comments, filmInfo, userDetails } = film;
-  const { watchlist, alreadyWatched, favorite } = userDetails;
+  const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
   const {
     title,
     alternativeTitle,
@@ -122,19 +122,19 @@ const createFilmDetailsTemplate = (film) => {
           <section class="film-details__controls">
             <button type="button"
               class="film-details__control-button film-details__control-button--watchlist
-                ${ watchlist ? 'film-details__control-button--active' : '' }"
+                ${ isWatchlist ? 'film-details__control-button--active' : '' }"
               id="watchlist" name="watchlist">
               Add to watchlist
             </button>
             <button type="button"
               class="film-details__control-button film-details__control-button--watched
-                ${ alreadyWatched ? 'film-details__control-button--active' : '' }"
+                ${ isAlreadyWatched ? 'film-details__control-button--active' : '' }"
               id="watched" name="watched">
               Already watched
             </button>
             <button type="button"
               class="film-details__control-button film-details__control-button--favorite
-                ${ favorite ? 'film-details__control-button--active' : '' }"
+                ${ isFavorite ? 'film-details__control-button--active' : '' }"
               id="favorite" name="favorite">
               Add to favorites
             </button>
@@ -191,21 +191,58 @@ export default class FilmDetails extends Abstract {
   constructor(film) {
     super();
     this._film = film;
-    this._onClickHandler = this._onClickHandler.bind(this);
+    this._toCloseClickHandler = this._toCloseClickHandler.bind(this);
+    this._watchListClickHandler = this._watchListClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
-  _onClickHandler() {
+  _toCloseClickHandler() {
     this._callback.click();
   }
 
-  setClickHandler(params) {
-    this._callback.click = params;
+  _watchListClickHandler() {
+    this._callback.clickwatchList();
+  }
+
+  _watchedClickHandler() {
+    this._callback.clickWatched();
+  }
+
+  _favoriteClickHandler() {
+    this._callback.clickFavorite();
+  }
+
+  setToCloseClickHandler(callback) {
+    this._callback.click = callback;
     const closeBtn = this.getElement().querySelector('.film-details__close-btn');
 
-    closeBtn.addEventListener('click', this._onClickHandler);
+    closeBtn.addEventListener('click', this._toCloseClickHandler);
+  }
+
+  // *** ↓ handle controls ↓ ***
+  setWatchListClickHandler(callback) {
+    this._callback.clickwatchList = callback;
+
+    const watchlist = this.getElement().querySelector('.film-details__control-button--watchlist');
+    watchlist.addEventListener('click', this._watchListClickHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.clickWatched = callback;
+
+    const watched = this.getElement().querySelector('.film-details__control-button--watched');
+    watched.addEventListener('click', this._watchedClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.clickFavorite = callback;
+
+    const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
+    favorite.addEventListener('click', this._favoriteClickHandler);
   }
 }
