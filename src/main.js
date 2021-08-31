@@ -9,10 +9,23 @@ import FilterView from './view/filter.js';
 import FooterStatisticView from './view/footer-statistic.js';
 
 const films = new Array(Films.FILM_COUNT).fill('').map(() => generateFilm());
-const filmsExtra = {
-  topRated: new Array(Films.SHOW_FILMS_EXTRA).fill('').map(generateFilm),
-  mostCommented: new Array(Films.SHOW_FILMS_EXTRA).fill('').map(generateFilm),
+
+const ExtraTypeFilms = {
+  topRated: films
+    .slice()
+    .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
+    .slice(0, Films.SHOW_FILMS_EXTRA),
+  mostCommented: films
+    .slice()
+    .sort((a, b) => b.comments.size - a.comments.size)
+    .slice(0, Films.SHOW_FILMS_EXTRA),
 };
+
+const filmsExtra = {
+  topRated: ExtraTypeFilms.topRated,
+  mostCommented: ExtraTypeFilms.mostCommented,
+};
+
 const filters = toFiltersCount(films);
 
 const pageBody = document.querySelector('body');
