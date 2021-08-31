@@ -51,6 +51,7 @@ export default class Film {
 
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
+
   }
 
   // главный метод для начала работы модуля
@@ -83,6 +84,8 @@ export default class Film {
   }
 
   _closeFilmDetails() {
+    observer.removeObserver(this._closeFilmDetails);
+
     this.filmDetailsComponent.getElement().remove();
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
@@ -136,5 +139,20 @@ export default class Film {
     const updatedFilm = Object.assign({}, this.film, { userDetails });
 
     this._handlerFilmsUpdate(updatedFilm);
+  }
+
+  _destroyAll() {
+    removeComponent(this.filmCardComponent);
+    removeComponent(this.filmDetailsComponent);
+  }
+
+  _clearMainFilmList() {
+    const extraList = this.filmCardComponent.getElement().closest('.films-list--extra');
+
+    if (extraList) {
+      return;
+    }
+
+    removeComponent(this.filmCardComponent);
   }
 }
