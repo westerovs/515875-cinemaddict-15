@@ -16,7 +16,8 @@ import NoFilmsView from '../view/no-films.js';
 export default class Movies {
   constructor(filmsContainer) {
     this._filmsContainer = filmsContainer;
-    this.filmPresenters = new Map(); // запоминаем все созданные презентеры
+    // ↓ запоминаем все созданные презентеры ↓
+    this.filmPresenters = new Map();
     this.filmPresentersExtra = {
       topRated: new Map(),
       mostCommented: new Map(),
@@ -117,9 +118,10 @@ export default class Movies {
       .forEach((film) => this._renderFilmPresenter(container, film));
   }
 
-  _renderFilmPresenter(filmContainer, film) {
-    const filmPresenter = new FilmPresenter(filmContainer, this._handlerFilmsUpdate); // принимает ф-цию update
+  _renderFilmPresenter(container, film) {
+    const filmPresenter = new FilmPresenter(container, this._handlerFilmsUpdate); // принимает ф-цию update
     filmPresenter.init(film);
+
     this.filmPresenters.set(film.id, filmPresenter); // в map записывает ключ: id и film
     this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
     this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter); // в map записывает ключ: id и film
@@ -143,7 +145,6 @@ export default class Movies {
           this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
         });
         break;
-
       case 'Most commented':
         this.filmsExtra.mostCommented.forEach((film) => {
           const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
@@ -175,8 +176,8 @@ export default class Movies {
   _handlerFilmsUpdate(updatedFilm) {
     // при вызове метода, будет реагировать на изменения контроллов карточки фильма
     this.films = update(this.films, updatedFilm); // обновляет список фильмов, или возвращает как есть
-    this.filmPresenters.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
-    this.filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
-    this.filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm); // перерисовываем данные
+    this.filmPresenters.get(updatedFilm.id).init(updatedFilm);
+    this.filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
+    this.filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
   }
 }
