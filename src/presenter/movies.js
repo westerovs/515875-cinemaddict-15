@@ -1,7 +1,6 @@
 /*
 * главный презентер
 * */
-/* eslint-disable */
 import dayjs from 'dayjs';
 import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
@@ -24,17 +23,19 @@ export default class Movies {
       mostCommented: new Map(),
     };
 
-    this._sortComponent        = new SortView();
-    this._filmsBoardComponent  = new FilmsBoardView();
-    this._filmsListComponent   = new FilmsListView();
+    this._sortComponent = new SortView();
+    this._filmsBoardComponent = new FilmsBoardView();
+    this._filmsListComponent = new FilmsListView();
     this._showMoreBtnComponent = new ShowMoreBtnView();
-    this._noFilmsComponent     = new NoFilmsView();
+    this._noFilmsComponent = new NoFilmsView();
+
+    this.initCountFilms = Films.SHOW_FILMS;
+    this.visibleFilms = Films.FILMS_LOAD;
+    this.renderedFilmsCount = Films.FILMS_LOAD;
 
     this.films = null;
     this.filmsExtra = null;
-    this.renderedFilmsCount = Films.FILMS_LOAD;
-    this.initCountFilms = Films.SHOW_FILMS;
-    this.visibleFilms = Films.FILMS_LOAD;
+    this.filmsBoard = null;
     this.filmsListMainContainer = null;
     this.defaultSort = null;
 
@@ -92,25 +93,23 @@ export default class Movies {
         break;
     }
 
-    // this._renderAllFilms()
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
-    this._renderFilmsExtra('Top rated');
-    this._renderFilmsExtra('Most commented');
+    this._renderAllFilms();
+    this._renderFilmsListExtra();
   }
 
   _renderFilmContainer() {
     // render доски фильмов
     render(this._filmsContainer, this._filmsBoardComponent);
     const filmsBoard = this._filmsContainer.querySelector('.films');
+    this.filmsBoard = filmsBoard;
 
     // render центрального контейнера для фильмов
-    render(filmsBoard, this._filmsListComponent);
+    render(this.filmsBoard, this._filmsListComponent);
     const filmsListMain = filmsBoard.querySelector('.films-list--main');
     this.filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
     this._renderAllFilms();
-    this._renderFilmsExtra('Top rated');
-    this._renderFilmsExtra('Most commented');
+    this._renderFilmsListExtra(true);
 
     // show more cards
     if (this.films.length > Films.FILMS_LOAD) {
@@ -134,28 +133,43 @@ export default class Movies {
     this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter); // в map записывает ключ: id и film
   }
 
-  _renderAllFilms() {
-    console.log('отрендерил все фильмы')
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(this.initCountFilms, this.films.length));
+  _renderAllFilms(firstInit = false) {
+    // рендерит число указанное в константе
+    if (firstInit) {
+      this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(this.initCountFilms, this.films.length));
+      return;
+    }
+    // рендерит текущее число видимых (когда открыто много карточек и мы сортируем, что бы не схлопывалось)
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
   }
 
-  _renderFilmsExtra(name) {
-    console.log('отрендерил экстра фильмы');
-    const filmListExtraComponent = new FilmsListExtraView(name);
-    const filmsBoard = this._filmsContainer.querySelector('.films');
+  _renderFilmsListExtra(firstInit = false) {
+    if (this.filmsExtra.topRated.some((film) => +film.filmInfo.totalRating !== 0)) {
+      if (firstInit) {
+        render(this.filmsBoard, new FilmsListExtraView('Top rated', 'rated'));
+      }
+      this._renderExtraFilms('Top rated', 'rated');
+    }
+    if (this.filmsExtra.mostCommented.some((film) => film.comments.size !== 0)) {
+      if (firstInit) {
+        render(this.filmsBoard, new FilmsListExtraView('Most commented', 'commented'));
+      }
+      this._renderExtraFilms('Most commented', 'commented');
+    }
+  }
 
-    render(filmsBoard, filmListExtraComponent);
-
-    const filmListExtraContainer = filmListExtraComponent.getElement().querySelector('.films-list__container');
+  _renderExtraFilms(name, type) {
+    const filmListExtraContainer = this.filmsBoard.querySelector(`*[data-extra-type="${ type }"]`);
 
     switch (name) {
       case 'Top rated':
         this.filmsExtra.topRated.forEach((film) => {
-          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate); // принимает ф-цию update
+          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
           filmPresenter.init(film);
-          this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
+          this.filmPresentersExtra.topRated.set(film.id, filmPresenter);
         });
         break;
+
       case 'Most commented':
         this.filmsExtra.mostCommented.forEach((film) => {
           const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
