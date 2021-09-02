@@ -2,10 +2,10 @@
 * Неизменяемые значения в приложении
 * */
 const Films = {
-  FILM_COUNT: 4,
-  INIT_COUNT: 5,
+  FILMS_COUNT: 4,
+  SHOW_FILMS: 5,
   SHOW_FILMS_EXTRA: 2,
-  LOAD_MORE: 5,
+  FILMS_LOAD: 5,
   TOTAL_MOVIES: 9999,
 };
 

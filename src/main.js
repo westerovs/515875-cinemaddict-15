@@ -8,7 +8,7 @@ import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import FooterStatisticView from './view/footer-statistic.js';
 
-const films = new Array(Films.FILM_COUNT).fill('').map(() => generateFilm());
+const films = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
 
 const ExtraTypeFilms = {
   topRated: films

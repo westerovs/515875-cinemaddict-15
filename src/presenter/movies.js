@@ -1,6 +1,7 @@
 /*
 * главный презентер
 * */
+/* eslint-disable */
 import dayjs from 'dayjs';
 import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
@@ -31,8 +32,9 @@ export default class Movies {
 
     this.films = null;
     this.filmsExtra = null;
-    this.renderedFilmsCount = Films.LOAD_MORE;
-    this.visibleFilms = Films.LOAD_MORE;
+    this.renderedFilmsCount = Films.FILMS_LOAD;
+    this.initCountFilms = Films.SHOW_FILMS;
+    this.visibleFilms = Films.FILMS_LOAD;
     this.filmsListMainContainer = null;
     this.defaultSort = null;
 
@@ -74,21 +76,26 @@ export default class Movies {
   _handleSortTypeChange(target) {
     // - Очищаем список
     this.filmPresenters.forEach((presenter) => presenter._destroyAll());
+    // - Очищаем экстра список
+    Object.values(this.filmPresentersExtra).forEach((extra) =>
+      extra.forEach((presenter) => presenter._destroyAll()));
 
     switch (target.dataset.sortType) {
       case 'default':
         this.films = this.defaultSort.slice();
-        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
       case 'date':
         this.films.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
-        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
       case 'rating':
         this.films.sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
-        this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
         break;
     }
+
+    // this._renderAllFilms()
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0,  Math.min(this.visibleFilms, this.films.length));
+    this._renderFilmsExtra('Top rated');
+    this._renderFilmsExtra('Most commented');
   }
 
   _renderFilmContainer() {
@@ -102,11 +109,11 @@ export default class Movies {
     this.filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
     this._renderAllFilms();
-    this._renderFilmsExtra(filmsBoard, 'Top rated');
-    this._renderFilmsExtra(filmsBoard, 'Most commented');
+    this._renderFilmsExtra('Top rated');
+    this._renderFilmsExtra('Most commented');
 
     // show more cards
-    if (this.films.length > Films.LOAD_MORE) {
+    if (this.films.length > Films.FILMS_LOAD) {
       this._renderLoadMoreBtn(filmsListMain);
     }
   }
@@ -128,12 +135,16 @@ export default class Movies {
   }
 
   _renderAllFilms() {
-    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(Films.INIT_COUNT, this.films.length));
+    console.log('отрендерил все фильмы')
+    this._renderFilmsFromTo(this.filmsListMainContainer, 0, Math.min(this.initCountFilms, this.films.length));
   }
 
-  _renderFilmsExtra(container, name) {
+  _renderFilmsExtra(name) {
+    console.log('отрендерил экстра фильмы');
     const filmListExtraComponent = new FilmsListExtraView(name);
-    render(container, filmListExtraComponent);
+    const filmsBoard = this._filmsContainer.querySelector('.films');
+
+    render(filmsBoard, filmListExtraComponent);
 
     const filmListExtraContainer = filmListExtraComponent.getElement().querySelector('.films-list__container');
 
@@ -161,8 +172,8 @@ export default class Movies {
   }
 
   _handlerLoadMoreBtnClick() {
-    this._renderFilmsFromTo(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + Films.LOAD_MORE);
-    this.renderedFilmsCount += Films.LOAD_MORE;
+    this._renderFilmsFromTo(this.filmsListMainContainer, this.renderedFilmsCount, this.renderedFilmsCount + Films.FILMS_LOAD);
+    this.renderedFilmsCount += Films.FILMS_LOAD;
     this.visibleFilms = this.filmsListMainContainer.childElementCount;
 
     // удаление кнопки

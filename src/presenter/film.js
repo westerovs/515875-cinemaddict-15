@@ -1,6 +1,7 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
+/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import { observer } from '../utils/observer.js';
 import FilmCardView from '../view/film-card.js';
@@ -37,15 +38,18 @@ export default class Film {
     this._addHandlers();
     observer.addObserver(this._closeFilmDetails);
 
+
     // [1] -------------------- если первый init
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
       this._renderFilm(this.filmContainer, film);
+      console.warn('первый рендер id: ', this.film.id)
       return;
     }
 
     // [2] -------------------- если init был, то нужно не рендерить, а заменить...
     if (this.filmContainer.contains(prevFilmComponent.getElement())) {
       replace(this.filmCardComponent, prevFilmComponent);
+      console.warn('повторный рендер id: ', this.film.id)
     }
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this.filmDetailsComponent, prevFilmDetailsComponent);
