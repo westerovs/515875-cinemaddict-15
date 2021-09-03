@@ -101,6 +101,20 @@ export default class Movies {
     this._renderAllFilms();
   }
 
+  _clearFilmsList() {
+    this._filmPresenters.forEach((presenter) => presenter._destroyAll());
+    this._filmPresenters.clear();
+
+    Object.values(this._filmPresentersExtra)
+      .forEach((extra) => {
+        extra.forEach((presenter) => presenter._destroyAll());
+        extra.clear();
+      });
+
+    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
+    removeComponent(this._showMoreBtnComponent);
+  }
+
   _renderFilmsContainer() {
     // render центрального контейнера для фильмов
     render(this._filmsBoard, this._filmsListComponent);
@@ -196,12 +210,7 @@ export default class Movies {
     // Вызывается в Film презентер, принимает обновлённые данные
     this._films = update(this._films, updatedFilm);
     this._defaultSort = update(this._defaultSort, updatedFilm);
-
-    // xm xmm xm !???
-    // this._filmsExtra = {
-    //   topRated: ExtraTypeFilms(this._filmsExtra.topRated, updatedFilm),
-    //   mostCommented: ExtraTypeFilms(this._filmsExtra.mostCommented, updatedFilm),
-    // };
+    this._filmsExtra = ExtraTypeFilms(this._films);
 
     if (this._filmPresenters.get(updatedFilm.id)) {
       this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
@@ -212,19 +221,5 @@ export default class Movies {
     if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
       this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
     }
-  }
-
-  _clearFilmsList() {
-    this._filmPresenters.forEach((presenter) => presenter._destroyAll());
-    this._filmPresenters.clear();
-
-    Object.values(this._filmPresentersExtra)
-      .forEach((extra) => {
-        extra.forEach((presenter) => presenter._destroyAll());
-        extra.clear();
-      });
-
-    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
-    removeComponent(this._showMoreBtnComponent);
   }
 }
