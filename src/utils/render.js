@@ -45,11 +45,10 @@ const removeComponent = (component) => {
   component.removeElement();
 };
 
-// сравнивает id объектов, если они равны, то возвращает изменённый массив
+// обновляет список фильмов, или возвращает как есть
 const update = (items, updateItem) => {
   const index = items.findIndex((item) => item.id === updateItem.id);
 
-  // если возвращается -1, то return items
   if (index === -1) {
     return items;
   }
