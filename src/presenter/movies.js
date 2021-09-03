@@ -39,6 +39,9 @@ export default class Movies {
     this.filmsListMainContainer = null;
     this.defaultSort = null;
 
+    this._topRatedFilmsList = null;
+    this._mostCommentedFilmsList = null;
+
     this._handlerLoadMoreBtnClick = this._handlerLoadMoreBtnClick.bind(this);
     this._handlerFilmsUpdate = this._handlerFilmsUpdate.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -128,9 +131,23 @@ export default class Movies {
     const filmPresenter = new FilmPresenter(container, this._handlerFilmsUpdate); // принимает ф-цию update
     filmPresenter.init(film);
 
-    this.filmPresenters.set(film.id, filmPresenter); // в map записывает ключ: id и film
-    this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
-    this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter); // в map записывает ключ: id и film
+    switch (container) {
+      case this.filmsListMainContainer: {
+        // console.log(this.filmsBoard)
+        // console.log(this.filmsBoard.querySelector('*[data-extra-type="rated"]'));
+
+        this.filmPresenters.set(film.id, filmPresenter); // в map записывает ключ: id и film
+        break;
+      }
+      case this._topRatedFilmsList: {
+        this.filmPresentersExtra.topRated.set(film.id, filmPresenter); // в map записывает ключ: id и film
+        break;
+      }
+      case this._mostCommentedFilmsList: {
+        this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter); // в map записывает ключ: id и film
+        break;
+      }
+    }
   }
 
   _renderAllFilms(firstInit = false) {
@@ -147,35 +164,27 @@ export default class Movies {
     if (this.filmsExtra.topRated.some((film) => +film.filmInfo.totalRating !== 0)) {
       if (firstInit) {
         render(this.filmsBoard, new FilmsListExtraView('Top rated', 'rated'));
+        this._topRatedFilmsList = this.filmsBoard.querySelector('*[data-extra-type="rated"]');
       }
-      this._renderExtraFilms('Top rated', 'rated');
+      this._renderExtraFilms('Top rated');
     }
     if (this.filmsExtra.mostCommented.some((film) => film.comments.size !== 0)) {
       if (firstInit) {
         render(this.filmsBoard, new FilmsListExtraView('Most commented', 'commented'));
+        this._mostCommentedFilmsList = this.filmsBoard.querySelector('*[data-extra-type="commented"]');
       }
-      this._renderExtraFilms('Most commented', 'commented');
+      this._renderExtraFilms('Most commented');
     }
   }
 
-  _renderExtraFilms(name, type) {
-    const filmListExtraContainer = this.filmsBoard.querySelector(`*[data-extra-type="${ type }"]`);
-
+  _renderExtraFilms(name) {
     switch (name) {
       case 'Top rated':
-        this.filmsExtra.topRated.forEach((film) => {
-          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
-          filmPresenter.init(film);
-          this.filmPresentersExtra.topRated.set(film.id, filmPresenter);
-        });
+        this.filmsExtra.topRated.forEach((film) => this._renderFilmPresenter(this._topRatedFilmsList, film));
         break;
 
       case 'Most commented':
-        this.filmsExtra.mostCommented.forEach((film) => {
-          const filmPresenter = new FilmPresenter(filmListExtraContainer, this._handlerFilmsUpdate);
-          filmPresenter.init(film);
-          this.filmPresentersExtra.mostCommented.set(film.id, filmPresenter);
-        });
+        this.filmsExtra.mostCommented.forEach((film) => this._renderFilmPresenter(this._mostCommentedFilmsList, film));
         break;
     }
   }
@@ -197,12 +206,21 @@ export default class Movies {
     }
   }
 
-  // Вызывается в Film презентер, принимает обновлённые данные
   _handlerFilmsUpdate(updatedFilm) {
+    // Вызывается в Film презентер, принимает обновлённые данные
     // при вызове метода, будет реагировать на изменения контроллов карточки фильма
-    this.films = update(this.films, updatedFilm); // обновляет список фильмов, или возвращает как есть
-    this.filmPresenters.get(updatedFilm.id).init(updatedFilm);
-    this.filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
-    this.filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
+    // обновляет список фильмов, или возвращает как есть
+    this.films = update(this.films, updatedFilm);
+    this.defaultSort = update(this.defaultSort, updatedFilm);
+
+    if (this.filmPresenters.get(updatedFilm.id)) {
+      this.filmPresenters.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this.filmPresentersExtra.topRated.get(updatedFilm.id)) {
+      this.filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this.filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
+      this.filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
+    }
   }
 }
