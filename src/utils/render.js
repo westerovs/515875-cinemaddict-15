@@ -45,6 +45,7 @@ const removeComponent = (component) => {
   component.removeElement();
 };
 
+// todo / слишком сложно / Лучше сделать нормально
 // обновляет список фильмов, или возвращает как есть
 const update = (items, updateItem) => {
   const index = items.findIndex((item) => item.id === updateItem.id);

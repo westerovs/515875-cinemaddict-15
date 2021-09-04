@@ -4,7 +4,7 @@
 import dayjs from 'dayjs';
 import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
-import { ExtraTypeFilms } from '../utils/const.js';
+import { getExtraTypeFilms } from '../utils/const.js';
 
 import FilmPresenter from './film.js';
 import SortView from '../view/sort.js';
@@ -50,8 +50,8 @@ export default class Movies {
   init(films) {
     this._films = films.slice();
     this._filmsExtra = {
-      topRated: ExtraTypeFilms(films).topRated,
-      mostCommented: ExtraTypeFilms(films).mostCommented,
+      topRated: getExtraTypeFilms(films).topRated,
+      mostCommented: getExtraTypeFilms(films).mostCommented,
     };
 
     this._defaultSort = films.slice();
@@ -210,7 +210,7 @@ export default class Movies {
     // Вызывается в Film презентер, принимает обновлённые данные
     this._films = update(this._films, updatedFilm);
     this._defaultSort = update(this._defaultSort, updatedFilm);
-    this._filmsExtra = ExtraTypeFilms(this._films);
+    this._filmsExtra = getExtraTypeFilms(this._films);
 
     if (this._filmPresenters.get(updatedFilm.id)) {
       this._filmPresenters.get(updatedFilm.id).init(updatedFilm);

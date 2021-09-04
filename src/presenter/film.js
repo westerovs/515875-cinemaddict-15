@@ -90,6 +90,7 @@ export default class Film {
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
   }
 
+  // todo create Enam
   _onEscCloseFilmDetails(evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();

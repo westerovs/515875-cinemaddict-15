@@ -20,6 +20,7 @@ export default class Sort extends Abstract {
     return createSortingTemplate();
   }
 
+  // todo - ('A') так лучше никогда не делать. Сделать проверку на класс
   _sortTypeChangeHandler(evt) {
     if (evt.target !== evt.target.closest('A')) { return; }
     if (evt.target.classList.contains('sort__button--active')) { return; }
