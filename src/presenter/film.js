@@ -15,8 +15,8 @@ export default class Film {
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
 
-    this._showFilmDetails = this._showFilmDetails.bind(this);
-    this._closeFilmDetails = this._closeFilmDetails.bind(this);
+    this._renderFilmDetails = this._renderFilmDetails.bind(this);
+    this._destroyFilmDetails = this._destroyFilmDetails.bind(this);
     this._onEscCloseFilmDetails = this._onEscCloseFilmDetails.bind(this);
     // *** ↓ handle controls ↓ ***
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
@@ -34,7 +34,7 @@ export default class Film {
     this._filmDetailsComponent = new FilmDetailsView(film);
 
     this._addHandlers();
-    observer.addObserver(this._closeFilmDetails);
+    observer.addObserver(this._destroyFilmDetails);
 
     // [1] если первый init
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
@@ -48,7 +48,7 @@ export default class Film {
     }
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this._filmDetailsComponent, prevFilmDetailsComponent);
-      this._filmDetailsComponent.setCloseDetailsClickHandler(this._closeFilmDetails);
+      this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
     }
 
     removeComponent(prevFilmComponent);
@@ -60,8 +60,20 @@ export default class Film {
     render(this._filmContainer, this._filmCardComponent);
   }
 
+  _renderFilmDetails() {
+    observer.notify(this._destroyFilmDetails);
+
+    render(document.body, this._filmDetailsComponent.getElement());
+
+    document.body.classList.add('hide-overflow');
+    document.addEventListener('keydown', this._onEscCloseFilmDetails );
+
+    this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
+    this._filmDetailsComponent.reset();
+  }
+
   _addHandlers() {
-    this._filmCardComponent.setShowFilmDetailsClickHandler(this._showFilmDetails);
+    this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
 
     // *** ↓ set handle details controls ↓ ***
     this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
@@ -73,18 +85,7 @@ export default class Film {
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
   }
 
-  // ↓ film details ↓
-  _showFilmDetails() {
-    observer.notify(this._closeFilmDetails);
-
-    document.body.appendChild(this._filmDetailsComponent.getElement());
-    document.body.classList.add('hide-overflow');
-
-    document.addEventListener('keydown', this._onEscCloseFilmDetails );
-    this._filmDetailsComponent.setCloseDetailsClickHandler(this._closeFilmDetails);
-  }
-
-  _closeFilmDetails() {
+  _destroyFilmDetails() {
     this._filmDetailsComponent.getElement().remove();
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
@@ -94,7 +95,7 @@ export default class Film {
   _onEscCloseFilmDetails(evt) {
     if (evt.code === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this._closeFilmDetails();
+      this._destroyFilmDetails();
     }
   }
 
@@ -141,7 +142,7 @@ export default class Film {
     this._handlerFilmsUpdate(updatedFilm);
   }
 
-  _destroyAll() {
+  _destroy() {
     removeComponent(this._filmCardComponent);
     removeComponent(this._filmDetailsComponent);
   }

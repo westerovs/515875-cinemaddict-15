@@ -8,8 +8,7 @@
 
 import { isDay } from '../utils/days.js';
 import { EMOTION } from '../utils/const.js';
-import Abstract from './abstract.js';
-/* eslint-disable */
+import Smart from './smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -203,10 +202,9 @@ const createFilmDetailsTemplate = (state) => {
   );
 };
 
-export default class FilmDetails extends Abstract {
+export default class FilmDetails extends Smart {
   constructor(film) {
     super();
-    // хранит состояние попапа / парсим информацию в состояние
     this._state = FilmDetails.parseFilmToData(film);
 
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
@@ -288,8 +286,6 @@ export default class FilmDetails extends Abstract {
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
 
-  // ==================================
-
   setInnerHandlers() {
     const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
     const textarea = this.getElement().querySelector('.film-details__comment-input');
@@ -307,42 +303,7 @@ export default class FilmDetails extends Abstract {
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
-  updateState(update, doNotReplace) {
-    // если ничего не обновилось, то и нехуй перерисовки вызывать
-    if (!update) {
-      return;
-    }
-
-    this._state = Object.assign({}, this._state, update);
-
-    if (doNotReplace) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-  updateElement() {
-    // как только вызвали update - текущий становится предыдущим
-    const prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-    parent.replaceChild(newElement, prevElement);
-
-    // Вызовем метод restoreAllHandlers после обновления в updateElement
-    this.restoreAllHandlers();
-  }
-
   static parseFilmToData(film) {
-    // static потому что не используют контекст
-    // - film это то что сейчас в модели(информация). Объект описывающий задачу
-    //    В этом объекте есть только те ключи, которые относятся к задачи
-    /*
-    * Эмоция либо отображается, либо нет
-    * КомментText либо отображается, либо нет
-    * */
     //  ф-ция задача которой взять информацию и сделать некий снимок её, превратив в состояние
     return Object.assign(
       {},
@@ -355,6 +316,8 @@ export default class FilmDetails extends Abstract {
   }
 
   static parseDataToFilm(data) {
+    // пока не нашёл где это применить. Думаю позже понадобится, при сохранении коммента.
+
     // - под data, мы понимаем данные которые есть в самом компоненте
     //  Некое состояние. Снимок информации на данный момент(состояние)
     // здесь состояние превращается в информацию. Эту инфу можно отдать презентору

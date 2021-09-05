@@ -102,12 +102,12 @@ export default class Movies {
   }
 
   _clearFilmsList() {
-    this._filmPresenters.forEach((presenter) => presenter._destroyAll());
+    this._filmPresenters.forEach((presenter) => presenter._destroy());
     this._filmPresenters.clear();
 
     Object.values(this._filmPresentersExtra)
       .forEach((extra) => {
-        extra.forEach((presenter) => presenter._destroyAll());
+        extra.forEach((presenter) => presenter._destroy());
         extra.clear();
       });
 
