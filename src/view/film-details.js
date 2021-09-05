@@ -303,6 +303,12 @@ export default class FilmDetails extends Smart {
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
+  reset(film) {
+    this.updateState(
+      FilmDetails.parseFilmToData(film),
+    );
+  }
+
   static parseFilmToData(film) {
     //  ф-ция задача которой взять информацию и сделать некий снимок её, превратив в состояние
     return Object.assign(
@@ -316,12 +322,14 @@ export default class FilmDetails extends Smart {
   }
 
   static parseDataToFilm(data) {
-    // пока не нашёл где это применить. Думаю позже понадобится, при сохранении коммента.
+    // todo пока не нашёл где это применить. Думаю позже понадобится, при сохранении коммента.
 
-    // - под data, мы понимаем данные которые есть в самом компоненте
-    //  Некое состояние. Снимок информации на данный момент(состояние)
-    // здесь состояние превращается в информацию. Эту инфу можно отдать презентору
-    // Презентер может передать модели. Модель может сохранить...
+    /*
+      под data, мы понимаем данные которые есть в самом компоненте
+      Снимок информации на данный момент(состояние)
+      здесь состояние превращается в информацию. Эту инфу можно отдать презентору
+      Презентер может передать модели. Модель может сохранить...
+    */
     data = Object.assign({}, data);
 
     if (!data.emotion) {
@@ -337,9 +345,4 @@ export default class FilmDetails extends Smart {
     return data;
   }
 
-  reset(film){
-    this.updateState(
-      FilmDetails.parseFilmToData(film),
-    );
-  }
 }

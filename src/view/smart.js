@@ -1,3 +1,6 @@
+/*
+* обновляет данные и, если нужно, вызывает перерисовку
+* */
 import Abstract from './abstract';
 
 export default class Smart extends Abstract {
@@ -7,7 +10,6 @@ export default class Smart extends Abstract {
   }
 
   updateState(update, doNotReplace) {
-    // если ничего не обновилось, то и нехуй перерисовки вызывать
     if (!update) {
       return;
     }
@@ -30,7 +32,7 @@ export default class Smart extends Abstract {
     const newElement = this.getElement();
     parent.replaceChild(newElement, prevElement);
 
-    // Вызовем метод restoreAllHandlers после обновления в updateElement
+    // Вызовем метод restoreAllHandlers после перерисовки
     this.restoreAllHandlers();
   }
 
