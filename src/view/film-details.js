@@ -1,6 +1,14 @@
+/*
+* Обработчики должны добавляться во вьюхе, иначе это нарушение паттерна
+* Пользователь чего-то жмакает по попапу
+* это приводит к перерисовке формы
+* раз форма удаляется, то удаляются и обработчики
+* Тут же навешиваем обработчики через restoreHandlers
+* */
+
 import { isDay } from '../utils/days.js';
 import Abstract from './abstract.js';
-
+/* eslint-disable */
 const createCommentTemplate = (comments) => {
   let template = '';
 
@@ -38,9 +46,11 @@ const createGenreTemplate = (genre) => {
     </td>`;
 };
 
-const createFilmDetailsTemplate = (film) => {
-  const { id, comments, filmInfo, userDetails } = film;
+const createFilmDetailsTemplate = (state) => {
+  const { id, comments, filmInfo, userDetails } = state;
+
   const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
+
   const {
     title,
     alternativeTitle,
@@ -190,15 +200,20 @@ const createFilmDetailsTemplate = (film) => {
 export default class FilmDetails extends Abstract {
   constructor(film) {
     super();
-    this._film = film;
+    // хранит состояние попапа / парсим информацию в состояние
+    this._state = FilmDetails.parseFilmToData(film);
+
     this._toCloseClickHandler = this._toCloseClickHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._emotionClickHandler = this._emotionClickHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._state);
   }
 
   _toCloseClickHandler() {
@@ -224,7 +239,6 @@ export default class FilmDetails extends Abstract {
     closeBtn.addEventListener('click', this._toCloseClickHandler);
   }
 
-  // *** ↓ handle controls ↓ ***
   setWatchListClickHandler(callback) {
     this._callback.clickwatchList = callback;
 
@@ -244,5 +258,121 @@ export default class FilmDetails extends Abstract {
 
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
+  }
+
+  // ==================================
+  // ================================== new
+  // ==================================
+
+  // ↓ emotion ↓
+  _emotionClickHandler(evt) {
+    evt.preventDefault();
+
+    const input = evt.target;
+    if (!input.closest('.film-details__emoji-item')) return
+
+    // т.к чекбоксы сами себя перерисовывают, нам надо подумать,
+    // как эту инфу сохранить в состояние
+    this.updateState({
+      comment: Object.assign({}, this._state.comment,
+        {
+          [input.value]: input.checked
+        }
+      )
+    });
+
+    // const emojiBlock = this.getElement().querySelector('.film-details__add-emoji-label');
+    // emojiBlock.innerHTML = `<img src="./images/emoji/${ input.value }.png" width="55" height="55" alt="emoji-smile">`
+    //
+    // const textArea = this.getElement().querySelector('.film-details__comment-input');
+    // console.log(textArea)
+    // textArea.addEventListener('input', () => console.log(textArea.value));
+    // this._callback.emotionClick()
+    // console.log('click', input.value)
+  }
+
+  setClickEmotionHandler(callBack) {
+    this._callback.emotionClick = callBack;
+    const emotionList = this.getElement().querySelector('.film-details__emoji-list')
+
+    emotionList.addEventListener('click', this._emotionClickHandler)
+  }
+
+  // [1] update состояния
+  // вызывать когда пользователь взаимодействует с попапом
+  // justDataUpdate обновить состояние без перерисовки
+  updateState(update, justDataUpdate) {
+    // если ничего не обновилось, то и нехуй перерисовки вызывать
+    if (!update) {
+      return;
+    }
+
+    this._state = Object.assign({}, this._state, update);
+
+    if (justDataUpdate) return;
+
+    this.updateElement()
+  }
+
+  //  [2] обновление элемента
+  updateElement() {
+    // получить предыдущий элемент
+    // удалить предыдущий элемент
+    // как только вызвали update - текущий становится предыдущим
+    const prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement()
+
+    const newElement = this.getElement();
+    // parent.replaceChild(newElement, prevElement)
+
+    this.restoreHandlers()
+  }
+
+  restoreHandlers() {
+    //  восстановить обработчики
+    this._setInnerHandlers()
+  }
+
+  descriptionCommentHandler(evt) {
+    // если происходит ввод в текст ареа, то нам не нужно думать о перерисовке. Браузер сам думает
+    evt.preventDefault()
+    this.updateState({
+      description: evt.target.value
+    }, true)
+  }
+
+  // навесить удалённые обработчики
+  _setInnerHandlers() {
+
+  }
+
+  static parseFilmToData(film) {
+    // static потому что не используют контекст
+    // - film это то что сейчас в модели(информация). Объект описывающий задачу
+    //    В этом объекте есть только те ключи, которые относятся к задачи
+    /*
+    * Эмоция либо отображается, либо нет
+    * КомментText либо отображается, либо нет
+    * */
+    //  ф-ция задача которой взять информацию и сделать некий снимок её, превратив в состояние
+    return Object.assign({}, film,
+      {
+        isComments: Boolean(film.comments.size === 0),
+      }
+    );
+  }
+
+  // - под data, мы понимаем данные которые есть в самом компоненте
+  //  Некое состояние. Снимок информации на данный момент(состояние)
+  // здесь состояние превращается в информацию. Эту инфу можно отдать презентору
+  // Презентер может передать модели. Модель может сохранить
+  static ParseDataToFilm(data) {
+  //
+    if (!isComments) {
+    //   есть комменты, или нет
+    //  если комментов нет, то этот блок скрывать
+    }
+
   }
 }
