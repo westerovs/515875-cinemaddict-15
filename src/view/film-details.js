@@ -3,7 +3,7 @@
 * Пользователь чего-то жмакает по попапу
 * это приводит к перерисовке формы
 * раз форма удаляется, то удаляются и обработчики
-* Тут же навешиваем обработчики через restoreHandlers
+* Тут же навешиваем обработчики через restoreAllHandlers
 * */
 
 import { isDay } from '../utils/days.js';
@@ -53,23 +53,21 @@ const createEmojiTemplate = () => {
 
   EMOTION.forEach((emoji) => {
     template += `
-      <input class="film-details__emoji-item visually-hidden"
-        name="comment-emoji"
-        type="radio"
-        id="emoji-${ emoji }"
-        value="${ emoji }">
-      <label class="film-details__emoji-label" for="emoji-${ emoji }">
-      <img src="./images/emoji/${ emoji }.png" width="30" height="30" alt="emoji ${ emoji }">
-      </label>
-    `
-  })
+       <input class="film-details__emoji-item visually-hidden"
+          name="comment-emoji"
+          type="radio"
+          id="emoji-${ emoji }"
+          value="${ emoji }">
+       <label class="film-details__emoji-label" for="emoji-${ emoji }">
+         <img src="./images/emoji/${ emoji }.png" width="30" height="30" alt="emoji ${ emoji }">
+       </label>`;
+  });
 
-  return template
-}
+  return template;
+};
 
 const createFilmDetailsTemplate = (state) => {
   const { id, comments, filmInfo, userDetails, emotion, commentText } = state;
-
   const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
   const {
     title,
@@ -89,7 +87,7 @@ const createFilmDetailsTemplate = (state) => {
   const countComments = comments.size;
   const releaseDate = date.format('DD MMMM YYYY');
 
-  const emoji = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
+  const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
 
   return (
     `<section class="film-details" id="${ id }">
@@ -184,7 +182,7 @@ const createFilmDetailsTemplate = (state) => {
 
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">
-                ${ emoji }
+                ${ emojiPic }
               </div>
 
               <label class="film-details__comment-label">
@@ -211,34 +209,25 @@ export default class FilmDetails extends Abstract {
     // хранит состояние попапа / парсим информацию в состояние
     this._state = FilmDetails.parseFilmToData(film);
 
-    this._emotionClickHandler = this._emotionClickHandler.bind(this);
-    this._commentInputHandler = this._commentInputHandler.bind(this);
-
-    this._toCloseClickHandler = this._toCloseClickHandler.bind(this);
-
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
+    this._emotionClickHandler = this._emotionClickHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
+    this.setInnerHandlers();
 
-    this._setInnerHandlers();
+    this._scrollPosition = 0;
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._state);
   }
 
-  _toCloseClickHandler() {
+  _closeDetailsClickHandler() {
     this._callback.toCloseClick();
   }
 
-  setToCloseClickHandler(callback) {
-    this._callback.toCloseClick = callback;
-    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
-
-    closeBtn.addEventListener('click', this._toCloseClickHandler);
-  }
-
-  // ↓ controls ↓
   _watchListClickHandler() {
     this._callback.watchListClick(this._state);
   }
@@ -251,7 +240,33 @@ export default class FilmDetails extends Abstract {
     this._callback.favoriteClick(this._state);
   }
 
-  // ↓ controls ↓
+  _emotionClickHandler(evt) {
+    evt.preventDefault();
+    this._scrollPosition = this.getElement().scrollTop;
+
+    this.updateState({ emotion: evt.target.value });
+
+    this.getElement().scrollTop = this._scrollPosition;
+
+    const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
+    emojiItems.forEach((emotion) => {
+      if(emotion.value === evt.target.value){
+        emotion.setAttribute('checked', 'true');
+      }
+    });
+  }
+
+  _commentInputHandler(evt) {
+    this.updateState({ commentText: evt.target.value }, true);
+  }
+
+  setCloseDetailsClickHandler(callback) {
+    this._callback.toCloseClick = callback;
+    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
+
+    closeBtn.addEventListener('click', this._closeDetailsClickHandler);
+  }
+
   setWatchListClickHandler(callback) {
     this._callback.watchListClick = callback;
 
@@ -273,67 +288,26 @@ export default class FilmDetails extends Abstract {
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
 
-  // ================================== new
+  // ==================================
 
-  // ↓ emotion ↓
-  _emotionClickHandler(evt) {
-    evt.preventDefault();
+  setInnerHandlers() {
+    const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
+    const textarea = this.getElement().querySelector('.film-details__comment-input');
 
-    if (evt.target.closest('.film-details__emoji-item')) return;
-
-    console.log(evt.target)
-    // т.к чекбоксы сами себя перерисовывают, нам надо подумать, как эту инфу сохранить в состояние
-    this.updateState({
-      emotion : evt.target.value,
-    });
-
-    this.getElement().querySelectorAll('.film-details__emoji-item')
-      .forEach((emotion) => {
-        if(emotion.value === evt.target.value){
-          emotion.setAttribute('checked', 'true');
-        }
-      });
+    emoji.forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
+    textarea.addEventListener('input', this._commentInputHandler);
   }
 
-  // ↓ comment ↓
-  // если происходит ввод в текст ареа, то нам не нужно думать о перерисовке. Браузер сам думает
-  _commentInputHandler(evt) {
-    evt.preventDefault();
+  restoreAllHandlers() {
+    this.setInnerHandlers();
 
-    this.updateState({
-      commentText : evt.target.value,
-    },true);
-  }
-
-  _setInnerHandlers() {
-    const emojiList = this.getElement().querySelector('.film-details__emoji-list');
-    emojiList.addEventListener('click', this._emotionClickHandler);
-
-    // console.log(emojiList)
-    // this.getElement().querySelectorAll('.film-details__emoji-item')
-    //   .forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
-
-    // textarea
-    this.getElement().querySelector('.film-details__comment-input')
-      .addEventListener('input', this._commentInputHandler);
-  }
-
-  // restoreHandlers, который будет восстанавливать обработчики после обновления.
-  // Здесь нужно восстановить как внутренние, так и внешние
-  restoreHandlers() {
-    //  восстановить обработчики
-    this._setInnerHandlers();
-
-    this.setToCloseClickHandler(this._callback.toCloseClick);
+    this.setCloseDetailsClickHandler(this._callback.toCloseClick);
     this.setWatchListClickHandler(this._callback.watchListClick);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
-  // [1] update состояния
-  // вызывать когда пользователь взаимодействует с попапом
-  // justDataUpdate обновить состояние без перерисовки
-  updateState(update, justDataUpdate) {
+  updateState(update, doNotReplace) {
     // если ничего не обновилось, то и нехуй перерисовки вызывать
     if (!update) {
       return;
@@ -341,17 +315,14 @@ export default class FilmDetails extends Abstract {
 
     this._state = Object.assign({}, this._state, update);
 
-    if (justDataUpdate) {
+    if (doNotReplace) {
       return;
     }
 
     this.updateElement();
   }
 
-  //  [2] // Объявим метод updateElement, его задача удалить старый DOM элемент, вызвать генерацию нового и заменить один на другой
   updateElement() {
-    // получить предыдущий элемент
-    // удалить предыдущий элемент
     // как только вызвали update - текущий становится предыдущим
     const prevElement = this.getElement();
     const parent = prevElement.parentElement;
@@ -360,8 +331,8 @@ export default class FilmDetails extends Abstract {
     const newElement = this.getElement();
     parent.replaceChild(newElement, prevElement);
 
-    // Вызовем метод restoreHandlers после обновления в updateElement
-    this.restoreHandlers();
+    // Вызовем метод restoreAllHandlers после обновления в updateElement
+    this.restoreAllHandlers();
   }
 
   static parseFilmToData(film) {
@@ -383,11 +354,11 @@ export default class FilmDetails extends Abstract {
     );
   }
 
-  // - под data, мы понимаем данные которые есть в самом компоненте
-  //  Некое состояние. Снимок информации на данный момент(состояние)
-  // здесь состояние превращается в информацию. Эту инфу можно отдать презентору
-  // Презентер может передать модели. Модель может сохранить
   static parseDataToFilm(data) {
+    // - под data, мы понимаем данные которые есть в самом компоненте
+    //  Некое состояние. Снимок информации на данный момент(состояние)
+    // здесь состояние превращается в информацию. Эту инфу можно отдать презентору
+    // Презентер может передать модели. Модель может сохранить...
     data = Object.assign({}, data);
 
     if (!data.emotion) {

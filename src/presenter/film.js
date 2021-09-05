@@ -48,7 +48,7 @@ export default class Film {
     }
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this._filmDetailsComponent, prevFilmDetailsComponent);
-      this._filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
+      this._filmDetailsComponent.setCloseDetailsClickHandler(this._closeFilmDetails);
     }
 
     removeComponent(prevFilmComponent);
@@ -81,7 +81,7 @@ export default class Film {
     document.body.classList.add('hide-overflow');
 
     document.addEventListener('keydown', this._onEscCloseFilmDetails );
-    this._filmDetailsComponent.setToCloseClickHandler(this._closeFilmDetails);
+    this._filmDetailsComponent.setCloseDetailsClickHandler(this._closeFilmDetails);
   }
 
   _closeFilmDetails() {
