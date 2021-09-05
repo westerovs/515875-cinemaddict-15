@@ -1,13 +1,7 @@
 import { nanoid } from 'nanoid';
 import { getRandomNumber, getRandomItem } from '../utils/random.js';
 import { getRandomDateComment } from '../utils/days.js';
-
-const emotion = [
-  'smile',
-  'sleeping',
-  'puke',
-  'angry',
-];
+import { EMOTION } from '../utils/const.js';
 
 const filmDesc = [
   'Interesting setting and a good cast',
@@ -40,7 +34,7 @@ const filmComments = () => ({
   author: getRandomItem(filmAuthor),
   comment: getRandomItem(filmDesc),
   date: getRandomItem(filmDates),
-  emotion: getRandomItem(emotion),
+  emotion: getRandomItem(EMOTION),
 });
 
 const getComments = () => new Set(

@@ -26,6 +26,13 @@ const SortType = {
   RATING: 'rating',
 };
 
+const EMOTION = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry',
+];
+
 const COUNTRIES = [
   'USA',
   'ALBANIA',
@@ -47,5 +54,6 @@ export {
   COUNTRIES,
   GENRES,
   Films,
-  getExtraTypeFilms
+  getExtraTypeFilms,
+  EMOTION
 };

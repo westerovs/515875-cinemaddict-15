@@ -7,8 +7,10 @@
 * */
 
 import { isDay } from '../utils/days.js';
+import { EMOTION } from '../utils/const.js';
 import Abstract from './abstract.js';
 /* eslint-disable */
+
 const createCommentTemplate = (comments) => {
   let template = '';
 
@@ -46,11 +48,29 @@ const createGenreTemplate = (genre) => {
     </td>`;
 };
 
+const createEmojiTemplate = () => {
+  let template = '';
+
+  EMOTION.forEach((emoji) => {
+    template += `
+      <input class="film-details__emoji-item visually-hidden"
+        name="comment-emoji"
+        type="radio"
+        id="emoji-${ emoji }"
+        value="${ emoji }">
+      <label class="film-details__emoji-label" for="emoji-${ emoji }">
+      <img src="./images/emoji/${ emoji }.png" width="30" height="30" alt="emoji ${ emoji }">
+      </label>
+    `
+  })
+
+  return template
+}
+
 const createFilmDetailsTemplate = (state) => {
-  const { id, comments, filmInfo, userDetails } = state;
+  const { id, comments, filmInfo, userDetails, emotion, commentText } = state;
 
   const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
-
   const {
     title,
     alternativeTitle,
@@ -67,8 +87,9 @@ const createFilmDetailsTemplate = (state) => {
   } = filmInfo;
   const { date, releaseCountry } = release;
   const countComments = comments.size;
-
   const releaseDate = date.format('DD MMMM YYYY');
+
+  const emoji = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
 
   return (
     `<section class="film-details" id="${ id }">
@@ -162,32 +183,19 @@ const createFilmDetailsTemplate = (state) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">
+                ${ emoji }
+              </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea
+                  class="film-details__comment-input"
+                  placeholder="Select reaction below and write comment here"
+                  name="comment">${ commentText ? commentText : '' }</textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${ createEmojiTemplate() }
               </div>
             </div>
           </section>
@@ -203,11 +211,14 @@ export default class FilmDetails extends Abstract {
     // хранит состояние попапа / парсим информацию в состояние
     this._state = FilmDetails.parseFilmToData(film);
 
+    this._emotionClickHandler = this._emotionClickHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
+
     this._toCloseClickHandler = this._toCloseClickHandler.bind(this);
+
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
-    this._emotionClickHandler = this._emotionClickHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -217,85 +228,106 @@ export default class FilmDetails extends Abstract {
   }
 
   _toCloseClickHandler() {
-    this._callback.click();
-  }
-
-  _watchListClickHandler() {
-    this._callback.clickwatchList();
-  }
-
-  _watchedClickHandler() {
-    this._callback.clickWatched();
-  }
-
-  _favoriteClickHandler() {
-    this._callback.clickFavorite();
+    this._callback.toCloseClick();
   }
 
   setToCloseClickHandler(callback) {
-    this._callback.click = callback;
+    this._callback.toCloseClick = callback;
     const closeBtn = this.getElement().querySelector('.film-details__close-btn');
 
     closeBtn.addEventListener('click', this._toCloseClickHandler);
   }
 
+  // ↓ controls ↓
+  _watchListClickHandler() {
+    this._callback.watchListClick(this._state);
+  }
+
+  _watchedClickHandler() {
+    this._callback.watchedClick(this._state);
+  }
+
+  _favoriteClickHandler() {
+    this._callback.favoriteClick(this._state);
+  }
+
+  // ↓ controls ↓
   setWatchListClickHandler(callback) {
-    this._callback.clickwatchList = callback;
+    this._callback.watchListClick = callback;
 
     const watchlist = this.getElement().querySelector('.film-details__control-button--watchlist');
     watchlist.addEventListener('click', this._watchListClickHandler);
   }
 
   setWatchedClickHandler(callback) {
-    this._callback.clickWatched = callback;
+    this._callback.watchedClick = callback;
 
     const watched = this.getElement().querySelector('.film-details__control-button--watched');
     watched.addEventListener('click', this._watchedClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
-    this._callback.clickFavorite = callback;
+    this._callback.favoriteClick = callback;
 
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
 
-  // ==================================
   // ================================== new
-  // ==================================
 
   // ↓ emotion ↓
   _emotionClickHandler(evt) {
     evt.preventDefault();
 
-    const input = evt.target;
-    if (!input.closest('.film-details__emoji-item')) return
+    if (evt.target.closest('.film-details__emoji-item')) return;
 
-    // т.к чекбоксы сами себя перерисовывают, нам надо подумать,
-    // как эту инфу сохранить в состояние
+    console.log(evt.target)
+    // т.к чекбоксы сами себя перерисовывают, нам надо подумать, как эту инфу сохранить в состояние
     this.updateState({
-      comment: Object.assign({}, this._state.comment,
-        {
-          [input.value]: input.checked
-        }
-      )
+      emotion : evt.target.value,
     });
 
-    // const emojiBlock = this.getElement().querySelector('.film-details__add-emoji-label');
-    // emojiBlock.innerHTML = `<img src="./images/emoji/${ input.value }.png" width="55" height="55" alt="emoji-smile">`
-    //
-    // const textArea = this.getElement().querySelector('.film-details__comment-input');
-    // console.log(textArea)
-    // textArea.addEventListener('input', () => console.log(textArea.value));
-    // this._callback.emotionClick()
-    // console.log('click', input.value)
+    this.getElement().querySelectorAll('.film-details__emoji-item')
+      .forEach((emotion) => {
+        if(emotion.value === evt.target.value){
+          emotion.setAttribute('checked', 'true');
+        }
+      });
   }
 
-  setClickEmotionHandler(callBack) {
-    this._callback.emotionClick = callBack;
-    const emotionList = this.getElement().querySelector('.film-details__emoji-list')
+  // ↓ comment ↓
+  // если происходит ввод в текст ареа, то нам не нужно думать о перерисовке. Браузер сам думает
+  _commentInputHandler(evt) {
+    evt.preventDefault();
 
-    emotionList.addEventListener('click', this._emotionClickHandler)
+    this.updateState({
+      commentText : evt.target.value,
+    },true);
+  }
+
+  _setInnerHandlers() {
+    const emojiList = this.getElement().querySelector('.film-details__emoji-list');
+    emojiList.addEventListener('click', this._emotionClickHandler);
+
+    // console.log(emojiList)
+    // this.getElement().querySelectorAll('.film-details__emoji-item')
+    //   .forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
+
+    // textarea
+    this.getElement().querySelector('.film-details__comment-input')
+      .addEventListener('input', this._commentInputHandler);
+  }
+
+  // restoreHandlers, который будет восстанавливать обработчики после обновления.
+  // Здесь нужно восстановить как внутренние, так и внешние
+  restoreHandlers() {
+    //  восстановить обработчики
+    this._setInnerHandlers();
+
+    this.setToCloseClickHandler(this._callback.toCloseClick);
+    this.setWatchListClickHandler(this._callback.watchListClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
   // [1] update состояния
@@ -309,42 +341,27 @@ export default class FilmDetails extends Abstract {
 
     this._state = Object.assign({}, this._state, update);
 
-    if (justDataUpdate) return;
+    if (justDataUpdate) {
+      return;
+    }
 
-    this.updateElement()
+    this.updateElement();
   }
 
-  //  [2] обновление элемента
+  //  [2] // Объявим метод updateElement, его задача удалить старый DOM элемент, вызвать генерацию нового и заменить один на другой
   updateElement() {
     // получить предыдущий элемент
     // удалить предыдущий элемент
     // как только вызвали update - текущий становится предыдущим
     const prevElement = this.getElement();
     const parent = prevElement.parentElement;
-    this.removeElement()
+    this.removeElement();
 
     const newElement = this.getElement();
-    // parent.replaceChild(newElement, prevElement)
+    parent.replaceChild(newElement, prevElement);
 
-    this.restoreHandlers()
-  }
-
-  restoreHandlers() {
-    //  восстановить обработчики
-    this._setInnerHandlers()
-  }
-
-  descriptionCommentHandler(evt) {
-    // если происходит ввод в текст ареа, то нам не нужно думать о перерисовке. Браузер сам думает
-    evt.preventDefault()
-    this.updateState({
-      description: evt.target.value
-    }, true)
-  }
-
-  // навесить удалённые обработчики
-  _setInnerHandlers() {
-
+    // Вызовем метод restoreHandlers после обновления в updateElement
+    this.restoreHandlers();
   }
 
   static parseFilmToData(film) {
@@ -356,10 +373,13 @@ export default class FilmDetails extends Abstract {
     * КомментText либо отображается, либо нет
     * */
     //  ф-ция задача которой взять информацию и сделать некий снимок её, превратив в состояние
-    return Object.assign({}, film,
+    return Object.assign(
+      {},
+      film,
       {
-        isComments: Boolean(film.comments.size === 0),
-      }
+        emotion: null,
+        commentText: null,
+      },
     );
   }
 
@@ -367,12 +387,25 @@ export default class FilmDetails extends Abstract {
   //  Некое состояние. Снимок информации на данный момент(состояние)
   // здесь состояние превращается в информацию. Эту инфу можно отдать презентору
   // Презентер может передать модели. Модель может сохранить
-  static ParseDataToFilm(data) {
-  //
-    if (!isComments) {
-    //   есть комменты, или нет
-    //  если комментов нет, то этот блок скрывать
+  static parseDataToFilm(data) {
+    data = Object.assign({}, data);
+
+    if (!data.emotion) {
+      data.emotion = null;
+    }
+    if (!data.commentText) {
+      data.commentText = null;
     }
 
+    delete data.emotion;
+    delete data.commentText;
+
+    return data;
+  }
+
+  reset(film){
+    this.updateState(
+      FilmDetails.parseFilmToData(film),
+    );
   }
 }
