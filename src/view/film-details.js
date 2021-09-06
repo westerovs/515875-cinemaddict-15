@@ -1,5 +1,14 @@
+/*
+* Обработчики должны добавляться во вьюхе, иначе это нарушение паттерна
+* Пользователь чего-то жмакает по попапу
+* это приводит к перерисовке формы
+* раз форма удаляется, то удаляются и обработчики
+* Тут же навешиваем обработчики через restoreAllHandlers
+* */
+
 import { isDay } from '../utils/days.js';
-import Abstract from './abstract.js';
+import { EMOTION } from '../utils/const.js';
+import Smart from './smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -38,8 +47,26 @@ const createGenreTemplate = (genre) => {
     </td>`;
 };
 
-const createFilmDetailsTemplate = (film) => {
-  const { id, comments, filmInfo, userDetails } = film;
+const createEmojiTemplate = () => {
+  let template = '';
+
+  EMOTION.forEach((emoji) => {
+    template += `
+       <input class="film-details__emoji-item visually-hidden"
+          name="comment-emoji"
+          type="radio"
+          id="emoji-${ emoji }"
+          value="${ emoji }">
+       <label class="film-details__emoji-label" for="emoji-${ emoji }">
+         <img src="./images/emoji/${ emoji }.png" width="30" height="30" alt="emoji ${ emoji }">
+       </label>`;
+  });
+
+  return template;
+};
+
+const createFilmDetailsTemplate = (state) => {
+  const { id, comments, filmInfo, userDetails, emotion, commentText } = state;
   const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
   const {
     title,
@@ -57,8 +84,9 @@ const createFilmDetailsTemplate = (film) => {
   } = filmInfo;
   const { date, releaseCountry } = release;
   const countComments = comments.size;
-
   const releaseDate = date.format('DD MMMM YYYY');
+
+  const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
 
   return (
     `<section class="film-details" id="${ id }">
@@ -152,32 +180,19 @@ const createFilmDetailsTemplate = (film) => {
             </ul>
 
             <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">
+                ${ emojiPic }
+              </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea
+                  class="film-details__comment-input"
+                  placeholder="Select reaction below and write comment here"
+                  name="comment">${ commentText ? commentText : '' }</textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${ createEmojiTemplate() }
               </div>
             </div>
           </section>
@@ -187,62 +202,147 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
-export default class FilmDetails extends Abstract {
+export default class FilmDetails extends Smart {
   constructor(film) {
     super();
-    this._film = film;
-    this._toCloseClickHandler = this._toCloseClickHandler.bind(this);
+    this._state = FilmDetails.parseFilmToData(film);
+
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
+    this._emotionClickHandler = this._emotionClickHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
+    this.setInnerHandlers();
+
+    this._scrollPosition = 0;
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._state);
   }
 
-  _toCloseClickHandler() {
-    this._callback.click();
+  _closeDetailsClickHandler() {
+    this._callback.toCloseClick();
   }
 
   _watchListClickHandler() {
-    this._callback.clickwatchList();
+    this._callback.watchListClick(this._state);
   }
 
   _watchedClickHandler() {
-    this._callback.clickWatched();
+    this._callback.watchedClick(this._state);
   }
 
   _favoriteClickHandler() {
-    this._callback.clickFavorite();
+    this._callback.favoriteClick(this._state);
   }
 
-  setToCloseClickHandler(callback) {
-    this._callback.click = callback;
+  _emotionClickHandler(evt) {
+    evt.preventDefault();
+    this._scrollPosition = this.getElement().scrollTop;
+
+    this.updateState({ emotion: evt.target.value });
+
+    this.getElement().scrollTop = this._scrollPosition;
+
+    const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
+    emojiItems.forEach((emotion) => {
+      if(emotion.value === evt.target.value){
+        emotion.setAttribute('checked', 'true');
+      }
+    });
+  }
+
+  _commentInputHandler(evt) {
+    this.updateState({ commentText: evt.target.value }, true);
+  }
+
+  setCloseDetailsClickHandler(callback) {
+    this._callback.toCloseClick = callback;
     const closeBtn = this.getElement().querySelector('.film-details__close-btn');
 
-    closeBtn.addEventListener('click', this._toCloseClickHandler);
+    closeBtn.addEventListener('click', this._closeDetailsClickHandler);
   }
 
-  // *** ↓ handle controls ↓ ***
   setWatchListClickHandler(callback) {
-    this._callback.clickwatchList = callback;
+    this._callback.watchListClick = callback;
 
     const watchlist = this.getElement().querySelector('.film-details__control-button--watchlist');
     watchlist.addEventListener('click', this._watchListClickHandler);
   }
 
   setWatchedClickHandler(callback) {
-    this._callback.clickWatched = callback;
+    this._callback.watchedClick = callback;
 
     const watched = this.getElement().querySelector('.film-details__control-button--watched');
     watched.addEventListener('click', this._watchedClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
-    this._callback.clickFavorite = callback;
+    this._callback.favoriteClick = callback;
 
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
+
+  setInnerHandlers() {
+    const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
+    const textarea = this.getElement().querySelector('.film-details__comment-input');
+
+    emoji.forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
+    textarea.addEventListener('input', this._commentInputHandler);
+  }
+
+  restoreAllHandlers() {
+    this.setInnerHandlers();
+
+    this.setCloseDetailsClickHandler(this._callback.toCloseClick);
+    this.setWatchListClickHandler(this._callback.watchListClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
+  reset(film) {
+    this.updateState(
+      FilmDetails.parseFilmToData(film),
+    );
+  }
+
+  static parseFilmToData(film) {
+    //  ф-ция задача которой взять информацию и сделать некий снимок её, превратив в состояние
+    return Object.assign(
+      {},
+      film,
+      {
+        emotion: null,
+        commentText: null,
+      },
+    );
+  }
+
+  static parseDataToFilm(data) {
+    // todo пока не нашёл где это применить. Думаю позже понадобится, при сохранении коммента.
+
+    /*
+      под data, мы понимаем данные которые есть в самом компоненте
+      Снимок информации на данный момент(состояние)
+      здесь состояние превращается в информацию. Эту инфу можно отдать презентору
+      Презентер может передать модели. Модель может сохранить...
+    */
+    data = Object.assign({}, data);
+
+    if (!data.emotion) {
+      data.emotion = null;
+    }
+    if (!data.commentText) {
+      data.commentText = null;
+    }
+
+    delete data.emotion;
+    delete data.commentText;
+
+    return data;
+  }
+
 }

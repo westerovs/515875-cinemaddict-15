@@ -9,7 +9,7 @@ const Films = {
   TOTAL_MOVIES: 9999,
 };
 
-const ExtraTypeFilms = (films) => ({
+const getExtraTypeFilms = (films) => ({
   topRated: films
     .slice()
     .sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
@@ -25,6 +25,13 @@ const SortType = {
   DATE: 'date',
   RATING: 'rating',
 };
+
+const EMOTION = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry',
+];
 
 const COUNTRIES = [
   'USA',
@@ -47,5 +54,6 @@ export {
   COUNTRIES,
   GENRES,
   Films,
-  ExtraTypeFilms
+  getExtraTypeFilms,
+  EMOTION
 };
