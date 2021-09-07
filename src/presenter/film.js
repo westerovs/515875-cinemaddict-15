@@ -2,9 +2,11 @@
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
 import { removeComponent, render, replace } from '../utils/render.js';
-import { observer } from '../utils/observer.js';
+import AbstractObserver from '../utils/abstract/abstract-observer.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
+
+const observer = new AbstractObserver();
 
 export default class Film {
   constructor(filmContainer, handlerFilmsUpdate) {
@@ -34,7 +36,7 @@ export default class Film {
     this._filmDetailsComponent = new FilmDetailsView(film);
 
     this._addHandlers();
-    observer.addObserver(this._destroyFilmDetails);
+    observer.add(this._destroyFilmDetails);
 
     // [1] если первый init
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
