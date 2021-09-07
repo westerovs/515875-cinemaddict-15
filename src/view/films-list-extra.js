@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import Abstract from '../utils/abstract/abstract.js';
 
 const createFilmsListExtraTemplate = (title, type) => (
   `<section class="films-list films-list--extra">

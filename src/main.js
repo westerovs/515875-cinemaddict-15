@@ -1,5 +1,5 @@
-import { generateFilm } from './mock/film.js';
-import { toFiltersCount } from './mock/filter.js';
+import { generateFilm } from './utils/mock/film.js';
+import { toFiltersCount } from './utils/mock/filter.js';
 import { render } from './utils/render.js';
 import { Films } from './utils/const.js';
 

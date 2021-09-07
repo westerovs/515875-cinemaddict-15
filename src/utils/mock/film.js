@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
-import { getRandomNumber, getRandomItem, shuffleArr } from '../utils/random.js';
-import { getRandomDate } from '../utils/days.js';
-import { COUNTRIES, GENRES } from '../utils/const.js';
+import { getRandomNumber, getRandomItem, shuffleArr } from '../random.js';
+import { getRandomDate } from '../days.js';
+import { COUNTRIES, GENRES } from '../const.js';
 import { getComments } from './comments.js';
 
 const generateRandomBoolean = () => !!getRandomNumber(0, 1);

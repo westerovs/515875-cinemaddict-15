@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import Abstract from '../utils/abstract/abstract.js';
 
 const createNoFilmLsTemplate = () => (
   `<section class="films-list">

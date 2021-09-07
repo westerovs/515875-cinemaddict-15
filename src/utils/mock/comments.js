@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
-import { getRandomNumber, getRandomItem } from '../utils/random.js';
-import { getRandomDateComment } from '../utils/days.js';
-import { EMOTION } from '../utils/const.js';
+import { getRandomNumber, getRandomItem } from '../random.js';
+import { getRandomDateComment } from '../days.js';
+import { EMOTION } from '../const.js';
 
 const filmDesc = [
   'Interesting setting and a good cast',

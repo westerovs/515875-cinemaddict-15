@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import Abstract from '../utils/abstract/abstract.js';
 import { getRandomNumber } from '../utils/random.js';
 
 const viewed = getRandomNumber(0, 31);

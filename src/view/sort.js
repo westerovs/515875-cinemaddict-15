@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import Abstract from '../utils/abstract/abstract.js';
 import { SortType } from '../utils/const.js';
 
 const createSortingTemplate = () => (

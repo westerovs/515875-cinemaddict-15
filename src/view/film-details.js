@@ -8,7 +8,7 @@
 
 import { isDay } from '../utils/days.js';
 import { EMOTION } from '../utils/const.js';
-import Smart from './smart.js';
+import Smart from '../utils/abstract/smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';

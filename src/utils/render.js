@@ -2,7 +2,7 @@
 * Методы для работы с DOM
 * */
 
-import Abstract from '../view/abstract.js';
+import Abstract from './abstract/abstract.js';
 
 const renderPosition = {
   AFTERBEGIN: 'afterbegin',
