@@ -1,6 +1,8 @@
 /*
 * главный презентер
 * */
+
+/* eslint-disable */
 import dayjs from 'dayjs';
 import { Films } from '../utils/const.js';
 import { render, removeComponent, update } from '../utils/render.js';
@@ -15,9 +17,9 @@ import ShowMoreBtnView from '../view/show-more-btn.js';
 import NoFilmsView from '../view/no-films.js';
 
 export default class Movies {
-  constructor(mainElement) {
+  constructor(mainElement, model) {
     this._mainElement = mainElement;
-
+    this._filmModel = model;
     // ↓ запоминаем все созданные презентеры ↓
     this._filmPresenters = new Map();
     this._filmPresentersExtra = {
@@ -47,15 +49,22 @@ export default class Movies {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(films) {
-    this._films = films.slice();
+  init() {
+    this._films = this._getFilms();
     this._filmsExtra = {
-      topRated: getExtraTypeFilms(films).topRated,
-      mostCommented: getExtraTypeFilms(films).mostCommented,
+      topRated: getExtraTypeFilms(this._films).topRated,
+      mostCommented: getExtraTypeFilms(this._films).mostCommented,
     };
-
-    this._defaultSort = films.slice();
+    this._defaultSort = this._films.slice();
     this._renderBoard();
+  }
+
+  _getFilms() {
+    // учитывает сортировку !
+
+    // повышает уровень абстракции
+    // позволяет проводить манипуляции с задачами, какие нам нужны в презенторе в одном месте
+    return this._filmModel.getFilms();
   }
 
   // главный метод для начала работы модуля

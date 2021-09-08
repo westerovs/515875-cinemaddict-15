@@ -4,19 +4,22 @@
 
 export default class AbstractObserver {
   constructor() {
-    this._observers = [];
+    this._observers = new Set();
   }
 
-  add(callback) {
-    this._observers.push(callback);
+  add(observer) {
+    this._observers.add(observer);
   }
 
-  // Чтобы перестать наблюдать, каждый подписчик должен передать в метод remove тот же callback.
-  remove(callback) {
-    this._observers = this._observers.filter((callbackInStock) => callbackInStock !== callback);
+  remove(observer) {
+    this._observers.delete(observer);
   }
 
-  notify() {
-    this._observers.forEach((callback) => callback());
+  notify(event, payload) {
+    // event - кастомный эвент событие (тип обновления ) Шпионский жучок, который будет сам observer прокидывать
+    // payload - полезная нагрузка ( данные ). Хранятся в модели
+    // когда модель говорит презенторам, что произошло что-то, она будет сообщать
+    // тип события и данные
+    this._observers.forEach((observer) => observer(event, payload));
   }
 }

@@ -3,7 +3,7 @@ import { toFiltersCount } from './utils/mock/filter.js';
 import { render } from './utils/render.js';
 import { Films } from './utils/const.js';
 
-import MoviesModel from './model/movies.js';
+import MoviesModel from './model/movies-model.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import FooterStatisticView from './view/footer-statistic.js';
@@ -22,6 +22,7 @@ render(siteMainElement, new FilterView(filters));
 render(siteFooterStatistics, new FooterStatisticView(Films.TOTAL_MOVIES));
 
 const moviesModel = new MoviesModel();
+moviesModel.setFilms(films);
 
-const moviesPresenter = new MoviesPresenter(siteMainElement);
-moviesPresenter.init(moviesModel.setFilms(films));
+const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel);
+moviesPresenter.init();
