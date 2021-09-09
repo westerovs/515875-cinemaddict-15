@@ -5,7 +5,7 @@
 /* eslint-disable */
 import dayjs from 'dayjs';
 import { Films, SortType } from '../utils/const.js';
-import { render, removeComponent, update } from '../utils/render.js';
+import { render, removeComponent } from '../utils/render.js'; // убрал метод updateItem
 import { getExtraTypeFilms } from '../utils/const.js';
 
 import FilmPresenter from './film.js';
@@ -19,7 +19,7 @@ import NoFilmsView from '../view/no-films.js';
 export default class Movies {
   constructor(mainElement, model) {
     this._mainElement = mainElement;
-    this._filmModel = model;
+    this._filmModel = model; // - Переведем получение задач в презентере на модель.
     this._filmsExtra = null;
 
     // ↓ запоминаем все созданные презентеры ↓
@@ -40,8 +40,6 @@ export default class Movies {
     this._topRatedFilmsList = null;
     this._mostCommentedFilmsList = null;
     this._currentSortType = SortType.DEFAULT;
-
-    this._initCountFilms = Films.SHOW_FILMS;
     this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
@@ -50,13 +48,17 @@ export default class Movies {
   }
 
   init() {
+    // убрал получение моков
     this._renderBoard();
+    this._renderFilmsList();
   }
 
+  // - В методе получения задач из модели опишем условие, чтобы учитывалась выбранная сортировка.
+  // Теперь, если какой-то метод в нашем презентере захочет получить список задач из модели, он получит их в нужном порядке
   _getFilms() {
-    // учитывает сортировку !
-    // повышает уровень абстракции
     // позволяет проводить манипуляции с задачами, какие нам нужны в презенторе в одном месте
+    // Переведем получение задач в презентере на модель.
+    // Теперь моки напрямую в презентере не используются, только модель
     const filmCards = this._filmModel.getFilms();
     this._filmsExtra = {
       topRated: getExtraTypeFilms(filmCards).topRated,
@@ -65,14 +67,11 @@ export default class Movies {
 
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        console.log(`sort default`)
-        return filmCards;
+        return this._filmModel.getFilms();
       case SortType.DATE:
-        console.log(`sort date`)
         return filmCards
           .sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
       case SortType.RATING:
-        console.log(`sort rating`)
         return filmCards
           .sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
     }
@@ -80,10 +79,10 @@ export default class Movies {
 
   // главный метод для начала работы модуля
   _renderBoard() {
-    // если фильмов нет
     const filmCards = this._getFilms();
     const filmCardsCount = filmCards.length;
 
+    // если фильмов нет
     if (!filmCardsCount) {
       this._renderNoFilms();
       return;
@@ -93,8 +92,6 @@ export default class Movies {
 
     render(this._mainElement, this._filmsBoardComponent);
     this._filmsBoard = this._mainElement.querySelector('.films');
-
-    this._renderFilmsList();
   }
 
   _renderNoFilms() {
@@ -104,23 +101,6 @@ export default class Movies {
   _renderSort() {
     render(this._mainElement, this._sortComponent);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
-  _clearFilmsList() {
-    console.log('clear film list')
-    this._filmPresenters.forEach((presenter) => presenter._destroy());
-    this._filmPresenters.clear();
-
-    Object.values(this._filmPresentersExtra)
-      .forEach((extra) => {
-        extra.forEach((presenter) => presenter._destroy());
-        extra.clear();
-      });
-
-    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
-    removeComponent(this._showMoreBtnComponent);
-
-    console.log(this._getFilms())
   }
 
   // [1]
@@ -136,10 +116,11 @@ export default class Movies {
 
   // [2]
   _renderAllFilms(firstInit = false) {
+    console.log('!!! render all !!!');
     const filmsCount = this._getFilms().length;
-    const films = this._getFilms().slice(0, Math.min(filmsCount, this._initCountFilms));
+    const films = this._getFilms().slice(0, Math.min(filmsCount, Films.SHOW_FILMS));
 
-    this._renderFilms(this._filmsListMainContainer, films)
+    this._renderFilms(this._filmsListMainContainer, films);
     this._renderExtraFilmsContainer(firstInit);
 
     // show more cards
@@ -149,8 +130,11 @@ export default class Movies {
   }
 
   // [3]
+  // Упростим метод _renderTasks: теперь он получает не диапазон,
+  // а сразу массив задач, которые нужно отрендерить, потому что мы отказались от свойства this.films (моков)
+  // и больше неоткуда брать задачи по диапазону
   _renderFilms(container, films) {
-    films.forEach(film => this._renderFilmPresenter(container, film))
+    films.forEach(film => this._renderFilmPresenter(container, film));
   }
 
   // [4]
@@ -210,13 +194,8 @@ export default class Movies {
   }
 
   // handlers ↓
-  _handleSortTypeChange(target) {
-    if (this._currentSortType === target.dataset.sortType) {
-      console.log('AGA ! this._currentSortType === sortType')
-      return;
-    }
-
-    this._currentSortType = target.dataset.sortType;
+  _handleSortTypeChange(sortType) {
+    this._currentSortType = sortType;
 
     this._clearFilmsList();
     this._renderAllFilms();
@@ -224,20 +203,21 @@ export default class Movies {
 
   _handleLoadMoreBtnClick() {
     const filmsCount = this._getFilms().length;
-    const newRenderedTaskCount = Math.min(filmsCount, this._renderedFilmsCount + Films.FILMS_LOAD_MORE);
-    const films = this._getFilms().slice(this._renderedFilmsCount, newRenderedTaskCount);
+    const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + Films.FILMS_LOAD_MORE);
+    const films = this._getFilms().slice(this._renderedFilmsCount, newRenderedFilmCount);
 
     this._renderFilms(this._filmsListMainContainer, films);
-    this._renderedFilmsCount += Films.FILMS_LOAD_MORE;
+    this._renderedFilmsCount = newRenderedFilmCount;
 
     // удаление кнопки
-    if (this._renderedFilmsCount >= this._getFilms().length) {
+    if (this._renderedFilmsCount >= filmsCount) {
       this._showMoreBtnComponent.getElement().removeEventListener('click', this._handleLoadMoreBtnClick);
       removeComponent(this._showMoreBtnComponent);
     }
   }
 
   _handleFilmsUpdate(updatedFilm) {
+    // аналог _handleTaskChange
     // Здесь будем вызывать обновление модели
     // Вызывается в Film презентер, принимает обновлённые данные
 
@@ -254,5 +234,38 @@ export default class Movies {
     if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
       this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
     }
+  }
+
+  _clearFilmsList() {
+    this._filmPresenters.forEach((presenter) => presenter._destroy());
+    this._filmPresenters.clear();
+
+    Object.values(this._filmPresentersExtra).forEach((extra) => {
+      extra.forEach((presenter) => presenter._destroy());
+      extra.clear();
+    });
+
+    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
+    removeComponent(this._showMoreBtnComponent);
+  }
+
+  // updateType - жучок
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // обрабатывает события на вьюхе, он будет вызывать updateFilm
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+
+  }
+
+  // обработчик-наблюдатель который будет реагировать на изменения модели
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 }

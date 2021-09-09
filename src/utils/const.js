@@ -26,6 +26,19 @@ const SortType = {
   RATING: 'rating',
 };
 
+const UserAction = {
+  UPDATE_TASK: 'UPDATE_TASK',
+  ADD_TASK: 'ADD_TASK',
+  DELETE_TASK: 'DELETE_TASK',
+};
+
+// семантическое версионирование
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 const EMOTION = [
   'smile',
   'sleeping',
@@ -51,6 +64,8 @@ const GENRES = [
 
 export {
   SortType,
+  UserAction,
+  UpdateType,
   COUNTRIES,
   GENRES,
   Films,

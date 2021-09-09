@@ -20,8 +20,8 @@ export default class Sort extends Abstract {
     return createSortingTemplate();
   }
 
-  // todo - ('A') так лучше никогда не делать. Сделать проверку на класс
   _sortTypeChangeHandler(evt) {
+    // todo - ('A') так лучше никогда не делать. Сделать проверку на класс
     if (evt.target !== evt.target.closest('A')) { return; }
     if (evt.target.classList.contains('sort__button--active')) { return; }
 
@@ -30,7 +30,7 @@ export default class Sort extends Abstract {
       evt.target.classList.add('sort__button--active');
     }
 
-    this._callback.sortCallback(evt.target);
+    this._callback.sortCallback(evt.target.dataset.sortType);
   }
 
   setSortTypeChangeHandler(callback) {
