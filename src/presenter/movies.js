@@ -43,7 +43,7 @@ export default class Movies {
     this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
-    this._handleFilmsUpdate = this._handleFilmsUpdate.bind(this);
+    this._handleModalChange = this._handleModalChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -139,7 +139,7 @@ export default class Movies {
 
   // [4]
   _renderFilmPresenter(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmsUpdate); // принимает ф-цию update
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction); // принимает ф-цию update
     filmPresenter.init(film);
 
     switch (container) {
@@ -193,6 +193,19 @@ export default class Movies {
     this._showMoreBtnComponent.setClickHandler(this._handleLoadMoreBtnClick);
   }
 
+  _clearFilmsList() {
+    this._filmPresenters.forEach((presenter) => presenter._destroy());
+    this._filmPresenters.clear();
+
+    Object.values(this._filmPresentersExtra).forEach((extra) => {
+      extra.forEach((presenter) => presenter._destroy());
+      extra.clear();
+    });
+
+    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
+    removeComponent(this._showMoreBtnComponent);
+  }
+
   // handlers ↓
   _handleSortTypeChange(sortType) {
     this._currentSortType = sortType;
@@ -216,7 +229,7 @@ export default class Movies {
     }
   }
 
-  _handleFilmsUpdate(updatedFilm) {
+  _handleModalChange(updatedFilm) {
     // аналог _handleTaskChange
     // Здесь будем вызывать обновление модели
     // Вызывается в Film презентер, принимает обновлённые данные
@@ -236,19 +249,6 @@ export default class Movies {
     }
   }
 
-  _clearFilmsList() {
-    this._filmPresenters.forEach((presenter) => presenter._destroy());
-    this._filmPresenters.clear();
-
-    Object.values(this._filmPresentersExtra).forEach((extra) => {
-      extra.forEach((presenter) => presenter._destroy());
-      extra.clear();
-    });
-
-    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
-    removeComponent(this._showMoreBtnComponent);
-  }
-
   // updateType - жучок
   _handleViewAction(actionType, updateType, update) {
     console.log(actionType, updateType, update);
@@ -257,7 +257,6 @@ export default class Movies {
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
-
   }
 
   // обработчик-наблюдатель который будет реагировать на изменения модели

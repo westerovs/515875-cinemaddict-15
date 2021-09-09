@@ -1,19 +1,27 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
+/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
+import { UserAction, UpdateType } from '../utils/const.js';
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
 const observer = new AbstractObserver();
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class Film {
-  constructor(filmContainer, handlerFilmsUpdate) {
+  constructor(filmContainer, _handleModalChange) {
     this._filmContainer = filmContainer;
-    this._handleFilmsUpdate = handlerFilmsUpdate;
+    this._handleModalChange = _handleModalChange;
 
     this._film = null;
+    this._mode = Mode.DEFAULT;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
 
@@ -51,6 +59,18 @@ export default class Film {
     if (document.contains(prevFilmDetailsComponent.getElement())) {
       replace(this._filmDetailsComponent, prevFilmDetailsComponent);
       this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
+    }
+
+    // todo порефакторить
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._filmCardComponent, prevFilmComponent);
+      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
+    }
+
+    if (this._mode === Mode.EDITING) {
+      replace(this._filmCardComponent, prevFilmComponent);
+      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     removeComponent(prevFilmComponent);
@@ -113,7 +133,11 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleFilmsUpdate(updatedFilm);
+    this._handleModalChange(
+      UpdateType.MINOR,
+      UpdateType.MINOR,
+      updatedFilm
+    );
   }
 
   _handleWatchedClick() {
@@ -127,7 +151,11 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleFilmsUpdate(updatedFilm);
+    this._handleModalChange(
+      UpdateType.MINOR,
+      UpdateType.MINOR,
+      updatedFilm
+    );
   }
 
   _handleFavoriteClick() {
@@ -141,11 +169,54 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleFilmsUpdate(updatedFilm);
+    this._handleModalChange(
+      UpdateType.MINOR,
+      UpdateType.MINOR,
+      updatedFilm
+    );
   }
 
   _destroy() {
     removeComponent(this._filmCardComponent);
     removeComponent(this._filmDetailsComponent);
+  }
+
+  resetView() {
+    // if (this._mode !== Mode.DEFAULT) {
+    //   this._replaceFormToCard();
+    // }
+  }
+
+  setViewState(state) {
+    // if (this._mode === Mode.DEFAULT) {
+    //   return;
+    // }
+    //
+    // const resetFormState = () => {
+    //   this._taskEditComponent.updateData({
+    //     isDisabled: false,
+    //     isSaving: false,
+    //     isDeleting: false,
+    //   });
+    // };
+    //
+    // switch (state) {
+    //   case State.SAVING:
+    //     this._taskEditComponent.updateData({
+    //       isDisabled: true,
+    //       isSaving: true,
+    //     });
+    //     break;
+    //   case State.DELETING:
+    //     this._taskEditComponent.updateData({
+    //       isDisabled: true,
+    //       isDeleting: true,
+    //     });
+    //     break;
+    //   case State.ABORTING:
+    //     this._taskComponent.shake(resetFormState);
+    //     this._taskEditComponent.shake(resetFormState);
+    //     break;
+    // }
   }
 }
