@@ -11,7 +11,7 @@ const observer = new AbstractObserver();
 export default class Film {
   constructor(filmContainer, handlerFilmsUpdate) {
     this._filmContainer = filmContainer;
-    this._handlerFilmsUpdate = handlerFilmsUpdate;
+    this._handleFilmsUpdate = handlerFilmsUpdate;
 
     this._film = null;
     this._filmCardComponent = null;
@@ -113,7 +113,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleFilmsUpdate(updatedFilm);
   }
 
   _handleWatchedClick() {
@@ -127,7 +127,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleFilmsUpdate(updatedFilm);
   }
 
   _handleFavoriteClick() {
@@ -141,7 +141,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleFilmsUpdate(updatedFilm);
   }
 
   _destroy() {
