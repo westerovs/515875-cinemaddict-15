@@ -4,6 +4,7 @@ import { render } from './utils/render.js';
 import { Films } from './utils/const.js';
 
 import MoviesModel from './model/movies-model.js';
+import FilterModel from './model/filter.js';
 import RankView from './view/rank.js';
 import FilterView from './view/filter.js';
 import FooterStatisticView from './view/footer-statistic.js';
@@ -23,6 +24,8 @@ render(siteFooterStatistics, new FooterStatisticView(Films.TOTAL_MOVIES));
 
 const moviesModel = new MoviesModel();
 moviesModel.setFilms(films);
+
+const filterModel = new FilterModel();
 
 const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel);
 moviesPresenter.init();
