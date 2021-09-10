@@ -47,19 +47,19 @@ const removeComponent = (component) => {
 
 // todo / слишком сложно / Лучше сделать нормально
 // обновляет список фильмов, или возвращает как есть
-const update = (items, updateItem) => {
-  const index = items.findIndex((item) => item.id === updateItem.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    updateItem,
-    ...items.slice(index + 1),
-  ];
-};
+// const update = (items, updateItem) => {
+//   const index = items.findIndex((item) => item.id === updateItem.id);
+//
+//   if (index === -1) {
+//     return items;
+//   }
+//
+//   return [
+//     ...items.slice(0, index),
+//     updateItem,
+//     ...items.slice(index + 1),
+//   ];
+// };
 
 const replace = (newChild, oldChild) => {
   if (oldChild instanceof Abstract) {
@@ -84,6 +84,5 @@ export {
   render,
   createElement,
   removeComponent,
-  update,
   replace
 };

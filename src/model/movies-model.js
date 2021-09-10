@@ -1,7 +1,6 @@
 /*
 * главный класс Model
 * */
-/* eslint-disable */
 
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 

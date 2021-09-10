@@ -203,18 +203,18 @@ export default class Movies {
     this._showMoreBtnComponent.setClickHandler(this._handleLoadMoreBtnClick);
   }
 
-  _clearFilmsList() {
-    this._filmPresenters.forEach((presenter) => presenter._destroy());
-    this._filmPresenters.clear();
-
-    Object.values(this._filmPresentersExtra).forEach((extra) => {
-      extra.forEach((presenter) => presenter._destroy());
-      extra.clear();
-    });
-
-    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
-    removeComponent(this._showMoreBtnComponent);
-  }
+  // _clearFilmsList() {
+  //   // this._filmPresenters.forEach((presenter) => presenter._destroy());
+  //   // this._filmPresenters.clear();
+  //   //
+  //   // Object.values(this._filmPresentersExtra).forEach((extra) => {
+  //   //   extra.forEach((presenter) => presenter._destroy());
+  //   //   extra.clear();
+  //   // });
+  //   //
+  //   // this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
+  //   // removeComponent(this._showMoreBtnComponent);
+  // }
 
   // handlers ↓
   _handleSortTypeChange(sortType) {

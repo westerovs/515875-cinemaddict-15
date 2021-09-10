@@ -26,24 +26,24 @@ const SortType = {
   RATING: 'rating',
 };
 
-const UserAction = {
-  UPDATE_TASK: 'UPDATE_TASK',
-  ADD_TASK: 'ADD_TASK',
-  DELETE_TASK: 'DELETE_TASK',
-};
-
 // семантическое версионирование
 const UpdateType = {
-  PATCH: 'PATCH',
-  MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
 };
 
-export const FilterType = {
+const FilterType = {
   ALL: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',
+};
+
+const UserAction = {
+  UPDATE_FILM_CARD: 'update_film_card',
+  ADD_NEW_COMMENT: 'add_new_comment',
+  DELETE_COMMENT: 'delete_comment',
 };
 
 const EMOTION = [
@@ -54,11 +54,11 @@ const EMOTION = [
 ];
 
 const COUNTRIES = [
-  'USA',
-  'ALBANIA',
-  'TAJIKISTAN',
-  'FINLAND',
-  'USSR',
+  'Usa',
+  'Albania',
+  'Tajikistan',
+  'Finland',
+  'Ussr',
 ];
 
 const GENRES = [
@@ -69,13 +69,20 @@ const GENRES = [
   'Historical',
 ];
 
+const KeyCodes = {
+  ESCAPE : 'Escape',
+  ENTER: 'Enter',
+};
+
 export {
   SortType,
+  FilterType,
   UserAction,
   UpdateType,
   COUNTRIES,
   GENRES,
   Films,
   getExtraTypeFilms,
-  EMOTION
+  EMOTION,
+  KeyCodes
 };
