@@ -4,7 +4,7 @@
 
 /* eslint-disable */
 import dayjs from 'dayjs';
-import { Films, SortType } from '../utils/const.js';
+import { Films, SortType,  UpdateType, UserAction } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js'; // убрал метод updateItem
 import { getExtraTypeFilms } from '../utils/const.js';
 
@@ -29,11 +29,11 @@ export default class Movies {
       mostCommented: new Map(),
     };
 
-    this._sortComponent = new SortView();
     this._filmsBoardComponent = new FilmsBoardView();
     this._filmsListComponent = new FilmsListView();
-    this._showMoreBtnComponent = new ShowMoreBtnView();
     this._noFilmsComponent = new NoFilmsView();
+    this._sortComponent = null;
+    this._showMoreBtnComponent = null;
 
     this._filmsBoard = null;
     this._filmsListMainContainer = null;
@@ -99,8 +99,13 @@ export default class Movies {
   }
 
   _renderSort() {
-    render(this._mainElement, this._sortComponent);
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    render(this._mainElement, this._sortComponent);
   }
 
   // [1]
@@ -116,7 +121,6 @@ export default class Movies {
 
   // [2]
   _renderAllFilms(firstInit = false) {
-    console.log('!!! render all !!!');
     const filmsCount = this._getFilms().length;
     const films = this._getFilms().slice(0, Math.min(filmsCount, Films.SHOW_FILMS));
 
@@ -187,6 +191,12 @@ export default class Movies {
   }
 
   _renderLoadMoreBtn() {
+    if (this._showMoreBtnComponent !== null) {
+      this._showMoreBtnComponent = null;
+    }
+
+    this._showMoreBtnComponent = new ShowMoreBtnView();
+
     const filmsListMain = this._filmsBoard.querySelector('.films-list--main');
     render(filmsListMain, this._showMoreBtnComponent);
 
@@ -210,8 +220,11 @@ export default class Movies {
   _handleSortTypeChange(sortType) {
     this._currentSortType = sortType;
 
-    this._clearFilmsList();
-    this._renderAllFilms();
+    this._clearBoard({ resetRenderedTaskCount: true });
+    // this._renderAllFilms();
+    this._renderBoard();
+    // this._clearFilmsList();
+    // this._renderAllFilms();
   }
 
   _handleLoadMoreBtnClick() {
@@ -257,14 +270,71 @@ export default class Movies {
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
+
+    // Описываем все возможные пользовательские действия и все возможные реакции на них
+    switch (actionType) {
+      case UserAction.UPDATE_TASK:
+        this._filmModel.updateFilm(updateType, update);
+        break;
+      // case UserAction.ADD_TASK:
+      //   this._filmModel.addTask(updateType, update);
+      //   break;
+      // case UserAction.DELETE_TASK:
+      //   this._filmModel.deleteTask(updateType, update);
+      //   break;
+    }
   }
 
   // обработчик-наблюдатель который будет реагировать на изменения модели
+  // В зависимости от типа изменений решаем, что делать:
+  // - обновить часть списка (например, когда поменялось описание)
+  // - обновить список (например, когда задача ушла в архив)
+  // - обновить всю доску (например, при переключении фильтра)
   _handleModelEvent(updateType, data) {
     console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+
+    // Описываем все возможные пользовательские действия и все возможные реакции на них
+    switch (updateType) {
+      case UpdateType.PATCH:
+        // - обновить часть списка (например, когда поменялось описание)
+        this._filmPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        // - обновить список (например, когда задача ушла в архив)
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        // - обновить всю доску (например, при переключении фильтра)
+        this._clearBoard({ resetRenderedTaskCount: true, resetSortType: true });
+        this._renderBoard();
+        break;
+    }
+  }
+
+  // - Опишем новый метод _clearBoard для очистки доски: он умеет очищать список
+  // и (по необходимости) сбрасывать количество показанных задач или сортировку
+  _clearBoard({ resetRenderedTaskCount = false, resetSortType = false } = {}) {
+    const filmsCount = this._getFilms().length;
+
+    this._filmPresenters.forEach((presenter) => presenter.destroy());
+    this._filmPresenters.clear();
+
+    removeComponent(this._sortComponent);
+    removeComponent(this._noFilmsComponent);
+    removeComponent(this._showMoreBtnComponent);
+
+    if (resetRenderedTaskCount) {
+      this._renderedFilmsCount = Films.SHOW_FILMS;
+    } else {
+      // На случай, если перерисовка доски вызвана
+      // уменьшением количества задач (например, удаление или перенос в архив)
+      // нужно скорректировать число показанных задач
+      this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
   }
 }
