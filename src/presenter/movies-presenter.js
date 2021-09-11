@@ -1,62 +1,14 @@
 /* eslint-disable */
 
 /*
- ===== главный презентер =====
-
-_getFilms()
-  - В методе получения задач из модели опишем условие, чтобы учитывалась выбранная сортировка.
-  Теперь, если какой-то метод в нашем презентере захочет получить список задач из модели,
-  он получит их в нужном порядке
-  позволяет проводить манипуляции с задачами, какие нам нужны в презенторе в одном месте
-  Переведем получение задач в презентере на модель.
-  Теперь моки напрямую в презентере не используются, только модель
-
-
-_renderFilms()
-   теперь он получает не диапазон, а сразу массив задач, которые нужно отрендерить,
-   потому что мы больше не получаем в init моки и больше неоткуда брать задачи по диапазону
-  WIP: отказавшись от моков "сломали" обновление данных, оно заработает снова после настройки датабиндинга с моделью
-
-
-_handleFilmChange(updatedFilm) {
-  Здесь будем вызывать обновление модели
-
-
-_handleModelEvent(updateType, data) {
-  обработчик-наблюдатель который будет реагировать на изменения модели
-  В зависимости от типа изменений решаем, что делать:
-    - обновить часть списка (например, когда поменялось описание)
-    - обновить список (например, когда задача ушла в архив)
-    - обновить всю доску (например, при переключении фильтра)
-
-
-_handleViewAction(actionType, updateType, update) {
-  обрабатывает события на вьюхе, он будет вызывать updateFilm
-    actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    updateType - жучок тип изменений, нужно чтобы понять, что после нужно обновить
-    update - обновленные данные
-
-
-_clearBoard({ resetRenderedTaskCount = false, resetSortType = false } = {}) {
-  для очистки доски: он умеет очищать список
-  и (по необходимости) сбрасывать количество показанных задач или сортировку
-
-
-
-7.1.5
-renderBoard объединим с _renderTaskList
-и тоже научим отрисовывать не просто TASK_COUNT_PER_STEP задач, а столько - сколько было до перерисовки
-
-- В функции remove поддержим ситуацию, когда пытаемся удалить null, то есть отсутствующий компонент
-
-- Шаблон сортировки научим учитывать выбранную и отмечать активный пункт.
-Теперь это возможно, потому что компонент сортировки перерисовывается с доской
-*/
+* ===== главный презентер =====
+* */
 
 import dayjs from 'dayjs';
 import { getExtraTypeFilms, Films, SortType,  UpdateType, UserAction } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js'; // удалил метод updateItem
 
+// presenter
 import FilmPresenter from './film.js';
 // view
 import SortView from '../view/sort.js';
@@ -66,10 +18,12 @@ import FilmsListExtraView from '../view/films-list-extra.js';
 import ShowMoreBtnView from '../view/show-more-btn.js';
 import NoFilmsView from '../view/no-films.js';
 
+
 export default class MoviesPresenter {
   constructor(mainElement, model) {
     this._mainElement = mainElement;
     this._filmModel = model; // - Переведем получение задач в презентере на модель.
+
     this._filmsExtra = null;
 
     // ↓ запоминаем все созданные презентеры ↓
@@ -88,7 +42,7 @@ export default class MoviesPresenter {
     this._topRatedFilmsList = null;
     this._mostCommentedFilmsList = null;
     this._currentSortType = SortType.DEFAULT;
-    this._renderedFilmsCount = Films.FILMS_LOAD_MORE;
+    this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
 
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
@@ -96,15 +50,15 @@ export default class MoviesPresenter {
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    //  ------
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    //  ------ callbacks ↓
     this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._filmModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    // убрал получение моков
     this._renderBoard();
-    this._renderFilmsList();
   }
 
   _getFilms() {
@@ -127,6 +81,7 @@ export default class MoviesPresenter {
     }
   }
 
+  // ----------- RENDERS ↓
   // главный метод для начала работы модуля
   _renderBoard() {
     // если фильмов нет
@@ -139,74 +94,42 @@ export default class MoviesPresenter {
 
     render(this._mainElement, this._filmsBoardComponent);
     this._filmsBoard = this._mainElement.querySelector('.films');
+    this._renderFilmList(true);
   }
 
-  _renderNoFilms() {
-    render(this._mainElement, this._noFilmsComponent);
-  }
-
-  // sort ↓
-  _renderSort() {
-    if (this._sortComponent !== null) {
-      this._sortComponent = null;
-    }
-
-    this._sortComponent = new SortView(this._currentSortType);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-
-    render(this._mainElement, this._sortComponent);
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-
-    this._currentSortType = sortType;
-    // this._clearBoard({ resetRenderedTaskCount: true });
-    this._renderAllFilms(); // this._renderBoard(); // ?
-  }
-
-  // [1]
-  _renderFilmsList() {
+  // [1] нужно удалить ? аналог _renderTaskList см commit 7.1.6
+  // - рендерит 3 секции: main и extra/extra
+  _renderFilmList(firstInit) {
     // render центрального контейнера для фильмов
     render(this._filmsBoard, this._filmsListComponent);
 
     const filmsListMain = this._filmsBoard.querySelector('.films-list--main');
     this._filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    this._renderAllFilms(true);
+    // _renderAllFilms() { ↓
+    const filmsCount = this._getFilms().length;
+    const films = this._getFilms().slice(0, Math.min(filmsCount, Films.FILM_COUNT_PER_STEP));
+
+    this._renderFilms(this._filmsListMainContainer, films);
+    this._renderFilmListExtra(firstInit);
+
+    // show more cards
+    if (filmsCount > Films.FILM_COUNT_PER_STEP) {
+      this._renderLoadMoreBtn();
+    }
+  // }
   }
 
   // [2]
-  _renderAllFilms(firstInit = false) {
-    // аналог _renderBoard в taskmanagere
-    // Теперь, когда _renderBoard рендерит доску не только на старте,
-    // но и по ходу работы приложения, нужно заменить
-    // константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
-    // чтобы в случае перерисовки сохранить N-показанных карточек
-    const filmsCount = this._getFilms().length;
-    const films = this._getFilms().slice(0, Math.min(filmsCount, this._renderedFilmsCount));
-
-    this._renderFilms(this._filmsListMainContainer, films);
-    this._renderExtraFilmsContainer(firstInit);
-
-    // show more cards
-    if (filmsCount > Films.FILMS_LOAD_MORE) {
-      this._renderLoadMoreBtn();
-    }
-  }
-
-  // [3]
-  // Упростим метод _renderTasks: теперь он получает не диапазон,
+  // Упростим метод _renderFilms: теперь он получает не диапазон,
   // а сразу массив задач, которые нужно отрендерить, потому что мы отказались от свойства this.films (моков)
   // и больше неоткуда брать задачи по диапазону
   _renderFilms(container, films) {
-    films.forEach(film => this._renderFilmPresenter(container, film));
+    films.forEach(film => this._renderFilm(container, film));
   }
 
-  // [4]
-  _renderFilmPresenter(container, film) {
+  // [3]
+  _renderFilm(container, film) {
     const filmPresenter = new FilmPresenter(container, this._handleViewAction); // принимает ф-цию update
     filmPresenter.init(film);
 
@@ -225,8 +148,35 @@ export default class MoviesPresenter {
       }
     }
   }
+  // ----------- RENDERS ↑
 
-  _renderExtraFilmsContainer(firstInit = false) {
+
+  // ----------- SORT ↓
+  _renderSort() {
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._mainElement, this._sortComponent);
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    // this._clearBoard({ resetRenderedTaskCount: true });
+    this._renderFilmList(); // this._renderBoard(); // ?
+  }
+  // ----------- SORT ↑
+
+
+  // ----------- EXTRA ↓
+  _renderFilmListExtra(firstInit = false) {
     if (this._filmsExtra.topRated.some((film) => +film.filmInfo.totalRating !== 0)) {
       if (firstInit) {
         render(this._filmsBoard, new FilmsListExtraView('Top rated', 'rated'));
@@ -246,15 +196,17 @@ export default class MoviesPresenter {
   _renderAllExtraFilms(name) {
     switch (name) {
       case 'Top rated':
-        this._filmsExtra.topRated.forEach((film) => this._renderFilmPresenter(this._topRatedFilmsList, film));
+        this._filmsExtra.topRated.forEach((film) => this._renderFilm(this._topRatedFilmsList, film));
         break;
       case 'Most commented':
-        this._filmsExtra.mostCommented.forEach((film) => this._renderFilmPresenter(this._mostCommentedFilmsList, film));
+        this._filmsExtra.mostCommented.forEach((film) => this._renderFilm(this._mostCommentedFilmsList, film));
         break;
     }
   }
+  // ----------- EXTRA ↑
 
-  // load more ↓
+
+  // ----------- load more ↓
   _renderLoadMoreBtn() {
     if (this._showMoreBtnComponent !== null) {
       this._showMoreBtnComponent = null;
@@ -269,7 +221,7 @@ export default class MoviesPresenter {
 
   _handleLoadMoreBtnClick() {
     const filmsCount = this._getFilms().length;
-    const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + Films.FILMS_LOAD_MORE);
+    const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + Films.FILM_COUNT_PER_STEP);
     const films = this._getFilms().slice(this._renderedFilmsCount, newRenderedFilmCount);
 
     this._renderFilms(this._filmsListMainContainer, films);
@@ -281,39 +233,32 @@ export default class MoviesPresenter {
       removeComponent(this._showMoreBtnComponent);
     }
   }
+  // ----------- load more ↑
 
-  _handleFilmChange(updatedFilm) {
-    // Здесь будем вызывать обновление модели
 
-    // this._films = update(this._films, updatedFilm);
-    // this._currentSortType = update(this._currentSortType, updatedFilm);
-    // this._filmsExtra = getExtraTypeFilms(this._films);
-
-    if (this._filmPresenters.get(updatedFilm.id)) {
-      this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
-    }
-    if (this._filmPresentersExtra.topRated.get(updatedFilm.id)) {
-      this._filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
-    }
-    if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
-      this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
-    }
-  }
-
-  // ----------- new events
-  _handleViewAction(actionType, updateType, update) {
+  // ----------- ↓ NEW HANDLES ↓
+  _handleViewAction(actionType, updateType, updateElement) {
+    console.log('***')
     console.log('обрабатывает события на вьюхе, вызывает updateFilm');
+    console.log('actionType: ', actionType)
+    console.log('updateType: ', updateType)
+    console.log('updateElement: ', updateElement)
+    console.log('***')
+
 
     // Описываем все возможные пользовательские действия и все возможные реакции на них
+    // когда хотим в презенторе что-то изменить в модели, вызываем updateFilm, куда сообщаем тип и объект обновления ↓
+    // тип обновления - это абстрактный эвент
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._filmModel.updateFilm(updateType, update);
+        console.warn(updateType)
+        this._filmModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
-        this._filmModel.addComment(updateType, update);
+        this._filmModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmModel.deleteComment(updateType, update);
+        this._filmModel.deleteComment(updateType, updateElement);
         break;
     }
   }
@@ -339,8 +284,11 @@ export default class MoviesPresenter {
         break;
     }
   }
+  // ----------- ↑ NEW HANDLES ↑
 
-  // -------------------------
+
+  // ----------- other
+  // вместо _clearFilmList
   _clearBoard({ resetRenderedTaskCount = false, resetSortType = false } = {}) {
     // очищаем фильмы и экстра-фильмы
     this._filmPresenters.forEach((presenter) => presenter.destroy());
@@ -349,8 +297,6 @@ export default class MoviesPresenter {
       extra.forEach((presenter) => presenter._destroy());
       extra.clear();
     });
-
-    // this._renderedFilmsCount = Films.FILMS_LOAD_MORE; // ? раньше было в _clearList
 
     removeComponent(this._sortComponent);
     removeComponent(this._noFilmsComponent);
@@ -369,5 +315,29 @@ export default class MoviesPresenter {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+  }
+
+  // handleTaskChange ↓
+  _handleFilmChange(updatedFilm) {
+    // Здесь будем вызывать обновление модели
+
+    // this._films = update(this._films, updatedFilm);
+    // this._currentSortType = update(this._currentSortType, updatedFilm);
+    // this._filmsExtra = getExtraTypeFilms(this._films);
+
+    if (this._filmPresenters.get(updatedFilm.id)) {
+      this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this._filmPresentersExtra.topRated.get(updatedFilm.id)) {
+      this._filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
+      this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
+    }
+  }
+
+  //  ----------- utils и разная херня
+  _renderNoFilms() {
+    render(this._mainElement, this._noFilmsComponent);
   }
 }

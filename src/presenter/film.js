@@ -32,6 +32,10 @@ export default class Film {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+
   }
 
   init(film) {
@@ -44,7 +48,7 @@ export default class Film {
     this._filmDetailsComponent = new FilmDetailsView(film);
 
     this._addHandlers();
-    observer.add(this._destroyFilmDetails);
+    observer.addObserver(this._destroyFilmDetails);
 
     // [1] если первый init
     if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
@@ -83,7 +87,7 @@ export default class Film {
   }
 
   _renderFilmDetails() {
-    observer.notify(this._destroyFilmDetails);
+    observer._notify(this._destroyFilmDetails);
 
     render(document.body, this._filmDetailsComponent.getElement());
 
@@ -97,14 +101,17 @@ export default class Film {
   _addHandlers() {
     this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
 
-    // *** ↓ set handle details controls ↓ ***
-    this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    // // *** ↓ set handle controls ↓ ***
+    // // *** ↓ set handle film controls ↓ ***
     this._filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    // *** ↓ set handle pop-up controls ↓ ***
+    this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    this._filmDetailsComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._filmDetailsComponent.setFormSubmitHandler(this._handleFormSubmit);
   }
 
   _destroyFilmDetails() {
@@ -134,7 +141,7 @@ export default class Film {
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
     this._handleModalChange(
-      UpdateType.MINOR,
+      UserAction.UPDATE_FILM_CARD,
       UpdateType.MINOR,
       updatedFilm
     );
@@ -152,7 +159,7 @@ export default class Film {
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
     this._handleModalChange(
-      UpdateType.MINOR,
+      UserAction.UPDATE_FILM_CARD,
       UpdateType.MINOR,
       updatedFilm
     );
@@ -170,7 +177,7 @@ export default class Film {
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
     this._handleModalChange(
-      UpdateType.MINOR,
+      UserAction.UPDATE_FILM_CARD,
       UpdateType.MINOR,
       updatedFilm
     );
@@ -182,12 +189,14 @@ export default class Film {
   }
 
   resetView() {
+    console.log('resetView')
     // if (this._mode !== Mode.DEFAULT) {
     //   this._replaceFormToCard();
     // }
   }
 
   setViewState(state) {
+    console.log('setViewState')
     // if (this._mode === Mode.DEFAULT) {
     //   return;
     // }
@@ -218,5 +227,31 @@ export default class Film {
     //     this._taskEditComponent.shake(resetFormState);
     //     break;
     // }
+  }
+
+  _handleFormSubmit(update) {
+    console.log('_handleFormSubmit')
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
+
+    // const isMinorUpdate =
+    //   !isDatesEqual(this._task.dueDate, update.dueDate) ||
+    //   isTaskRepeating(this._task.repeating) !== isTaskRepeating(update.repeating);
+    //
+    // this._changeData(
+    //   UserAction.UPDATE_TASK,
+    //   isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+    //   update,
+    // );
+    // this._replaceFormToCard();
+  }
+
+  _handleDeleteClick(film) {
+    console.log('_handleDeleteClick')
+    // this._handleModalChange(
+    //   UserAction.DELETE_COMMENT,
+    //   UpdateType.MINOR,
+    //   film,
+    // );
   }
 }

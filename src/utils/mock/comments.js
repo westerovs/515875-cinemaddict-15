@@ -38,7 +38,7 @@ const filmComments = () => ({
 });
 
 const getComments = () => new Set(
-  new Array(getRandomNumber(0, 5))
+  new Array(getRandomNumber(0, 25))
     .fill('')
     .map(() => filmComments()),
 );

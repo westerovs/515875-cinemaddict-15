@@ -37,6 +37,10 @@ const createElement = (template) => {
 
 // Отрисовкой в DOM занимается не абстрактный класс, а utils. Поэтому utils и удаляет
 const removeComponent = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof Abstract)) {
     throw new Error('Возможно удалять только компоненты!');
   }
@@ -44,22 +48,6 @@ const removeComponent = (component) => {
   component.getElement().remove();
   component.removeElement();
 };
-
-// todo / слишком сложно / Лучше сделать нормально
-// обновляет список фильмов, или возвращает как есть
-// const update = (items, updateItem) => {
-//   const index = items.findIndex((item) => item.id === updateItem.id);
-//
-//   if (index === -1) {
-//     return items;
-//   }
-//
-//   return [
-//     ...items.slice(0, index),
-//     updateItem,
-//     ...items.slice(index + 1),
-//   ];
-// };
 
 const replace = (newChild, oldChild) => {
   if (oldChild instanceof Abstract) {

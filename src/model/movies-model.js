@@ -6,8 +6,8 @@
 updateFilm(updateType, updateElement)
   когда в презенторе хотим что-то изменить в модели, вызываем этот метод
   куда мы сообщаем тип обновления - сам объект обновления
+    updateType - вызывается в презенторе, это абстрактный event, его нет в модели, он никуда не записывается
 */
-
 
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 
@@ -26,7 +26,6 @@ export default class MoviesModel extends AbstractObserver {
   }
 
   updateFilm(updateType, updateElement) {
-    // updateType - вызывается в презенторе, это абстрактный event, его нет в модели, он никуда не записывается
     const index = this._films.findIndex((film) => film.id === updateElement.id);
 
     if (index === -1) {
@@ -39,7 +38,7 @@ export default class MoviesModel extends AbstractObserver {
       ...this._films.slice(index + 1),
     ];
 
-    this.notify(updateType, updateElement);
+    this._notify(updateType, updateElement);
   }
 
   addComment(updateType, updateElement) {
@@ -48,7 +47,7 @@ export default class MoviesModel extends AbstractObserver {
       ...this._tasks,
     ];
 
-    this.notify(updateType, updateElement);
+    this._notify(updateType, updateElement);
   }
 
   deleteComment(updateType, updateElement) {
@@ -63,6 +62,6 @@ export default class MoviesModel extends AbstractObserver {
       ...this._tasks.slice(index + 1),
     ];
 
-    this.notify(updateType);
+    this._notify(updateType);
   }
 }
