@@ -28,22 +28,22 @@ const SortType = {
 
 // семантическое версионирование
 const UpdateType = {
-  PATCH: 'patch',
-  MINOR: 'minor',
-  MAJOR: 'major',
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
 const FilterType = {
-  ALL: 'all',
-  WATCHLIST: 'watchlist',
-  HISTORY: 'history',
-  FAVORITES: 'favorites',
+  ALL: 'ALL',
+  WATCHLIST: 'WATCHLIST',
+  HISTORY: 'HISTORY',
+  FAVORITES: 'FAVORITES',
 };
 
 const UserAction = {
-  UPDATE_FILM_CARD: 'update_film_card',
-  ADD_NEW_COMMENT: 'add_new_comment',
-  DELETE_COMMENT: 'delete_comment',
+  UPDATE_FILM_CARD: 'UPDATE_FILM_CARD',
+  ADD_NEW_COMMENT: 'ADD_NEW_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
 const EMOTION = [
