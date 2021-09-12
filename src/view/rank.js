@@ -1,9 +1,8 @@
 import AbstractView from '../utils/abstract/abstract-view.js';
-import { getRandomNumber } from '../utils/random.js';
 
-const viewed = getRandomNumber(0, 31);
+const createRankTemplate = (watchedMovies) => {
+  const viewed = watchedMovies();
 
-const createRankTemplate = () => {
   let rank = null;
 
   if (viewed <= 0) { return; }
@@ -20,7 +19,12 @@ const createRankTemplate = () => {
 };
 
 export default class Rank extends AbstractView {
+  constructor(watchedMovies){
+    super();
+    this._watchedMovies = watchedMovies;
+  }
+
   getTemplate() {
-    return createRankTemplate();
+    return createRankTemplate(this._watchedMovies);
   }
 }
