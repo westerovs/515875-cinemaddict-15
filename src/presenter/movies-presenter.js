@@ -22,9 +22,11 @@ import NoFilmsView from '../view/no-films.js';
 export default class MoviesPresenter {
   constructor(mainElement, model) {
     this._mainElement = mainElement;
-    this._moviesModel = model; // - Переведем получение задач в презентере на модель.
+    this._moviesModel = model;
 
-    this._filmsExtra = null;
+    this._filmsBoardComponent = new FilmsBoardView();
+    this._filmsListComponent  = new FilmsListView();
+    this._noFilmsComponent    = new NoFilmsView();
 
     // ↓ запоминаем все созданные презентеры ↓
     this._filmPresenters = new Map();
@@ -33,25 +35,19 @@ export default class MoviesPresenter {
       mostCommented: new Map(),
     };
 
-    this._filmsBoardComponent = new FilmsBoardView();
-    this._filmsListComponent = new FilmsListView();
-    this._noFilmsComponent = new NoFilmsView();
-
     this._filmsBoard = null;
     this._filmsListMainContainer = null;
+    this._filmsExtra = null;
     this._topRatedFilmsList = null;
     this._mostCommentedFilmsList = null;
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
-
-    // null, т.к теперь они могут быть, а могут не быть
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
-    this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    //  ------ callbacks ↓
+    //  ------ callbacks MVP ↓
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
@@ -63,22 +59,21 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
-    const filmCards = this._moviesModel.getFilms();
     this._filmsExtra = {
-      topRated: getExtraTypeFilms(filmCards).topRated,
-      mostCommented: getExtraTypeFilms(filmCards).mostCommented,
+      topRated: getExtraTypeFilms(this._moviesModel.getFilms()).topRated,
+      mostCommented: getExtraTypeFilms(this._moviesModel.getFilms()).mostCommented,
     };
 
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        // console.log('sort DEFAULT')
+        console.log('sort DEFAULT')
         return this._moviesModel.getFilms();
       case SortType.DATE:
         console.log('sort DATE')
-        return filmCards.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
+        return this._moviesModel.getFilms().slice().sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
       case SortType.RATING:
         console.log('sort RATING')
-        return filmCards.sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
+        return this._moviesModel.getFilms().slice().sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
     }
   }
 
@@ -91,7 +86,7 @@ export default class MoviesPresenter {
       return;
     }
 
-    this._renderSort();
+    this._renderSortList();
 
     render(this._mainElement, this._filmsBoardComponent);
     this._filmsBoard = this._mainElement.querySelector('.films'); // section films
@@ -106,7 +101,6 @@ export default class MoviesPresenter {
     const filmsListMain = this._filmsBoard.querySelector('.films-list--main');
     this._filmsListMainContainer = filmsListMain.querySelector('.films-list__container');
 
-    // _renderAllFilms() { ↓
     const filmsCount = this._getFilms().length;
     const films = this._getFilms().slice(0, Math.min(filmsCount, this._renderedFilmsCount));
 
@@ -117,7 +111,6 @@ export default class MoviesPresenter {
     if (filmsCount > this._renderedFilmsCount) {
       this._renderLoadMoreBtn();
     }
-  // }
   }
 
   // [2]
@@ -178,7 +171,7 @@ export default class MoviesPresenter {
 
 
   // ----------- SORT ↓
-  _renderSort() {
+  _renderSortList() {
     if (this._sortComponent !== null) {
       this._sortComponent = null;
     }
@@ -266,7 +259,15 @@ export default class MoviesPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
-        this._handleFilmChange(updatedFilm)
+        if (this._filmPresenters.get(updatedFilm.id)) {
+          this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
+        }
+        if (this._filmPresentersExtra.topRated.get(updatedFilm.id)) {
+          this._filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
+        }
+        if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
+          this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
+        }
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
@@ -312,25 +313,6 @@ export default class MoviesPresenter {
     // resetSortType - сбросить тип сортировки
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
-    }
-  }
-
-  // handleTaskChange ↓
-  _handleFilmChange(updatedFilm) {
-    // Здесь будем вызывать обновление модели
-
-    // this._films = update(this._films, updatedFilm);
-    // this._currentSortType = update(this._currentSortType, updatedFilm);
-    // this._filmsExtra = getExtraTypeFilms(this._films);
-
-    if (this._filmPresenters.get(updatedFilm.id)) {
-      this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
-    }
-    if (this._filmPresentersExtra.topRated.get(updatedFilm.id)) {
-      this._filmPresentersExtra.topRated.get(updatedFilm.id).init(updatedFilm);
-    }
-    if (this._filmPresentersExtra.mostCommented.get(updatedFilm.id)) {
-      this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
     }
   }
 

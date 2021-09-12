@@ -11,9 +11,9 @@ import FilmDetailsView from '../view/film-details.js';
 const observer = new AbstractObserver();
 
 export default class Film {
-  constructor(filmContainer, _handleModalChange) {
+  constructor(filmContainer, _handleViewAction) {
     this._filmContainer = filmContainer;
-    this._handleModalChange = _handleModalChange;
+    this._handleViewAction = _handleViewAction;
 
     this._film = null;
     this._filmCardComponent = null;
@@ -116,7 +116,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleModalChange(
+    this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       UpdateType.PATCH,
       updatedFilm
@@ -134,7 +134,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleModalChange(
+    this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       UpdateType.PATCH,
       updatedFilm
@@ -152,7 +152,7 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleModalChange(
+    this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       UpdateType.PATCH,
       updatedFilm
