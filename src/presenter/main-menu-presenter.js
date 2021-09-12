@@ -78,12 +78,12 @@ export default class MainMenu {
   }
 
   _handleModelEvent() {
-    console.log('_handleModelEvent !!!')
     this.init();
   }
 
   _handleFilterTypeChange(filterType) {
-    console.log('_handleFilterTypeChange')
+    console.log(filterType)
+    console.log(this._filterModel.getFilter())
     if (this._filterModel.getFilter() === filterType) {
       return;
     }

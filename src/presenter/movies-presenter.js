@@ -5,8 +5,9 @@
 * */
 
 import dayjs from 'dayjs';
-import { getExtraTypeFilms, Films, SortType,  UpdateType, UserAction } from '../utils/const.js';
+import { getExtraTypeFilms, Films, SortType,  UpdateType, UserAction, FilterType } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js'; // удалил метод updateItem
+import { filterCallBack } from '../utils/filter.js';
 
 // presenter
 import FilmPresenter from './film.js';
@@ -26,7 +27,7 @@ export default class MoviesPresenter {
 
     this._filmsBoardComponent = new FilmsBoardView();
     this._filmsListComponent  = new FilmsListView();
-    this._noFilmsComponent    = new NoFilmsView();
+    this._noFilmsComponent    = null;
 
     // ↓ запоминаем все созданные презентеры ↓
     this._filmPresenters = new Map();
@@ -45,6 +46,8 @@ export default class MoviesPresenter {
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
 
+    this._filterType = FilterType.ALL;
+
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     //  ------ callbacks MVP ↓
@@ -59,6 +62,11 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
+    // this._filterType = this._filterModel.getFilter();
+    // const filmCards = this._filmsModel.getFilms();
+    // const filtredFilmCards = filter[this._filterType](filmCards);
+
+
     this._filmsExtra = {
       topRated: getExtraTypeFilms(this._moviesModel.getFilms()).topRated,
       mostCommented: getExtraTypeFilms(this._moviesModel.getFilms()).mostCommented,
@@ -315,6 +323,7 @@ export default class MoviesPresenter {
 
   //  ----------- utils и разная херня
   _renderNoFilms() {
+    this._noFilmsComponent = new NoFilmsView(this._filterType);
     render(this._mainElement, this._noFilmsComponent);
   }
 }

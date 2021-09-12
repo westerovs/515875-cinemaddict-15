@@ -2,7 +2,7 @@
 * Неизменяемые значения в приложении
 * */
 const Films = {
-  FILMS_COUNT: 20,
+  FILMS_COUNT: 7,
   SHOW_FILMS: 5,
   SHOW_FILMS_EXTRA: 2,
   FILM_COUNT_PER_STEP: 5,
