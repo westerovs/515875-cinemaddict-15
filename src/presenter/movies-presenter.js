@@ -22,7 +22,7 @@ import NoFilmsView from '../view/no-films.js';
 export default class MoviesPresenter {
   constructor(mainElement, model) {
     this._mainElement = mainElement;
-    this._filmModel = model; // - Переведем получение задач в презентере на модель.
+    this._moviesModel = model; // - Переведем получение задач в презентере на модель.
 
     this._filmsExtra = null;
 
@@ -55,7 +55,7 @@ export default class MoviesPresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._filmModel.addObserver(this._handleModelEvent);
+    this._moviesModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -63,7 +63,7 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
-    const filmCards = this._filmModel.getFilms();
+    const filmCards = this._moviesModel.getFilms();
     this._filmsExtra = {
       topRated: getExtraTypeFilms(filmCards).topRated,
       mostCommented: getExtraTypeFilms(filmCards).mostCommented,
@@ -72,7 +72,7 @@ export default class MoviesPresenter {
     switch (this._currentSortType) {
       case SortType.DEFAULT:
         // console.log('sort DEFAULT')
-        return this._filmModel.getFilms();
+        return this._moviesModel.getFilms();
       case SortType.DATE:
         console.log('sort DATE')
         return filmCards.sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
@@ -246,28 +246,27 @@ export default class MoviesPresenter {
     // тип обновления - это абстрактный эвент
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._filmModel.updateFilm(updateType, updateElement);
+        this._moviesModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
         console.warn('ADD NEW COMMENT')
-        this._filmModel.addComment(updateType, updateElement);
+        this._moviesModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
         console.warn('DELETE COMMENT')
-        this._filmModel.deleteComment(updateType, updateElement);
+        this._moviesModel.deleteComment(updateType, updateElement);
         break;
     }
   }
 
-  _handleModelEvent(updateType, film) {
+  _handleModelEvent(updateType, updatedFilm) {
     console.log('обработчик наблюдатель изменения модели')
-    console.log(updateType)
 
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
-        this._filmPresenters.get(film.id).init(film);
+        this._handleFilmChange(updatedFilm)
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
