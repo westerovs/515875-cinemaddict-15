@@ -1,6 +1,6 @@
-import Abstract from '../utils/abstract/abstract.js';
+import AbstractView from '../utils/abstract/abstract-view.js';
 
-export default class CommentsModel extends Abstract {
+export default class CommentsModel extends AbstractView {
   constructor() {
     super();
   }

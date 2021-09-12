@@ -2,7 +2,7 @@
 * Методы для работы с DOM
 * */
 
-import Abstract from './abstract/abstract.js';
+import AbstractView from './abstract/abstract-view.js';
 
 const renderPosition = {
   AFTERBEGIN: 'afterbegin',
@@ -10,11 +10,11 @@ const renderPosition = {
 };
 
 const render = (container, element, place = renderPosition.BEFOREEND) => {
-  if (container instanceof Abstract) {
+  if (container instanceof AbstractView) {
     container = container.getElement();
   }
 
-  if (element instanceof Abstract) {
+  if (element instanceof AbstractView) {
     element = element.getElement();
   }
 
@@ -41,7 +41,7 @@ const removeComponent = (component) => {
     return;
   }
 
-  if (!(component instanceof Abstract)) {
+  if (!(component instanceof AbstractView)) {
     throw new Error('Возможно удалять только компоненты!');
   }
 
@@ -50,11 +50,11 @@ const removeComponent = (component) => {
 };
 
 const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
+  if (oldChild instanceof AbstractView) {
     oldChild = oldChild.getElement();
   }
 
-  if (newChild instanceof Abstract) {
+  if (newChild instanceof AbstractView) {
     newChild = newChild.getElement();
   }
 

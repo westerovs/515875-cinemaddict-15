@@ -1,4 +1,4 @@
-import Abstract from '../utils/abstract/abstract.js';
+import AbstractView from '../utils/abstract/abstract-view.js';
 
 const createFilmsListExtraTemplate = (title, type) => (
   `<section class="films-list films-list--extra">
@@ -7,7 +7,7 @@ const createFilmsListExtraTemplate = (title, type) => (
   </section>`
 );
 
-export default class FilmsListExtra extends Abstract {
+export default class FilmsListExtra extends AbstractView {
   constructor(title, type) {
     super();
     this._title = title;

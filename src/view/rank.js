@@ -1,4 +1,4 @@
-import Abstract from '../utils/abstract/abstract.js';
+import AbstractView from '../utils/abstract/abstract-view.js';
 import { getRandomNumber } from '../utils/random.js';
 
 const viewed = getRandomNumber(0, 31);
@@ -19,7 +19,7 @@ const createRankTemplate = () => {
   );
 };
 
-export default class Rank extends Abstract {
+export default class Rank extends AbstractView {
   getTemplate() {
     return createRankTemplate();
   }

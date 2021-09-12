@@ -66,13 +66,10 @@ export default class MoviesPresenter {
 
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        console.log('sort DEFAULT')
         return this._moviesModel.getFilms();
       case SortType.DATE:
-        console.log('sort DATE')
         return this._moviesModel.getFilms().slice().sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
       case SortType.RATING:
-        console.log('sort RATING')
         return this._moviesModel.getFilms().slice().sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
     }
   }

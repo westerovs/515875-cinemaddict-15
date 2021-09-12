@@ -1,9 +1,9 @@
 /*
 * обновляет данные и, если нужно, вызывает перерисовку
 * */
-import Abstract from './abstract.js';
+import AbstractView from './abstract-view.js';
 
-export default class Smart extends Abstract {
+export default class Smart extends AbstractView {
   constructor() {
     super();
     this._state = {};

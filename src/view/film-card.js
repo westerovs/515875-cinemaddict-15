@@ -1,4 +1,4 @@
-import Abstract from '../utils/abstract/abstract.js';
+import AbstractView from '../utils/abstract/abstract-view.js';
 
 const createFilmCardTemplate = (film) => {
   const { id, comments, filmInfo, userDetails } = film;
@@ -48,7 +48,7 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCard extends Abstract {
+export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;

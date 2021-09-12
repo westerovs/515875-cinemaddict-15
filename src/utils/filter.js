@@ -1,13 +1,15 @@
 /*
 *  Функция фильтрации
 * */
-import { FilterType } from './const';
+import { FilterType } from './const.js';
 
-const filterTypeToCb = {
-  [FilterType.ALL]: (filmCards) => filmCards,
-  [FilterType.WATCHLIST]: (filmCards) => filmCards.filter((filmCard) => filmCard.userDetails.isWatchlist),
-  [FilterType.HISTORY]: (filmCards) => filmCards.filter((filmCard) => filmCard.userDetails.isAlreadyWatched),
-  [FilterType.FAVORITES]: (filmCards) => filmCards.filter((filmCard) => filmCard.userDetails.isFavorite),
+const filterCallBack = {
+  [FilterType.ALL]: (films) => films,
+  [FilterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.isWatchlist),
+  [FilterType.HISTORY]: (films) => films.filter((film) => film.userDetails.isAlreadyWatched),
+  [FilterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.isFavorite),
 };
 
-export { filterTypeToCb };
+export {
+  filterCallBack
+};
