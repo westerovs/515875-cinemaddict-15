@@ -2,7 +2,7 @@
 * Неизменяемые значения в приложении
 * */
 const Films = {
-  FILMS_COUNT: 44,
+  FILMS_COUNT: 7,
   SHOW_FILMS: 5,
   SHOW_FILMS_EXTRA: 2,
   FILM_COUNT_PER_STEP: 5,
@@ -26,6 +26,12 @@ const SortType = {
   RATING: 'rating',
 };
 
+const UserAction = {
+  UPDATE_FILM_CARD: 'UPDATE_FILM_CARD', // patch || MINOR
+  ADD_NEW_COMMENT: 'ADD_NEW_COMMENT', // major
+  DELETE_COMMENT: 'DELETE_COMMENT', // major
+};
+
 // семантическое версионирование
 const UpdateType = {
   PATCH: 'PATCH',
@@ -38,12 +44,6 @@ const FilterType = {
   WATCHLIST: 'WATCHLIST',
   HISTORY: 'HISTORY',
   FAVORITES: 'FAVORITES',
-};
-
-const UserAction = {
-  UPDATE_FILM_CARD: 'UPDATE_FILM_CARD',
-  ADD_NEW_COMMENT: 'ADD_NEW_COMMENT',
-  DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
 const EMOTION = [

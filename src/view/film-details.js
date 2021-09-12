@@ -214,7 +214,7 @@ export default class FilmDetails extends Smart {
 
     this._emotionClickHandler = this._emotionClickHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
-    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+
     this.setInnerHandlers();
 
     this._scrollPosition = 0;
@@ -295,26 +295,6 @@ export default class FilmDetails extends Smart {
   }
   // -------------------------------- comments ↑
 
-
-  // -------------------------------- new ↓
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    // this._callback.deleteClick(TaskEdit.parseDataToTask(this._data));
-  }
-
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    const btnDelete = this.getElement().querySelector('.film-details__comment-delete');
-    // btnDelete.addEventListener('click', this._formDeleteClickHandler);
-  }
-
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    // this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
-  }
-  // -------------------------------- new ↑
-
-
   // -------------------------------- other ↓
   setInnerHandlers() {
     const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
@@ -331,15 +311,17 @@ export default class FilmDetails extends Smart {
     this.setWatchListClickHandler(this._callback.watchListClick);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
-
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   reset(film) {
     this.updateState(
       FilmDetails.parseFilmToData(film),
     );
+  }
+
+  //  ??? comment 7.1.6
+  removeElement() {
+    super.removeElement();
   }
 
   static parseFilmToData(film) {

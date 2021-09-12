@@ -3,17 +3,12 @@
 * */
 /* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
-import { UserAction, UpdateType } from '../utils/const.js';
+import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 
 const observer = new AbstractObserver();
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 export default class Film {
   constructor(filmContainer, _handleModalChange) {
@@ -21,7 +16,6 @@ export default class Film {
     this._handleModalChange = _handleModalChange;
 
     this._film = null;
-    this._mode = Mode.DEFAULT;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
 
@@ -32,10 +26,6 @@ export default class Film {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-
-    this._handleDeleteClick = this._handleDeleteClick.bind(this);
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
-
   }
 
   init(film) {
@@ -65,17 +55,6 @@ export default class Film {
       this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
     }
 
-    // todo порефакторить
-    if (this._mode === Mode.DEFAULT) {
-      replace(this._filmCardComponent, prevFilmComponent);
-      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
-    }
-
-    if (this._mode === Mode.EDITING) {
-      replace(this._filmCardComponent, prevFilmComponent);
-      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
-      this._mode = Mode.DEFAULT;
-    }
 
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
@@ -109,9 +88,6 @@ export default class Film {
     this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    this._filmDetailsComponent.setDeleteClickHandler(this._handleDeleteClick);
-    this._filmDetailsComponent.setFormSubmitHandler(this._handleFormSubmit);
   }
 
   _destroyFilmDetails() {
@@ -122,7 +98,7 @@ export default class Film {
 
   // todo create Enam
   _onEscCloseFilmDetails(evt) {
-    if (evt.code === 'Escape' || evt.key === 'Esc') {
+    if (evt.code === KeyCodes.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
       this._destroyFilmDetails();
     }
@@ -142,7 +118,7 @@ export default class Film {
 
     this._handleModalChange(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       updatedFilm
     );
   }
@@ -160,7 +136,7 @@ export default class Film {
 
     this._handleModalChange(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       updatedFilm
     );
   }
@@ -178,80 +154,13 @@ export default class Film {
 
     this._handleModalChange(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       updatedFilm
     );
   }
 
-  _destroy() {
+  destroy() {
     removeComponent(this._filmCardComponent);
     removeComponent(this._filmDetailsComponent);
-  }
-
-  resetView() {
-    console.log('resetView')
-    // if (this._mode !== Mode.DEFAULT) {
-    //   this._replaceFormToCard();
-    // }
-  }
-
-  setViewState(state) {
-    console.log('setViewState')
-    // if (this._mode === Mode.DEFAULT) {
-    //   return;
-    // }
-    //
-    // const resetFormState = () => {
-    //   this._taskEditComponent.updateData({
-    //     isDisabled: false,
-    //     isSaving: false,
-    //     isDeleting: false,
-    //   });
-    // };
-    //
-    // switch (state) {
-    //   case State.SAVING:
-    //     this._taskEditComponent.updateData({
-    //       isDisabled: true,
-    //       isSaving: true,
-    //     });
-    //     break;
-    //   case State.DELETING:
-    //     this._taskEditComponent.updateData({
-    //       isDisabled: true,
-    //       isDeleting: true,
-    //     });
-    //     break;
-    //   case State.ABORTING:
-    //     this._taskComponent.shake(resetFormState);
-    //     this._taskEditComponent.shake(resetFormState);
-    //     break;
-    // }
-  }
-
-  _handleFormSubmit(update) {
-    console.log('_handleFormSubmit')
-    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
-    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
-
-    // const isMinorUpdate =
-    //   !isDatesEqual(this._task.dueDate, update.dueDate) ||
-    //   isTaskRepeating(this._task.repeating) !== isTaskRepeating(update.repeating);
-    //
-    // this._changeData(
-    //   UserAction.UPDATE_TASK,
-    //   isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-    //   update,
-    // );
-    // this._replaceFormToCard();
-  }
-
-  _handleDeleteClick(film) {
-    console.log('_handleDeleteClick')
-    // this._handleModalChange(
-    //   UserAction.DELETE_COMMENT,
-    //   UpdateType.MINOR,
-    //   film,
-    // );
   }
 }

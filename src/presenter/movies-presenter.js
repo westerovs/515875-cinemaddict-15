@@ -44,6 +44,7 @@ export default class MoviesPresenter {
     this._currentSortType = SortType.DEFAULT;
     this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
 
+    // null, т.к теперь они могут быть, а могут не быть
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
 
@@ -70,7 +71,7 @@ export default class MoviesPresenter {
 
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        console.log('sort DEFAULT')
+        // console.log('sort DEFAULT')
         return this._filmModel.getFilms();
       case SortType.DATE:
         console.log('sort DATE')
@@ -93,12 +94,11 @@ export default class MoviesPresenter {
     this._renderSort();
 
     render(this._mainElement, this._filmsBoardComponent);
-    this._filmsBoard = this._mainElement.querySelector('.films');
+    this._filmsBoard = this._mainElement.querySelector('.films'); // section films
     this._renderFilmList(true);
   }
 
-  // [1] нужно удалить ? аналог _renderTaskList см commit 7.1.6
-  // - рендерит 3 секции: main и extra/extra
+  // [1] рендерит 3 секции: main и extra/extra
   _renderFilmList(firstInit) {
     // render центрального контейнера для фильмов
     render(this._filmsBoard, this._filmsListComponent);
@@ -108,22 +108,19 @@ export default class MoviesPresenter {
 
     // _renderAllFilms() { ↓
     const filmsCount = this._getFilms().length;
-    const films = this._getFilms().slice(0, Math.min(filmsCount, Films.FILM_COUNT_PER_STEP));
+    const films = this._getFilms().slice(0, Math.min(filmsCount, this._renderedFilmsCount));
 
     this._renderFilms(this._filmsListMainContainer, films);
     this._renderFilmListExtra(firstInit);
 
     // show more cards
-    if (filmsCount > Films.FILM_COUNT_PER_STEP) {
+    if (filmsCount > this._renderedFilmsCount) {
       this._renderLoadMoreBtn();
     }
   // }
   }
 
   // [2]
-  // Упростим метод _renderFilms: теперь он получает не диапазон,
-  // а сразу массив задач, которые нужно отрендерить, потому что мы отказались от свойства this.films (моков)
-  // и больше неоткуда брать задачи по диапазону
   _renderFilms(container, films) {
     films.forEach(film => this._renderFilm(container, film));
   }
@@ -148,32 +145,6 @@ export default class MoviesPresenter {
       }
     }
   }
-  // ----------- RENDERS ↑
-
-
-  // ----------- SORT ↓
-  _renderSort() {
-    if (this._sortComponent !== null) {
-      this._sortComponent = null;
-    }
-
-    this._sortComponent = new SortView(this._currentSortType);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-
-    render(this._mainElement, this._sortComponent);
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-
-    this._currentSortType = sortType;
-    // this._clearBoard({ resetRenderedTaskCount: true });
-    this._renderFilmList(); // this._renderBoard(); // ?
-  }
-  // ----------- SORT ↑
-
 
   // ----------- EXTRA ↓
   _renderFilmListExtra(firstInit = false) {
@@ -203,7 +174,31 @@ export default class MoviesPresenter {
         break;
     }
   }
-  // ----------- EXTRA ↑
+  // ----------- RENDERS ↑
+
+
+  // ----------- SORT ↓
+  _renderSort() {
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._mainElement, this._sortComponent);
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    this._clearBoard({ resetRenderedFilmCount: true });
+    this._renderBoard();
+  }
+  // ----------- SORT ↑
 
 
   // ----------- load more ↓
@@ -238,12 +233,12 @@ export default class MoviesPresenter {
 
   // ----------- ↓ NEW HANDLES ↓
   _handleViewAction(actionType, updateType, updateElement) {
-    console.log('***')
-    console.log('обрабатывает события на вьюхе, вызывает updateFilm');
-    console.log('actionType: ', actionType)
-    console.log('updateType: ', updateType)
-    console.log('updateElement: ', updateElement)
-    console.log('***')
+    // console.log(' ')
+    // console.log('обрабатывает события на вьюхе, вызывает updateFilm');
+    // console.log('actionType: ', actionType)
+    // console.log('updateType: ', updateType)
+    // console.log('updateElement: ', updateElement)
+    // console.log(' ')
 
 
     // Описываем все возможные пользовательские действия и все возможные реакции на них
@@ -251,36 +246,38 @@ export default class MoviesPresenter {
     // тип обновления - это абстрактный эвент
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        console.warn(updateType)
         this._filmModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
+        console.warn('ADD NEW COMMENT')
         this._filmModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
+        console.warn('DELETE COMMENT')
         this._filmModel.deleteComment(updateType, updateElement);
         break;
     }
   }
 
-  _handleModelEvent(updateType, data) {
+  _handleModelEvent(updateType, film) {
     console.log('обработчик наблюдатель изменения модели')
+    console.log(updateType)
 
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
-        this._filmPresenters.get(data.id).init(data);
+        this._filmPresenters.get(film.id).init(film);
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
         this._clearBoard();
-        this._renderBoard(); // ?
+        this._renderBoard();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
-        this._clearBoard({ resetRenderedTaskCount: true, resetSortType: true });
-        this._renderBoard(); // ?
+        this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
+        this._renderBoard();
         break;
     }
   }
@@ -288,23 +285,24 @@ export default class MoviesPresenter {
 
 
   // ----------- other
-  // вместо _clearFilmList
-  _clearBoard({ resetRenderedTaskCount = false, resetSortType = false } = {}) {
+  _clearBoard({ resetRenderedFilmCount = false, resetSortType = false } = {}) {
+    const filmsCount = this._getFilms().length;
+
     // очищаем фильмы и экстра-фильмы
     this._filmPresenters.forEach((presenter) => presenter.destroy());
     this._filmPresenters.clear();
     Object.values(this._filmPresentersExtra).forEach((extra) => {
-      extra.forEach((presenter) => presenter._destroy());
+      extra.forEach((presenter) => presenter.destroy());
       extra.clear();
     });
 
     removeComponent(this._sortComponent);
     removeComponent(this._noFilmsComponent);
     removeComponent(this._showMoreBtnComponent);
+    removeComponent(this._filmsBoardComponent);
 
-    const filmsCount = this._getFilms().length;
-
-    if (resetRenderedTaskCount) {
+    // resetRenderedFilmCount - счётчик показанных фильмов ?
+    if (resetRenderedFilmCount) {
       this._renderedFilmsCount = Films.SHOW_FILMS;
     } else {
       // На случай, если перерисовка доски вызвана уменьшением количества задач (например, удаление или перенос в архив)
@@ -312,6 +310,7 @@ export default class MoviesPresenter {
       this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
     }
 
+    // resetSortType - сбросить тип сортировки
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
