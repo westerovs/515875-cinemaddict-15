@@ -20,12 +20,6 @@ const getExtraTypeFilms = (films) => ({
     .slice(0, Films.SHOW_FILMS_EXTRA),
 });
 
-const SortType = {
-  DEFAULT: 'default',
-  DATE: 'date',
-  RATING: 'rating',
-};
-
 const UserAction = {
   UPDATE_FILM_CARD: 'UPDATE_FILM_CARD', // patch || MINOR
   ADD_NEW_COMMENT: 'ADD_NEW_COMMENT', // major
@@ -37,13 +31,6 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-};
-
-const FilterType = {
-  ALL: 'ALL',
-  WATCHLIST: 'WATCHLIST',
-  HISTORY: 'HISTORY',
-  FAVORITES: 'FAVORITES',
 };
 
 const EMOTION = [
@@ -75,8 +62,6 @@ const KeyCodes = {
 };
 
 export {
-  SortType,
-  FilterType,
   UserAction,
   UpdateType,
   COUNTRIES,

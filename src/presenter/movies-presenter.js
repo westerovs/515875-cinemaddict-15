@@ -4,26 +4,27 @@
 * ===== главный презентер =====
 * */
 
-import dayjs from 'dayjs';
-import { getExtraTypeFilms, Films, SortType,  UpdateType, UserAction, FilterType } from '../utils/const.js';
-import { render, removeComponent } from '../utils/render.js'; // удалил метод updateItem
-import { filterCallBack } from '../utils/filter.js';
+import { getExtraTypeFilms, Films, UpdateType, UserAction } from '../utils/const.js';
+import { render, removeComponent } from '../utils/render.js';
+import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
+import { FilterType, filterCallBack } from '../utils/filter.js';
 
 // presenter
-import FilmPresenter from './film.js';
+import FilmPresenter from './film-presenter.js';
 // view
-import SortView from '../view/sort.js';
-import FilmsBoardView from '../view/film-board.js';
-import FilmsListView from '../view/films-list.js';
-import FilmsListExtraView from '../view/films-list-extra.js';
-import ShowMoreBtnView from '../view/show-more-btn.js';
-import NoFilmsView from '../view/no-films.js';
+import SortView from '../view/board/sort.js';
+import FilmsBoardView from '../view/board/film-board.js';
+import FilmsListView from '../view/board/films-list.js';
+import FilmsListExtraView from '../view/board/films-list-extra.js';
+import ShowMoreBtnView from '../view/board/show-more-btn.js';
+import NoFilmsView from '../view/board/no-films.js';
 
 
 export default class MoviesPresenter {
-  constructor(mainElement, model) {
+  constructor(mainElement, model, filterModel) {
     this._mainElement = mainElement;
     this._moviesModel = model;
+    this._filterModel = filterModel;
 
     this._filmsBoardComponent = new FilmsBoardView();
     this._filmsListComponent  = new FilmsListView();
@@ -36,6 +37,7 @@ export default class MoviesPresenter {
       mostCommented: new Map(),
     };
 
+    this._filterType = FilterType.ALL;
     this._filmsBoard = null;
     this._filmsListMainContainer = null;
     this._filmsExtra = null;
@@ -46,8 +48,6 @@ export default class MoviesPresenter {
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
 
-    this._filterType = FilterType.ALL;
-
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     //  ------ callbacks MVP ↓
@@ -55,6 +55,7 @@ export default class MoviesPresenter {
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -62,24 +63,29 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
-    // this._filterType = this._filterModel.getFilter();
-    // const filmCards = this._filmsModel.getFilms();
-    // const filtredFilmCards = filter[this._filterType](filmCards);
-
+    this._filterType = this._filterModel.getFilter(); // (ALL) текущий тип фильтра
+    const films = this._moviesModel.getFilms(); // набор фильмов из модели фильмов
+    const filteredFilms = filterCallBack[this._filterType](films); // возвращает отфильтрованные фильмы
+    // console.warn(this._filterType)
+    // console.warn(films)
+    // console.warn(filteredFilms)
 
     this._filmsExtra = {
-      topRated: getExtraTypeFilms(this._moviesModel.getFilms()).topRated,
-      mostCommented: getExtraTypeFilms(this._moviesModel.getFilms()).mostCommented,
+      topRated: getExtraTypeFilms(films).topRated,
+      mostCommented: getExtraTypeFilms(films).mostCommented,
     };
 
+    // сортируем отфильтрованный результат
     switch (this._currentSortType) {
-      case SortType.DEFAULT:
-        return this._moviesModel.getFilms();
+      // case SortType.DEFAULT:
+      //   return filteredFilms;
       case SortType.DATE:
-        return this._moviesModel.getFilms().slice().sort((a, b) => dayjs(b.filmInfo.release.date).diff(dayjs(a.filmInfo.release.date)));
+        return filteredFilms.slice().sort(sortDateDown);
       case SortType.RATING:
-        return this._moviesModel.getFilms().slice().sort((a, b) => +b.filmInfo.totalRating - +a.filmInfo.totalRating);
+        return filteredFilms.slice().sort(sortRatingDown);
     }
+
+    return filteredFilms;
   }
 
   // ----------- RENDERS ↓
@@ -120,12 +126,12 @@ export default class MoviesPresenter {
 
   // [2]
   _renderFilms(container, films) {
-    films.forEach(film => this._renderFilm(container, film));
+    films.forEach((film) => this._renderFilm(container, film));
   }
 
   // [3]
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction); // принимает ф-цию update
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._filterModel.getFilter()); // принимает ф-цию update
     filmPresenter.init(film);
 
     switch (container) {
@@ -144,7 +150,6 @@ export default class MoviesPresenter {
     }
   }
 
-  // ----------- EXTRA ↓
   _renderFilmListExtra(firstInit = false) {
     if (this._filmsExtra.topRated.some((film) => +film.filmInfo.totalRating !== 0)) {
       if (firstInit) {
@@ -231,14 +236,6 @@ export default class MoviesPresenter {
 
   // ----------- ↓ NEW HANDLES ↓
   _handleViewAction(actionType, updateType, updateElement) {
-    // console.log(' ')
-    // console.log('обрабатывает события на вьюхе, вызывает updateFilm');
-    // console.log('actionType: ', actionType)
-    // console.log('updateType: ', updateType)
-    // console.log('updateElement: ', updateElement)
-    // console.log(' ')
-
-
     // Описываем все возможные пользовательские действия и все возможные реакции на них
     // когда хотим в презенторе что-то изменить в модели, вызываем updateFilm, куда сообщаем тип и объект обновления ↓
     // тип обновления - это абстрактный эвент
@@ -247,22 +244,21 @@ export default class MoviesPresenter {
         this._moviesModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
-        console.warn('ADD NEW COMMENT')
-        this._moviesModel.addComment(updateType, updateElement);
+        // console.warn('ADD NEW COMMENT');
+        // this._moviesModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
-        console.warn('DELETE COMMENT')
-        this._moviesModel.deleteComment(updateType, updateElement);
+        // console.warn('DELETE COMMENT');
+        // this._moviesModel.deleteComment(updateType, updateElement);
         break;
     }
   }
 
   _handleModelEvent(updateType, updatedFilm) {
-    console.log('обработчик наблюдатель изменения модели')
-
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
+        console.log('PATCH');
         // - обновить часть списка (например, когда поменялось описание)
         if (this._filmPresenters.get(updatedFilm.id)) {
           this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
@@ -275,11 +271,13 @@ export default class MoviesPresenter {
         }
         break;
       case UpdateType.MINOR:
+                console.log('MINOR');
         // - обновить список (например, когда задача ушла в архив)
         this._clearBoard();
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
+                console.log('MAJOR');
         // - обновить всю доску (например, при переключении фильтра)
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();
@@ -302,9 +300,12 @@ export default class MoviesPresenter {
     });
 
     removeComponent(this._sortComponent);
-    removeComponent(this._noFilmsComponent);
     removeComponent(this._showMoreBtnComponent);
     removeComponent(this._filmsBoardComponent);
+
+    if (this._noFilmsComponent) {
+      removeComponent(this._noFilmsComponent);
+    }
 
     // resetRenderedFilmCount - счётчик показанных фильмов ?
     if (resetRenderedFilmCount) {
@@ -321,7 +322,6 @@ export default class MoviesPresenter {
     }
   }
 
-  //  ----------- utils и разная херня
   _renderNoFilms() {
     this._noFilmsComponent = new NoFilmsView(this._filterType);
     render(this._mainElement, this._noFilmsComponent);

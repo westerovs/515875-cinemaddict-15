@@ -1,7 +1,13 @@
 /*
 *  Функция фильтрации
 * */
-import { FilterType } from './const.js';
+
+const FilterType = {
+  ALL: 'All movies',
+  WATCHLIST: 'Watchlist',
+  HISTORY: 'History',
+  FAVORITES: 'Favorites',
+};
 
 const filterCallBack = {
   [FilterType.ALL]: (films) => films,
@@ -11,5 +17,6 @@ const filterCallBack = {
 };
 
 export {
+  FilterType,
   filterCallBack
 };

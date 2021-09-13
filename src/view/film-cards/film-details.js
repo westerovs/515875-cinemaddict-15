@@ -6,9 +6,9 @@
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
 
-import { isDay } from '../utils/days.js';
-import { EMOTION } from '../utils/const.js';
-import Smart from '../utils/abstract/smart.js';
+import { isDay } from '../../utils/days.js';
+import { EMOTION } from '../../utils/const.js';
+import Smart from '../../utils/abstract/smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';

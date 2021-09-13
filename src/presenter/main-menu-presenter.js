@@ -1,13 +1,19 @@
-/* eslint-disable */
+// /* eslint-disable */
 
-import MainMenuView from '../view/main-menu.js';
-import { filterCallBack } from '../utils/filter.js';
-import { FilterType, UpdateType } from '../utils/const.js';
+/*
+* Отвечает за работу:
+*   - обновление фильтров
+*   - обновления звания пользователя
+*   - переключение на экран статистики ( в будущем )
+* */
+
+import MainMenuView from '../view/main-menu/main-menu.js';
+import RankView from '../view/main-menu/rank.js';
+import { UpdateType } from '../utils/const.js';
+import { FilterType, filterCallBack } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
-// View
-import RankView from '../view/rank.js';
 
-export default class MainMenu {
+export default class MainMenuPresenter {
   constructor(filtersContainer, headerContainer, filterModel, moviesModel) {
     this._filtersContainer = filtersContainer;
     this._headerContainer = headerContainer;
@@ -37,42 +43,40 @@ export default class MainMenu {
 
     // first init
     if (prevMainMenuComponent === null && prevRankComponent === null) {
-      console.log('first init !')
-      render(this._headerContainer, this._rankComponent);
       render(this._filtersContainer, this._mainMenuComponent);
+      render(this._headerContainer, this._rankComponent);
       return;
     }
 
-    console.warn('second init !')
-    replace(this._rankComponent, prevRankComponent);
     replace(this._mainMenuComponent, prevMainMenuComponent);
-    removeComponent(prevRankComponent);
+    replace(this._rankComponent, prevRankComponent);
     removeComponent(prevMainMenuComponent);
+    removeComponent(prevRankComponent);
   }
 
   _getFilters() {
-    const filmCards = this._moviesModel.getFilms();
-    // возвращает отфильтрованные штуки
+    const films = this._moviesModel.getFilms();
+
     return [
       {
         type: FilterType.ALL,
         name: 'All movies',
-        count: filterCallBack[FilterType.ALL](filmCards).length,
+        count: filterCallBack[FilterType.ALL](films).length,
       },
       {
         type: FilterType.WATCHLIST,
         name: 'Watchlist',
-        count: filterCallBack[FilterType.WATCHLIST](filmCards).length,
+        count: filterCallBack[FilterType.WATCHLIST](films).length,
       },
       {
         type: FilterType.HISTORY,
         name: 'History',
-        count: filterCallBack[FilterType.HISTORY](filmCards).length,
+        count: filterCallBack[FilterType.HISTORY](films).length,
       },
       {
         type: FilterType.FAVORITES,
         name: 'Favorites',
-        count: filterCallBack[FilterType.FAVORITES](filmCards).length,
+        count: filterCallBack[FilterType.FAVORITES](films).length,
       },
     ];
   }
@@ -82,8 +86,6 @@ export default class MainMenu {
   }
 
   _handleFilterTypeChange(filterType) {
-    console.log(filterType)
-    console.log(this._filterModel.getFilter())
     if (this._filterModel.getFilter() === filterType) {
       return;
     }

@@ -1,15 +1,16 @@
-import AbstractView from '../utils/abstract/abstract-view.js';
+import AbstractView from '../../utils/abstract/abstract-view.js';
 // import { isDay } from '../utils/days.js';
 
-/* eslint-disable */
+// /* eslint-disable */
 
 const createFilters = (filters, currentFilterType) => {
   let template = '';
 
   filters.forEach((filter) => {
     const { type, name, count } = filter;
+    console.log(currentFilterType, ' === ', type, currentFilterType === type)
 
-      template += `
+    template += `
         <a href="#${ name }"
           class="main-navigation__item ${ currentFilterType === type ? 'main-navigation__item--active' : '' }"
           data-name="${ name }">${ name }
@@ -22,9 +23,7 @@ const createFilters = (filters, currentFilterType) => {
   return template;
 };
 
-const createSiteMenuTemplate = (filters, currentFilterType) => {
-
-  return `<nav class="main-navigation">
+const createSiteMenuTemplate = (filters, currentFilterType) => `<nav class="main-navigation">
     <div class="main-navigation__items">
       <div class="main-navigation__items">
         ${ createFilters(filters, currentFilterType) }
@@ -32,7 +31,6 @@ const createSiteMenuTemplate = (filters, currentFilterType) => {
     </div>
     <a href="#stats" class="main-navigation__additional">Stats</a>
   </nav>`;
-};
 
 export default class MainMenu extends AbstractView {
   constructor(filter, currentFilterType) {

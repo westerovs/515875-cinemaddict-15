@@ -1,4 +1,4 @@
-import AbstractView from '../utils/abstract/abstract-view.js';
+import AbstractView from '../../utils/abstract/abstract-view.js';
 
 const createFilmCardTemplate = (film) => {
   const { id, comments, filmInfo, userDetails } = film;

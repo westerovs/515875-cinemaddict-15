@@ -4,16 +4,18 @@
 /* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
+import { FilterType } from '../utils/filter.js';
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
-import FilmCardView from '../view/film-card.js';
-import FilmDetailsView from '../view/film-details.js';
+import FilmCardView from '../view/film-cards/film-card.js';
+import FilmDetailsView from '../view/film-cards/film-details.js';
 
 const observer = new AbstractObserver();
 
-export default class Film {
-  constructor(filmContainer, _handleViewAction) {
+export default class FilmPresenter {
+  constructor(filmContainer, _handleViewAction, currentFilterType) {
     this._filmContainer = filmContainer;
     this._handleViewAction = _handleViewAction;
+    this._currentFilterType = currentFilterType;
 
     this._film = null;
     this._filmCardComponent = null;
@@ -118,7 +120,7 @@ export default class Film {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.PATCH,
+      this._currentFilterType === FilterType.WATCHLIST ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm
     );
   }
@@ -136,7 +138,7 @@ export default class Film {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.PATCH,
+      this._currentFilterType === FilterType.HISTORY ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm
     );
   }
@@ -154,7 +156,7 @@ export default class Film {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      UpdateType.PATCH,
+      this._currentFilterType === FilterType.FAVORITES ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm
     );
   }

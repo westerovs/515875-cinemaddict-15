@@ -1,5 +1,5 @@
-import AbstractView from '../utils/abstract/abstract-view.js';
-import { FilterType } from '../utils/const.js';
+import AbstractView from '../../utils/abstract/abstract-view.js';
+import { FilterType } from '../../utils/filter.js';
 
 const EmptyFilmsListTextType = {
   [FilterType.ALL]: 'There are no movies in our database',

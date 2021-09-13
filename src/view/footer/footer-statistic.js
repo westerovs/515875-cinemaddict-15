@@ -1,4 +1,4 @@
-import AbstractView from '../utils/abstract/abstract-view.js';
+import AbstractView from '../../utils/abstract/abstract-view.js';
 
 const createFooterStatisticTemplate = (allFilmsCount) => (
   `<section class="footer__statistics">
