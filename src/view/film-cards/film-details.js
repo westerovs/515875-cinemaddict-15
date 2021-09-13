@@ -299,12 +299,11 @@ export default class FilmDetails extends Smart {
     this.updateState({ commentText: evt.target.value }, true);
   }
 
-  // CREATE / REMOVE ↓
   _onSubmitNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
       const scrollTopPosition = this.getElement().scrollTop;
 
-      this._state.comments.add(this._createNewComment());
+      this._state.comments.push(this._createNewComment());
       this._callback.onSubmitNewComment(FilmDetails.parseDataToFilm(this._state));
 
       document.querySelector('.film-details').scrollTop = scrollTopPosition;
@@ -313,7 +312,7 @@ export default class FilmDetails extends Smart {
 
   _createNewComment() {
     if (!this._state.commentText) {
-      throw new Error('Пожалуйста, напишите новый комментарий !');
+      throw new Error('Нельзя отправить пустой комментарий !');
     }
     if (!this._state.emotion) {
       throw new Error('Пожалуйста, выберите эмоцию !');
@@ -330,13 +329,12 @@ export default class FilmDetails extends Smart {
 
   _onDeleteCommentClick(evt) {
     evt.preventDefault();
-
     const scrollTopPosition = this.getElement().scrollTop;
 
     const targetId = evt.target.closest('.film-details__comment').id;
+    // возвращается обновлённый массив
+    this._state.comments = this._state.comments.filter((comment) => comment.id !== targetId);
 
-
-    this._state.comments = [...this._state.comments].filter((comment) => comment.id !== targetId);
     this._callback.onDeleteClick(FilmDetails.parseDataToFilm(this._state));
 
     document.querySelector('.film-details').scrollTop = scrollTopPosition;

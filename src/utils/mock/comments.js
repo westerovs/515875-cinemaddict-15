@@ -37,11 +37,7 @@ const filmComments = () => ({
   emotion: getRandomItem(EMOTION),
 });
 
-const getComments = () => new Set(
-  new Array(getRandomNumber(0, 7))
-    .fill('')
-    .map(() => filmComments()),
-);
+const getComments = () => new Array(getRandomNumber(0, 7)).fill('').map(() => filmComments());
 
 export {
   getComments
