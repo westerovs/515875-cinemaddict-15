@@ -5,7 +5,6 @@
 * раз форма удаляется, то удаляются и обработчики
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
-/* eslint-disable */
 
 import dayjs from 'dayjs';
 import { isDay } from '../../utils/days.js';
@@ -303,7 +302,6 @@ export default class FilmDetails extends Smart {
   // CREATE / REMOVE ↓
   _onSubmitNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
-      console.log('added new comment')
       const scrollTopPosition = this.getElement().scrollTop;
 
       this._state.comments.add(this._createNewComment());

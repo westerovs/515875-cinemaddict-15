@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /*
 * ===== главный презентер =====
 * */
@@ -244,11 +242,9 @@ export default class MoviesPresenter {
         this._moviesModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
-        console.warn('ADD NEW COMMENT');
         this._moviesModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
-        console.warn('DELETE COMMENT');
         this._moviesModel.deleteComment(updateType, updateElement);
         break;
     }
@@ -258,7 +254,6 @@ export default class MoviesPresenter {
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        console.log('PATCH');
         // - обновить часть списка (например, когда поменялось описание)
         if (this._filmPresenters.get(updatedFilm.id)) {
           this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
@@ -271,13 +266,11 @@ export default class MoviesPresenter {
         }
         break;
       case UpdateType.MINOR:
-                console.log('MINOR');
         // - обновить список (например, когда задача ушла в архив)
         this._clearBoard();
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-                console.log('MAJOR');
         // - обновить всю доску (например, при переключении фильтра)
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();

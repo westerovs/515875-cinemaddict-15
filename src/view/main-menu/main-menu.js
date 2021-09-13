@@ -1,8 +1,6 @@
 import AbstractView from '../../utils/abstract/abstract-view.js';
 // import { isDay } from '../utils/days.js';
 
-// /* eslint-disable */
-
 const createFilters = (filters, currentFilterType) => {
   let template = '';
 

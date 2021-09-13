@@ -1,7 +1,6 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
-/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
 import { FilterType } from '../utils/filter.js';
@@ -124,7 +123,7 @@ export default class FilmPresenter {
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       this._currentFilterType === FilterType.WATCHLIST ? UpdateType.MINOR : UpdateType.PATCH,
-      updatedFilm
+      updatedFilm,
     );
   }
 
@@ -142,7 +141,7 @@ export default class FilmPresenter {
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       this._currentFilterType === FilterType.HISTORY ? UpdateType.MINOR : UpdateType.PATCH,
-      updatedFilm
+      updatedFilm,
     );
   }
 
@@ -160,7 +159,7 @@ export default class FilmPresenter {
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
       this._currentFilterType === FilterType.FAVORITES ? UpdateType.MINOR : UpdateType.PATCH,
-      updatedFilm
+      updatedFilm,
     );
   }
 
