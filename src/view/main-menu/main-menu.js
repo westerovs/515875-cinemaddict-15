@@ -8,7 +8,6 @@ const createFilters = (filters, currentFilterType) => {
 
   filters.forEach((filter) => {
     const { type, name, count } = filter;
-    console.log(currentFilterType, ' === ', type, currentFilterType === type)
 
     template += `
         <a href="#${ name }"

@@ -2,11 +2,9 @@ import AbstractView from '../../utils/abstract/abstract-view.js';
 
 const createRankTemplate = (watchedMovies) => {
   const viewed = watchedMovies();
-
   let rank = null;
 
-  if (viewed <= 0) { return; }
-  if (viewed >= 1 && viewed <= 10) { rank = 'Novice'; }
+  if (viewed >= 0 && viewed <= 10) { rank = 'Novice'; }
   if (viewed >= 11 && viewed <= 20) { rank = 'Fan'; }
   if (viewed >= 21) { rank = 'Movie Buff'; }
 

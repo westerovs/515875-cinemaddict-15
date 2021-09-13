@@ -28,6 +28,7 @@ export default class FilmPresenter {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
   }
 
   init(film) {
@@ -90,6 +91,8 @@ export default class FilmPresenter {
     this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
+
   }
 
   _destroyFilmDetails() {
@@ -98,7 +101,6 @@ export default class FilmPresenter {
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
   }
 
-  // todo create Enam
   _onEscCloseFilmDetails(evt) {
     if (evt.code === KeyCodes.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
@@ -158,6 +160,23 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM_CARD,
       this._currentFilterType === FilterType.FAVORITES ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm
+    );
+  }
+
+  // *** ↓ comments ↓ ***
+  _handleDeleteCommentClick(card){
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      UpdateType.PATCH,
+      card,
+    );
+  }
+
+  _handleSubmitNewComment(card){
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      UpdateType.PATCH,
+      card,
     );
   }
 

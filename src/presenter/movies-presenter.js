@@ -244,12 +244,12 @@ export default class MoviesPresenter {
         this._moviesModel.updateFilm(updateType, updateElement);
         break;
       case UserAction.ADD_NEW_COMMENT:
-        // console.warn('ADD NEW COMMENT');
-        // this._moviesModel.addComment(updateType, updateElement);
+        console.warn('ADD NEW COMMENT');
+        this._moviesModel.addComment(updateType, updateElement);
         break;
       case UserAction.DELETE_COMMENT:
-        // console.warn('DELETE COMMENT');
-        // this._moviesModel.deleteComment(updateType, updateElement);
+        console.warn('DELETE COMMENT');
+        this._moviesModel.deleteComment(updateType, updateElement);
         break;
     }
   }
