@@ -29,6 +29,7 @@ export default class FilmPresenter {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleSubmitNewComment = this._handleSubmitNewComment.bind(this);
   }
 
   init(film) {
@@ -81,18 +82,18 @@ export default class FilmPresenter {
   }
 
   _addHandlers() {
+    // film
     this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
-
-    // // *** ↓ set handle film controls ↓ ***
     this._filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    // *** ↓ set handle pop-up controls ↓ ***
+    // film-details
     this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
 
+    this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
+    this._filmDetailsComponent.setSubmitNewComment(this._handleSubmitNewComment);
   }
 
   _destroyFilmDetails() {

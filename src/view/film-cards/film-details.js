@@ -286,7 +286,6 @@ export default class FilmDetails extends Smart {
     this._scrollPosition = this.getElement().scrollTop;
 
     this.updateState({ emotion: evt.target.value });
-
     this.getElement().scrollTop = this._scrollPosition;
 
     const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
@@ -304,10 +303,12 @@ export default class FilmDetails extends Smart {
   // CREATE / REMOVE ↓
   _onSubmitNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
-      this._state.comments.push(this._createNewComment());
+      console.log('added new comment')
       const scrollTopPosition = this.getElement().scrollTop;
 
+      this._state.comments.add(this._createNewComment());
       this._callback.onSubmitNewComment(FilmDetails.parseDataToFilm(this._state));
+
       document.querySelector('.film-details').scrollTop = scrollTopPosition;
     }
   }
@@ -333,9 +334,13 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
 
     const scrollTopPosition = this.getElement().scrollTop;
-    this._state.comments = this._state.comments.filter((comment) => comment.id !== evt.target.dataset.id);
 
+    const targetId = evt.target.closest('.film-details__comment').id;
+
+
+    this._state.comments = [...this._state.comments].filter((comment) => comment.id !== targetId);
     this._callback.onDeleteClick(FilmDetails.parseDataToFilm(this._state));
+
     document.querySelector('.film-details').scrollTop = scrollTopPosition;
   }
 
@@ -351,6 +356,7 @@ export default class FilmDetails extends Smart {
       .addEventListener('keydown', this._onSubmitNewComment);
   }
   // -------------------------------- comments ↑
+
 
   // -------------------------------- other ↓
   setInnerHandlers() {

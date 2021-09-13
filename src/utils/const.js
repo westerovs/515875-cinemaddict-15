@@ -61,6 +61,12 @@ const KeyCodes = {
   ENTER: 'Enter',
 };
 
+// todo возможно добавить потом для удобства
+const isCtrlEnterPressed = (evt) => evt.key === KeyCodes.ENTER && evt.ctrlKey;
+
+// todo возможно добавить потом для удобства
+const isEscPressed = (evt) => evt.code === KeyCodes.ESCAPE || evt.key === 'Esc';
+
 export {
   UserAction,
   UpdateType,
