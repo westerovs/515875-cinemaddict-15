@@ -6,9 +6,12 @@
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
 
-import { isDay } from '../utils/days.js';
-import { EMOTION } from '../utils/const.js';
-import Smart from './smart.js';
+import dayjs from 'dayjs';
+import { isDay } from '../../utils/days.js';
+import { nanoid } from 'nanoid';
+import he from 'he';
+import { EMOTION, KeyCodes } from '../../utils/const.js';
+import Smart from '../../utils/abstract/smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -211,8 +214,12 @@ export default class FilmDetails extends Smart {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
+
     this._emotionClickHandler = this._emotionClickHandler.bind(this);
-    this._commentInputHandler = this._commentInputHandler.bind(this);
+    this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
+    this._onDeleteCommentClick = this._onDeleteCommentClick.bind(this);
+    this._onSubmitNewComment = this._onSubmitNewComment.bind(this);
+
     this.setInnerHandlers();
 
     this._scrollPosition = 0;
@@ -222,10 +229,21 @@ export default class FilmDetails extends Smart {
     return createFilmDetailsTemplate(this._state);
   }
 
+  // -------------------------------- close ↓
   _closeDetailsClickHandler() {
     this._callback.toCloseClick();
   }
 
+  setCloseDetailsClickHandler(callback) {
+    this._callback.toCloseClick = callback;
+    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
+
+    closeBtn.addEventListener('click', this._closeDetailsClickHandler);
+  }
+  // -------------------------------- close ↑
+
+
+  // -------------------------------- controls ↓
   _watchListClickHandler() {
     this._callback.watchListClick(this._state);
   }
@@ -236,33 +254,6 @@ export default class FilmDetails extends Smart {
 
   _favoriteClickHandler() {
     this._callback.favoriteClick(this._state);
-  }
-
-  _emotionClickHandler(evt) {
-    evt.preventDefault();
-    this._scrollPosition = this.getElement().scrollTop;
-
-    this.updateState({ emotion: evt.target.value });
-
-    this.getElement().scrollTop = this._scrollPosition;
-
-    const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
-    emojiItems.forEach((emotion) => {
-      if(emotion.value === evt.target.value){
-        emotion.setAttribute('checked', 'true');
-      }
-    });
-  }
-
-  _commentInputHandler(evt) {
-    this.updateState({ commentText: evt.target.value }, true);
-  }
-
-  setCloseDetailsClickHandler(callback) {
-    this._callback.toCloseClick = callback;
-    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
-
-    closeBtn.addEventListener('click', this._closeDetailsClickHandler);
   }
 
   setWatchListClickHandler(callback) {
@@ -285,28 +276,104 @@ export default class FilmDetails extends Smart {
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
+  // -------------------------------- controls ↑
 
+
+  // -------------------------------- comments ↓
+  _emotionClickHandler(evt) {
+    evt.preventDefault();
+    this._scrollPosition = this.getElement().scrollTop;
+
+    this.updateState({ emotion: evt.target.value });
+    this.getElement().scrollTop = this._scrollPosition;
+
+    const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
+    emojiItems.forEach((emotion) => {
+      if(emotion.value === evt.target.value){
+        emotion.setAttribute('checked', 'true');
+      }
+    });
+  }
+
+  _commentTextAreaHandler(evt) {
+    this.updateState({ commentText: evt.target.value }, true);
+  }
+
+  _onSubmitNewComment(evt) {
+    if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
+      const scrollTopPosition = this.getElement().scrollTop;
+
+      this._state.comments.push(this._createNewComment());
+      this._callback.onSubmitNewComment(FilmDetails.parseDataToFilm(this._state));
+
+      document.querySelector('.film-details').scrollTop = scrollTopPosition;
+    }
+  }
+
+  _createNewComment() {
+    if (!this._state.commentText) {
+      throw new Error('Нельзя отправить пустой комментарий !');
+    }
+    if (!this._state.emotion) {
+      throw new Error('Пожалуйста, выберите эмоцию !');
+    }
+
+    return {
+      id: nanoid(),
+      author: 'Волк Ларсен',
+      comment: he.encode(this._state.commentText),
+      date: dayjs(),
+      emotion: this._state.emotion,
+    };
+  }
+
+  _onDeleteCommentClick(evt) {
+    evt.preventDefault();
+    const scrollTopPosition = this.getElement().scrollTop;
+
+    const targetId = evt.target.closest('.film-details__comment').id;
+    // возвращается обновлённый массив
+    this._state.comments = this._state.comments.filter((comment) => comment.id !== targetId);
+
+    this._callback.onDeleteClick(FilmDetails.parseDataToFilm(this._state));
+
+    document.querySelector('.film-details').scrollTop = scrollTopPosition;
+  }
+
+  setOnDeleteCommentClick(callback) {
+    this._callback.onDeleteClick = callback;
+    this.getElement().querySelectorAll('.film-details__comment-delete')
+      .forEach((button) => button.addEventListener('click', this._onDeleteCommentClick));
+  }
+
+  setSubmitNewComment(callback) {
+    this._callback.onSubmitNewComment = callback;
+    this.getElement().querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this._onSubmitNewComment);
+  }
+  // -------------------------------- comments ↑
+
+
+  // -------------------------------- other ↓
   setInnerHandlers() {
     const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
     const textarea = this.getElement().querySelector('.film-details__comment-input');
 
     emoji.forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
-    textarea.addEventListener('input', this._commentInputHandler);
+    textarea.addEventListener('input', this._commentTextAreaHandler);
   }
 
   restoreAllHandlers() {
     this.setInnerHandlers();
 
     this.setCloseDetailsClickHandler(this._callback.toCloseClick);
+
     this.setWatchListClickHandler(this._callback.watchListClick);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
-  }
 
-  reset(film) {
-    this.updateState(
-      FilmDetails.parseFilmToData(film),
-    );
+    this.setOnDeleteCommentClick(this._callback.onDeleteClick);
+    this.setSubmitNewComment(this._callback.onSubmitNewComment);
   }
 
   static parseFilmToData(film) {
@@ -321,28 +388,31 @@ export default class FilmDetails extends Smart {
     );
   }
 
-  static parseDataToFilm(data) {
-    // todo пока не нашёл где это применить. Думаю позже понадобится, при сохранении коммента.
-
+  static parseDataToFilm(state) {
     /*
-      под data, мы понимаем данные которые есть в самом компоненте
+      под state(data), мы понимаем данные которые есть в самом компоненте
       Снимок информации на данный момент(состояние)
       здесь состояние превращается в информацию. Эту инфу можно отдать презентору
       Презентер может передать модели. Модель может сохранить...
     */
-    data = Object.assign({}, data);
+    state = Object.assign({}, state);
 
-    if (!data.emotion) {
-      data.emotion = null;
+    if (!state.emotion) {
+      state.emotion = null;
     }
-    if (!data.commentText) {
-      data.commentText = null;
+    if (!state.commentText) {
+      state.commentText = null;
     }
 
-    delete data.emotion;
-    delete data.commentText;
+    delete state.emotion;
+    delete state.commentText;
 
-    return data;
+    return state;
   }
 
+  reset(film) {
+    this.updateState(
+      FilmDetails.parseFilmToData(film),
+    );
+  }
 }

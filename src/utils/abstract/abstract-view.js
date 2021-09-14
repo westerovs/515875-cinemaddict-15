@@ -1,8 +1,8 @@
-import { createElement } from '../utils/render.js';
+import { createElement } from '../render.js';
 
-export default class Abstract {
+export default class AbstractView {
   constructor() {
-    if (new.target === Abstract) {
+    if (new.target === AbstractView) {
       throw Error('Нельзя создать экземпляр класса. Только наследование !');
     }
 

@@ -2,7 +2,7 @@
 * Методы для работы с DOM
 * */
 
-import Abstract from '../view/abstract.js';
+import AbstractView from './abstract/abstract-view.js';
 
 const renderPosition = {
   AFTERBEGIN: 'afterbegin',
@@ -10,11 +10,11 @@ const renderPosition = {
 };
 
 const render = (container, element, place = renderPosition.BEFOREEND) => {
-  if (container instanceof Abstract) {
+  if (container instanceof AbstractView) {
     container = container.getElement();
   }
 
-  if (element instanceof Abstract) {
+  if (element instanceof AbstractView) {
     element = element.getElement();
   }
 
@@ -37,7 +37,11 @@ const createElement = (template) => {
 
 // Отрисовкой в DOM занимается не абстрактный класс, а utils. Поэтому utils и удаляет
 const removeComponent = (component) => {
-  if (!(component instanceof Abstract)) {
+  if (component === null) {
+    return;
+  }
+
+  if (!(component instanceof AbstractView)) {
     throw new Error('Возможно удалять только компоненты!');
   }
 
@@ -45,28 +49,12 @@ const removeComponent = (component) => {
   component.removeElement();
 };
 
-// todo / слишком сложно / Лучше сделать нормально
-// обновляет список фильмов, или возвращает как есть
-const update = (items, updateItem) => {
-  const index = items.findIndex((item) => item.id === updateItem.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    updateItem,
-    ...items.slice(index + 1),
-  ];
-};
-
 const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
+  if (oldChild instanceof AbstractView) {
     oldChild = oldChild.getElement();
   }
 
-  if (newChild instanceof Abstract) {
+  if (newChild instanceof AbstractView) {
     newChild = newChild.getElement();
   }
 
@@ -84,6 +72,5 @@ export {
   render,
   createElement,
   removeComponent,
-  update,
   replace
 };

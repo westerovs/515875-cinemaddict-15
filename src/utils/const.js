@@ -2,10 +2,10 @@
 * Неизменяемые значения в приложении
 * */
 const Films = {
-  FILMS_COUNT: 20,
+  FILMS_COUNT: 7,
   SHOW_FILMS: 5,
   SHOW_FILMS_EXTRA: 2,
-  FILMS_LOAD_MORE: 5,
+  FILM_COUNT_PER_STEP: 5,
   TOTAL_MOVIES: 9999,
 };
 
@@ -20,10 +20,17 @@ const getExtraTypeFilms = (films) => ({
     .slice(0, Films.SHOW_FILMS_EXTRA),
 });
 
-const SortType = {
-  DEFAULT: 'default',
-  DATE: 'date',
-  RATING: 'rating',
+const UserAction = {
+  UPDATE_FILM_CARD: 'UPDATE_FILM_CARD', // patch || MINOR
+  ADD_NEW_COMMENT: 'ADD_NEW_COMMENT', // major
+  DELETE_COMMENT: 'DELETE_COMMENT', // major
+};
+
+// семантическое версионирование
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
 const EMOTION = [
@@ -34,11 +41,11 @@ const EMOTION = [
 ];
 
 const COUNTRIES = [
-  'USA',
-  'ALBANIA',
-  'TAJIKISTAN',
-  'FINLAND',
-  'USSR',
+  'Usa',
+  'Albania',
+  'Tajikistan',
+  'Finland',
+  'Ussr',
 ];
 
 const GENRES = [
@@ -49,11 +56,24 @@ const GENRES = [
   'Historical',
 ];
 
+const KeyCodes = {
+  ESCAPE : 'Escape',
+  ENTER: 'Enter',
+};
+
+// todo возможно добавить потом для удобства
+// const isCtrlEnterPressed = (evt) => evt.key === KeyCodes.ENTER && evt.ctrlKey;
+
+// todo возможно добавить потом для удобства
+// const isEscPressed = (evt) => evt.code === KeyCodes.ESCAPE || evt.key === 'Esc';
+
 export {
-  SortType,
+  UserAction,
+  UpdateType,
   COUNTRIES,
   GENRES,
   Films,
   getExtraTypeFilms,
-  EMOTION
+  EMOTION,
+  KeyCodes
 };

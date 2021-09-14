@@ -2,14 +2,19 @@
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
 import { removeComponent, render, replace } from '../utils/render.js';
-import { observer } from '../utils/observer.js';
-import FilmCardView from '../view/film-card.js';
-import FilmDetailsView from '../view/film-details.js';
+import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
+import { FilterType } from '../utils/filter.js';
+import AbstractObserver from '../utils/abstract/abstract-observer.js';
+import FilmCardView from '../view/film-cards/film-card.js';
+import FilmDetailsView from '../view/film-cards/film-details.js';
 
-export default class Film {
-  constructor(filmContainer, handlerFilmsUpdate) {
+const observer = new AbstractObserver();
+
+export default class FilmPresenter {
+  constructor(filmContainer, _handleViewAction, currentFilterType) {
     this._filmContainer = filmContainer;
-    this._handlerFilmsUpdate = handlerFilmsUpdate;
+    this._handleViewAction = _handleViewAction;
+    this._currentFilterType = currentFilterType;
 
     this._film = null;
     this._filmCardComponent = null;
@@ -22,6 +27,8 @@ export default class Film {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleSubmitNewComment = this._handleSubmitNewComment.bind(this);
   }
 
   init(film) {
@@ -51,6 +58,7 @@ export default class Film {
       this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
     }
 
+
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
   }
@@ -61,7 +69,7 @@ export default class Film {
   }
 
   _renderFilmDetails() {
-    observer.notify(this._destroyFilmDetails);
+    observer._notify(this._destroyFilmDetails);
 
     render(document.body, this._filmDetailsComponent.getElement());
 
@@ -73,16 +81,18 @@ export default class Film {
   }
 
   _addHandlers() {
+    // film
     this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
-
-    // *** ↓ set handle details controls ↓ ***
-    this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    // // *** ↓ set handle controls ↓ ***
     this._filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    // film-details
+    this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
+    this._filmDetailsComponent.setSubmitNewComment(this._handleSubmitNewComment);
   }
 
   _destroyFilmDetails() {
@@ -91,9 +101,8 @@ export default class Film {
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
   }
 
-  // todo create Enam
   _onEscCloseFilmDetails(evt) {
-    if (evt.code === 'Escape' || evt.key === 'Esc') {
+    if (evt.code === KeyCodes.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
       this._destroyFilmDetails();
     }
@@ -111,7 +120,11 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      this._currentFilterType === FilterType.WATCHLIST ? UpdateType.MINOR : UpdateType.PATCH,
+      updatedFilm,
+    );
   }
 
   _handleWatchedClick() {
@@ -125,7 +138,11 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      this._currentFilterType === FilterType.HISTORY ? UpdateType.MINOR : UpdateType.PATCH,
+      updatedFilm,
+    );
   }
 
   _handleFavoriteClick() {
@@ -139,10 +156,31 @@ export default class Film {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handlerFilmsUpdate(updatedFilm);
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      this._currentFilterType === FilterType.FAVORITES ? UpdateType.MINOR : UpdateType.PATCH,
+      updatedFilm,
+    );
   }
 
-  _destroy() {
+  // *** ↓ comments ↓ ***
+  _handleDeleteCommentClick(card){
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      UpdateType.PATCH,
+      card,
+    );
+  }
+
+  _handleSubmitNewComment(card){
+    this._handleViewAction(
+      UserAction.UPDATE_FILM_CARD,
+      UpdateType.PATCH,
+      card,
+    );
+  }
+
+  destroy() {
     removeComponent(this._filmCardComponent);
     removeComponent(this._filmDetailsComponent);
   }

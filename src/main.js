@@ -1,24 +1,30 @@
-import { generateFilm } from './mock/film.js';
-import { toFiltersCount } from './mock/filter.js';
+import { generateFilm } from './utils/mock/film.js';
 import { render } from './utils/render.js';
 import { Films } from './utils/const.js';
 
-import MoviesPresenter from './presenter/movies.js';
-import RankView from './view/rank.js';
-import FilterView from './view/filter.js';
-import FooterStatisticView from './view/footer-statistic.js';
-
-const films = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
-const filters = toFiltersCount(films);
+// Model
+import MoviesModel from './model/movies-model.js';
+import FilterModel from './model/filter-model.js';
+// // View
+import FooterStatisticView from './view/footer/footer-statistic.js';
+// // Presenter
+import MoviesPresenter from './presenter/movies-presenter.js';
+import MainMenuPresenter from './presenter/main-menu-presenter.js';
 
 const pageBody = document.querySelector('body');
 const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-render(siteHeaderElement, new RankView());
-render(siteMainElement, new FilterView(filters));
 render(siteFooterStatistics, new FooterStatisticView(Films.TOTAL_MOVIES));
 
-const moviesPresenter = new MoviesPresenter(siteMainElement);
-moviesPresenter.init(films);
+const films = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
+
+const filterModel = new FilterModel();
+const moviesModel = new MoviesModel();
+moviesModel.setFilms(films); // добавляет в модель фильмы
+
+const mainMenuPresenter = new MainMenuPresenter(siteMainElement, siteHeaderElement, filterModel, moviesModel);
+const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel, filterModel);
+mainMenuPresenter.init();
+moviesPresenter.init();
