@@ -13,7 +13,7 @@ const createFilmCardTemplate = (film) => {
     description,
   } = filmInfo;
   const { date } = release;
-  const countComments = comments.size;
+  const countComments = comments.length;
 
   const yearRelease = date.format('YYYY');
 
