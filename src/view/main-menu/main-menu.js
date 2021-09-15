@@ -4,12 +4,12 @@ const createFilters = (filters, currentFilterType) => {
   let template = '';
 
   filters.forEach((filter) => {
-    const { type, name, count } = filter;
+    const { type, count } = filter;
 
     template += `
-        <a href="#${ name }"
+        <a href="#${ type }"
           class="main-navigation__item ${ currentFilterType === type ? 'main-navigation__item--active' : '' }"
-          data-name="${ name }">${ name }
+          data-name="${ type }">${ type }
             <span class="main-navigation__item-count
               ${ name === 'All movies' ? 'visually-hidden' : '' }">${ count }
             </span>
@@ -36,45 +36,45 @@ export default class MainMenu extends AbstractView {
     this._filter = filter;
     this._currentFilterType = currentFilterType;
 
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
-    // stats
-    this._onStatsButtonClick = this._onStatsButtonClick.bind(this);
+    this._filterClickHandler = this._filterClickHandler.bind(this);
+    // statistics
+    this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
     this._filterButtons = this.getElement().querySelectorAll('.main-navigation__item ');
-    this._statsButton = this.getElement().querySelector('.main-navigation__additional');
-
+    this._statisticsButton = this.getElement().querySelector('.main-navigation__additional');
   }
 
   getTemplate() {
     return createSiteMenuTemplate(this._filter, this._currentFilterType);
   }
 
-  _filterTypeChangeHandler(evt) {
+  // filter ↓
+  _filterClickHandler(evt) {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.closest('.main-navigation__item').dataset.name);
   }
 
-  setFilterTypeChangeHandler(callback) {
+  setFilterClickHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement()
       .querySelectorAll('.main-navigation__item')
-      .forEach((filterButton) => filterButton.addEventListener('click', this._filterTypeChangeHandler));
+      .forEach((filterButton) => filterButton.addEventListener('click', this._filterClickHandler));
   }
 
-  // stats ↓
-  _onStatsButtonClick(evt) {
+  // statistics ↓
+  _statisticsClickHandler(evt) {
     evt.preventDefault();
 
     if (!evt.target.classList.contains('main-navigation__additional--active')) {
       this._filterButtons.forEach((filterButton) => filterButton.classList.remove('main-navigation__item--active'));
-      this._statsButton.classList.add('main-navigation__additional--active');
+      this._statisticsButton.classList.add('main-navigation__additional--active');
       this._callback.showStatusScreen();
     }
   }
 
-  setOnStatsButtonClick(callback){
+  setStatisticsClickHandler(callback){
     this._callback.showStatusScreen = callback;
     this.getElement().querySelector('.main-navigation__additional')
-      .addEventListener('click', this._onStatsButtonClick);
+      .addEventListener('click', this._statisticsClickHandler);
   }
 }
 

@@ -1,15 +1,17 @@
 /*
 * Отвечает за работу:
-*   - обновление фильтров
+*   - переключение фильтров
+*   - переключение на экран статистики
 *   - обновления звания пользователя
-*   - переключение на экран статистики ( в будущем )
 * */
-import StatsView from '../view/stats/stats.js';
 import MainMenuView from '../view/main-menu/main-menu.js';
+import StatisticsView from '../view/statistics/statistics.js';
 import RankView from '../view/main-menu/rank.js';
 import { UpdateType } from '../utils/const.js';
-import { FilterType, filterCallBack } from '../utils/filter.js';
+import { FilterType, FilteredFilms } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
+
+/* eslint-disable */
 
 export default class MainMenuPresenter {
   constructor(siteMainElement, headerContainer, filterModel, moviesModel, moviesPresenter) {
@@ -18,16 +20,18 @@ export default class MainMenuPresenter {
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
     this._moviesPresenter = moviesPresenter;
-    this._stats = null;
 
+    // view
     this._mainMenuComponent = null;
+    this._statisticsComponent = null;
     this._rankComponent = null;
 
-    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    // controls
+    this._handleFilterClick = this._handleFilterClick.bind(this);
+    this._handleStatisticsClick = this._handleStatisticsClick.bind(this);
+
     this._getWatchedFilmsCount = this._getWatchedFilmsCount.bind(this);
-    // stats
-    this._handleStatsButtonClick = this._handleStatsButtonClick.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -35,11 +39,12 @@ export default class MainMenuPresenter {
 
   init() {
     const filters = this._getFilters();
+
     const prevMainMenuComponent = this._mainMenuComponent;
     const prevRankComponent = this._rankComponent;
 
     //                     отфильтрованные числа ↓   тип фильтра по умолчанию ↓ (ALL)
-    this._mainMenuComponent = new MainMenuView(filters, this._filterModel.getFilter());
+    this._mainMenuComponent = new MainMenuView(filters, this._filterModel.getActiveFilter());
     this._rankComponent = new RankView(this._getWatchedFilmsCount);
 
     this._addHandlers();
@@ -64,54 +69,34 @@ export default class MainMenuPresenter {
     return [
       {
         type: FilterType.ALL,
-        name: 'All movies',
-        count: filterCallBack[FilterType.ALL](films).length,
+        count: FilteredFilms[FilterType.ALL](films).length,
       },
       {
         type: FilterType.WATCHLIST,
-        name: 'Watchlist',
-        count: filterCallBack[FilterType.WATCHLIST](films).length,
+        count: FilteredFilms[FilterType.WATCHLIST](films).length,
       },
       {
         type: FilterType.HISTORY,
-        name: 'History',
-        count: filterCallBack[FilterType.HISTORY](films).length,
+        count: FilteredFilms[FilterType.HISTORY](films).length,
       },
       {
         type: FilterType.FAVORITES,
-        name: 'Favorites',
-        count: filterCallBack[FilterType.FAVORITES](films).length,
+        count: FilteredFilms[FilterType.FAVORITES](films).length,
       },
     ];
   }
 
   _addHandlers() {
-    this._mainMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
-    this._mainMenuComponent.setOnStatsButtonClick(this._handleStatsButtonClick);
-  }
-
-  _handleModelEvent() {
-    this.init();
-  }
-
-  _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
-      return;
-    }
-
-    if (this._siteMainElement.querySelector('.statistic')) {
-      removeComponent(this._stats);
-    }
-    // вызывает полную перерисовку всего
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this._mainMenuComponent.setFilterClickHandler(this._handleFilterClick);
+    this._mainMenuComponent.setStatisticsClickHandler(this._handleStatisticsClick);
   }
 
   _getWatchedFilmsCount() {
     let watchedFilmsCount = null;
 
-    // получаем просмотренные фильмы, для передачи в ранг пользователя
+    // получаем кол-во просмотренных фильмов, для передачи в ранг пользователя
     this._getFilters().forEach((item) => {
-      if(item.type === FilterType.HISTORY){
+      if (item.type === FilterType.HISTORY) {
         watchedFilmsCount = item.count;
       }
     });
@@ -119,14 +104,34 @@ export default class MainMenuPresenter {
     return watchedFilmsCount;
   }
 
-  _handleStatsButtonClick() {
-    if (this._stats !== null) {
-      this._stats = null;
+  _handleModelEvent() {
+    this.init();
+  }
+
+  _handleFilterClick(filterType) {
+    if (this._filterModel.getActiveFilter() === filterType) {
+      return;
     }
 
+    if (this._siteMainElement.querySelector('.statistic')) {
+      this._destroyStatistics()
+    }
+
+    // вызвать update
+    this._filterModel.setActiveFilter(UpdateType.MAJOR, filterType);
+  }
+
+  _handleStatisticsClick() {
     this._moviesPresenter.destroy();
-    this._stats = new StatsView(this._moviesModel.getFilms());
-    this._filterModel.setFilter(null);
-    render(this._siteMainElement, this._stats);
+
+    this._statisticsComponent = new StatisticsView(this._moviesModel.getFilms());
+    this._filterModel.setActiveFilter(null);
+
+    render(this._siteMainElement, this._statisticsComponent);
+  }
+
+  _destroyStatistics() {
+    removeComponent(this._statisticsComponent);
+    this._statisticsComponent = null;
   }
 }

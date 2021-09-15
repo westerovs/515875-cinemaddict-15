@@ -5,7 +5,7 @@
 import { getExtraTypeFilms, Films, UpdateType, UserAction } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
-import { FilterType, filterCallBack } from '../utils/filter.js';
+import { FilterType, FilteredFilms } from '../utils/filter.js';
 
 // presenter
 import FilmPresenter from './film-presenter.js';
@@ -35,7 +35,7 @@ export default class MoviesPresenter {
       mostCommented: new Map(),
     };
 
-    this._filterType = FilterType.ALL;
+    this._activeFilter = FilterType.ALL;
     this._filmsBoard = null;
     this._filmsListMainContainer = null;
     this._filmsExtra = null;
@@ -61,9 +61,9 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
-    this._filterType = this._filterModel.getFilter(); // (ALL) текущий тип фильтра
+    this._activeFilter = this._filterModel.getActiveFilter(); // (ALL) текущий тип фильтра
     const films = this._moviesModel.getFilms(); // набор фильмов из модели фильмов
-    const filteredFilms = filterCallBack[this._filterType](films); // возвращает отфильтрованные фильмы
+    const filteredFilms = FilteredFilms[this._activeFilter](films); // возвращает отфильтрованные фильмы
 
     this._filmsExtra = {
       topRated: getExtraTypeFilms(films).topRated,
@@ -72,12 +72,9 @@ export default class MoviesPresenter {
 
     // сортируем отфильтрованный результат
     switch (this._currentSortType) {
-      case SortType.DEFAULT:
-        return filteredFilms;
-      case SortType.DATE:
-        return filteredFilms.slice().sort(sortDateDown);
-      case SortType.RATING:
-        return filteredFilms.slice().sort(sortRatingDown);
+      case SortType.DEFAULT: return filteredFilms;
+      case SortType.DATE:    return filteredFilms.slice().sort(sortDateDown);
+      case SortType.RATING:  return filteredFilms.slice().sort(sortRatingDown);
     }
   }
 
@@ -124,7 +121,7 @@ export default class MoviesPresenter {
 
   // [3]
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._filterModel.getFilter()); // принимает ф-цию update
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._filterModel.getActiveFilter()); // принимает ф-цию update
     filmPresenter.init(film);
 
     switch (container) {
@@ -277,7 +274,7 @@ export default class MoviesPresenter {
 
   // ----------- other
   _renderNoFilms() {
-    this._noFilmsComponent = new NoFilmsView(this._filterType);
+    this._noFilmsComponent = new NoFilmsView(this._activeFilter);
     render(this._mainElement, this._noFilmsComponent);
   }
 
@@ -300,7 +297,7 @@ export default class MoviesPresenter {
       removeComponent(this._noFilmsComponent);
     }
 
-    // resetRenderedFilmCount - счётчик показанных фильмов ?
+    // resetRenderedFilmCount - количество показанных фильмов
     if (resetRenderedFilmCount) {
       this._renderedFilmsCount = Films.SHOW_FILMS;
     } else {

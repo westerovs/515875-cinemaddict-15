@@ -289,11 +289,8 @@ export default class FilmDetails extends SmartView {
     this.getElement().scrollTop = this._scrollPosition;
 
     const emojiItems = this.getElement().querySelectorAll('.film-details__emoji-item');
-    emojiItems.forEach((emotion) => {
-      if(emotion.value === evt.target.value){
-        emotion.setAttribute('checked', 'true');
-      }
-    });
+
+    [...emojiItems].find((it) => it.value === evt.target.value).setAttribute('checked', 'true');
   }
 
   _commentTextAreaHandler(evt) {

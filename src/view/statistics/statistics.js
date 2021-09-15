@@ -167,7 +167,7 @@ const createStatsTemplate = (data, userRank) => {
     </section>`;
 };
 
-export default class Stats extends SmartView {
+export default class Statistics extends SmartView {
   constructor(films) {
     super();
 

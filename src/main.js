@@ -5,9 +5,9 @@ import { Films } from './utils/const.js';
 // Model
 import MoviesModel from './model/movies-model.js';
 import FilterModel from './model/filter-model.js';
-// // View
+// View
 import FooterStatisticView from './view/footer/footer-statistic.js';
-// // Presenter
+// Presenter
 import MoviesPresenter from './presenter/movies-presenter.js';
 import MainMenuPresenter from './presenter/main-menu-presenter.js';
 
@@ -32,5 +32,6 @@ const mainMenuPresenter = new MainMenuPresenter(
   moviesModel,
   moviesPresenter,
 );
+
 mainMenuPresenter.init();
 moviesPresenter.init();
