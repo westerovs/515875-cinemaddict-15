@@ -11,7 +11,7 @@ import { isDay } from '../../utils/days.js';
 import { nanoid } from 'nanoid';
 import he from 'he';
 import { EMOTION, KeyCodes } from '../../utils/const.js';
-import Smart from '../../utils/abstract/smart.js';
+import SmartView from '../../utils/abstract/smart.js';
 
 const createCommentTemplate = (comments) => {
   let template = '';
@@ -90,6 +90,7 @@ const createFilmDetailsTemplate = (state) => {
   const releaseDate = date.format('DD MMMM YYYY');
 
   const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
+  const { hour, minute } = runTime;
 
   return (
     `<section class="film-details" id="${ id }">
@@ -135,7 +136,7 @@ const createFilmDetailsTemplate = (state) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${ runTime }</td>
+                  <td class="film-details__cell">${ hour }${ minute }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -205,7 +206,7 @@ const createFilmDetailsTemplate = (state) => {
   );
 };
 
-export default class FilmDetails extends Smart {
+export default class FilmDetails extends SmartView {
   constructor(film) {
     super();
     this._state = FilmDetails.parseFilmToData(film);

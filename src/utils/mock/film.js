@@ -15,7 +15,10 @@ const titles = [
   'Interstellar',
 ];
 
-const getRunTimes = () => `${ getRandomNumber(0, 3) }h ${ getRandomNumber(0, 60) }m`;
+const getRunTimes = () => ({
+  hour: `${ getRandomNumber(0, 3) }h`,
+  minute: `${ getRandomNumber(0, 60) }m`,
+});
 
 const posters = [
   'the-dance-of-life.jpg',

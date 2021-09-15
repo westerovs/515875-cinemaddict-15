@@ -24,7 +24,13 @@ const filterModel = new FilterModel();
 const moviesModel = new MoviesModel();
 moviesModel.setFilms(films); // добавляет в модель фильмы
 
-const mainMenuPresenter = new MainMenuPresenter(siteMainElement, siteHeaderElement, filterModel, moviesModel);
 const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel, filterModel);
+const mainMenuPresenter = new MainMenuPresenter(
+  siteMainElement,
+  siteHeaderElement,
+  filterModel,
+  moviesModel,
+  moviesPresenter,
+);
 mainMenuPresenter.init();
 moviesPresenter.init();

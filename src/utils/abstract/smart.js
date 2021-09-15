@@ -37,6 +37,6 @@ export default class Smart extends AbstractView {
   }
 
   restoreAllHandlers() {
-    throw new Error('Абстрактный метод должен вызываться только у потомков: resetHandlers');
+    throw new Error('Абстрактный метод должен вызываться только у потомков: restoreAllHandlers');
   }
 }

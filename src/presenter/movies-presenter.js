@@ -281,6 +281,11 @@ export default class MoviesPresenter {
 
 
   // ----------- other
+  _renderNoFilms() {
+    this._noFilmsComponent = new NoFilmsView(this._filterType);
+    render(this._mainElement, this._noFilmsComponent);
+  }
+
   _clearBoard({ resetRenderedFilmCount = false, resetSortType = false } = {}) {
     const filmsCount = this._getFilms().length;
 
@@ -315,8 +320,8 @@ export default class MoviesPresenter {
     }
   }
 
-  _renderNoFilms() {
-    this._noFilmsComponent = new NoFilmsView(this._filterType);
-    render(this._mainElement, this._noFilmsComponent);
+  destroy() {
+    this._clearBoard({ resetRenderedFilmCardsCount: true, resetSortType: true });
   }
+
 }

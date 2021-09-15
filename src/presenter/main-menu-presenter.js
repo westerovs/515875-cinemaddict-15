@@ -4,7 +4,9 @@
 *   - обновления звания пользователя
 *   - переключение на экран статистики ( в будущем )
 * */
+/* eslint-disable */
 
+import StatsView from '../view/stats/stats.js';
 import MainMenuView from '../view/main-menu/main-menu.js';
 import RankView from '../view/main-menu/rank.js';
 import { UpdateType } from '../utils/const.js';
@@ -12,11 +14,13 @@ import { FilterType, filterCallBack } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
 
 export default class MainMenuPresenter {
-  constructor(filtersContainer, headerContainer, filterModel, moviesModel) {
-    this._filtersContainer = filtersContainer;
+  constructor(siteMainElement, headerContainer, filterModel, moviesModel, moviesPresenter) {
+    this._siteMainElement = siteMainElement;
     this._headerContainer = headerContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
+    this._moviesPresenter = moviesPresenter;
+    this._stats = null;
 
     this._mainMenuComponent = null;
     this._rankComponent = null;
@@ -24,6 +28,8 @@ export default class MainMenuPresenter {
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._getWatchedFilmsCount = this._getWatchedFilmsCount.bind(this);
+    // stats
+    this._handleStatsButtonClick = this._handleStatsButtonClick.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -39,9 +45,12 @@ export default class MainMenuPresenter {
     this._mainMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
     this._rankComponent     = new RankView(this._getWatchedFilmsCount);
 
+    // stats
+    this._mainMenuComponent.setOnStatsButtonClick(this._handleStatsButtonClick);
+
     // first init
     if (prevMainMenuComponent === null && prevRankComponent === null) {
-      render(this._filtersContainer, this._mainMenuComponent);
+      render(this._siteMainElement, this._mainMenuComponent);
       render(this._headerContainer, this._rankComponent);
       return;
     }
@@ -87,6 +96,10 @@ export default class MainMenuPresenter {
     if (this._filterModel.getFilter() === filterType) {
       return;
     }
+
+    if (this._siteMainElement.querySelector('.statistic')){
+      removeComponent(this._stats);
+    }
     // вызывает полную перерисовку всего
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
@@ -103,4 +116,17 @@ export default class MainMenuPresenter {
 
     return watchedFilmsCount;
   }
+
+//  stats ↓
+  _handleStatsButtonClick() {
+    if (this._stats !== null) {
+      this._stats = null;
+    }
+
+    this._moviesPresenter.destroy();
+    this._stats = new StatsView(this._moviesModel.getFilms());
+    this._filterModel.setFilter(null);
+    render(this._siteMainElement, this._stats);
+  }
+//  stats ↑
 }
