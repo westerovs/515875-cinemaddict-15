@@ -4,8 +4,6 @@
 *   - обновления звания пользователя
 *   - переключение на экран статистики ( в будущем )
 * */
-/* eslint-disable */
-
 import StatsView from '../view/stats/stats.js';
 import MainMenuView from '../view/main-menu/main-menu.js';
 import RankView from '../view/main-menu/rank.js';
@@ -38,20 +36,19 @@ export default class MainMenuPresenter {
   init() {
     const filters = this._getFilters();
     const prevMainMenuComponent = this._mainMenuComponent;
-    const prevRankComponent     = this._rankComponent;
+    const prevRankComponent = this._rankComponent;
 
     //                     отфильтрованные числа ↓   тип фильтра по умолчанию ↓ (ALL)
     this._mainMenuComponent = new MainMenuView(filters, this._filterModel.getFilter());
-    this._mainMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
-    this._rankComponent     = new RankView(this._getWatchedFilmsCount);
+    this._rankComponent = new RankView(this._getWatchedFilmsCount);
 
-    // stats
-    this._mainMenuComponent.setOnStatsButtonClick(this._handleStatsButtonClick);
+    this._addHandlers();
 
     // first init
     if (prevMainMenuComponent === null && prevRankComponent === null) {
       render(this._siteMainElement, this._mainMenuComponent);
       render(this._headerContainer, this._rankComponent);
+
       return;
     }
 
@@ -88,6 +85,11 @@ export default class MainMenuPresenter {
     ];
   }
 
+  _addHandlers() {
+    this._mainMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._mainMenuComponent.setOnStatsButtonClick(this._handleStatsButtonClick);
+  }
+
   _handleModelEvent() {
     this.init();
   }
@@ -97,7 +99,7 @@ export default class MainMenuPresenter {
       return;
     }
 
-    if (this._siteMainElement.querySelector('.statistic')){
+    if (this._siteMainElement.querySelector('.statistic')) {
       removeComponent(this._stats);
     }
     // вызывает полную перерисовку всего
@@ -117,7 +119,6 @@ export default class MainMenuPresenter {
     return watchedFilmsCount;
   }
 
-//  stats ↓
   _handleStatsButtonClick() {
     if (this._stats !== null) {
       this._stats = null;
@@ -128,5 +129,4 @@ export default class MainMenuPresenter {
     this._filterModel.setFilter(null);
     render(this._siteMainElement, this._stats);
   }
-//  stats ↑
 }

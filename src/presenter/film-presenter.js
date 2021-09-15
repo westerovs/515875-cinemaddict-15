@@ -58,7 +58,6 @@ export default class FilmPresenter {
       this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
     }
 
-
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
   }

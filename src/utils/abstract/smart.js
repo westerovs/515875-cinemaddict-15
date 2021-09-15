@@ -27,9 +27,11 @@ export default class Smart extends AbstractView {
     // как только вызвали update - текущий становится предыдущим
     const prevElement = this.getElement();
     const parent = prevElement.parentElement;
+
     this.removeElement();
 
     const newElement = this.getElement();
+
     parent.replaceChild(newElement, prevElement);
 
     // Вызовем метод restoreAllHandlers после перерисовки

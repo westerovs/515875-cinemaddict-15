@@ -64,9 +64,6 @@ export default class MoviesPresenter {
     this._filterType = this._filterModel.getFilter(); // (ALL) текущий тип фильтра
     const films = this._moviesModel.getFilms(); // набор фильмов из модели фильмов
     const filteredFilms = filterCallBack[this._filterType](films); // возвращает отфильтрованные фильмы
-    // console.warn(this._filterType)
-    // console.warn(films)
-    // console.warn(filteredFilms)
 
     this._filmsExtra = {
       topRated: getExtraTypeFilms(films).topRated,
@@ -75,15 +72,13 @@ export default class MoviesPresenter {
 
     // сортируем отфильтрованный результат
     switch (this._currentSortType) {
-      // case SortType.DEFAULT:
-      //   return filteredFilms;
+      case SortType.DEFAULT:
+        return filteredFilms;
       case SortType.DATE:
         return filteredFilms.slice().sort(sortDateDown);
       case SortType.RATING:
         return filteredFilms.slice().sort(sortRatingDown);
     }
-
-    return filteredFilms;
   }
 
   // ----------- RENDERS ↓
