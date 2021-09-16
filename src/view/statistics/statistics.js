@@ -3,11 +3,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from '../../utils/abstract/smart.js';
 import dayjs from 'dayjs';
 import { getWatchedFilmsChart } from '../../utils/statistic.js';
+/* eslint-disable */
 
 const TOP_GENRE_INDEX = 0;
 const BAR_HEIGHT = 50;
-
-/* eslint-disable */
 
 const getTotalDuration = (films) => films.reduce((acc, film) => {
   const hour = parseInt(film.filmInfo.runTime.hour, 10) * 60;
@@ -20,6 +19,7 @@ const getTotalDuration = (films) => films.reduce((acc, film) => {
 
 const renderGenresChart = (statisticCtx, data) => {
   const { films, dateTo, dateFrom, currentInput } = data;
+
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
   statisticCtx.height = BAR_HEIGHT * WatchedFilmsChart.uniqGenres.length;
 
