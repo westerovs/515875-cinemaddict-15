@@ -1,30 +1,22 @@
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import SmartView from '../../utils/abstract/smart.js';
-import dayjs from 'dayjs';
-import { getWatchedFilmsChart } from '../../utils/statistic.js';
 /* eslint-disable */
 
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import dayjs from 'dayjs';
+import { getWatchedFilmsChart, getTotalDuration, TypeOfStatistics } from '../../utils/statistic.js';
+import SmartView from '../../utils/abstract/smart.js';
+
 const TOP_GENRE_INDEX = 0;
-const BAR_HEIGHT = 50;
+const ROW_HEIGHT = 50;
 
-const getTotalDuration = (films) => films.reduce((acc, film) => {
-  const hour = parseInt(film.filmInfo.runTime.hour, 10) * 60;
-  const minute = parseInt(film.filmInfo.runTime.minute, 10);
-
-  acc += hour + minute;
-
-  return acc;
-}, 0);
-
-const renderGenresChart = (statisticCtx, data) => {
+const renderGenresChart = (container, data) => {
   const { films, dateTo, dateFrom, currentInput } = data;
 
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
-  statisticCtx.height = BAR_HEIGHT * WatchedFilmsChart.uniqGenres.length;
+  container.height = ROW_HEIGHT * WatchedFilmsChart.uniqGenres.length;
 
   // код от коллеги
-  return new Chart(statisticCtx, {
+  return new Chart(container, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
@@ -88,7 +80,9 @@ const createStatsTemplate = (data, userRank) => {
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
   const totalDuration = getTotalDuration(WatchedFilmsChart.watchedFilms);
 
-  console.log(currentInput)
+  console.log(' ')
+  console.log(`createStatsTemplate: `, currentInput)
+  console.log(' ')
 
   return `<section class="statistic">
       <p class="statistic__rank">
@@ -171,7 +165,7 @@ export default class Statistics extends SmartView {
   constructor(films) {
     super();
 
-    this._data = {
+    this._state = {
       films,
       dateFrom: (() => {
         const typeOfTime = 'year';
@@ -184,28 +178,35 @@ export default class Statistics extends SmartView {
     this._userRank = document.querySelector('.profile__rating').textContent;
     this._genresChart = null;
 
-    this._onStatsButtonClick = this._onStatsButtonClick.bind(this);
+    this._onClickStatisticsBtn = this._onClickStatisticsBtn.bind(this);
     this._setInnerHandlers();
-    this._setGenresChart();
-  }
-
-  removeElement() {
-    super.removeElement();
-
-    if (this._genresChart !== null) {
-      this._genresChart = null;
-    }
+    this._drawChart();
   }
 
   getTemplate() {
-    console.log('this._data.currentInput: ' ,this._data.currentInput )
-    return createStatsTemplate(this._data, this._userRank);
+    console.log(' ')
+    console.log('getTemplate: ' ,this._state.currentInput )
+    console.log(' ')
+    return createStatsTemplate(this._state, this._userRank);
   }
 
-  _onStatsButtonClick(evt) {
-    if (evt.target.value === this._data.currentInput) {
+  _drawChart() {
+    if (this._genresChart !== null) {
+      this._genresChart = null;
+    }
+
+    const container = this.getElement().querySelector('.statistic__chart');
+    this._genresChart = renderGenresChart(container, this._state);
+  }
+
+  _onClickStatisticsBtn(evt) {
+    if (evt.target.value === this._state.currentInput) {
       return;
     }
+
+    console.log('click')
+    console.log('evt.target.value: ', evt.target.value)
+    console.log('this._state.currentInput: ', this._state.currentInput)
 
     this.updateState(
       {
@@ -218,24 +219,21 @@ export default class Statistics extends SmartView {
     );
   }
 
-  _setGenresChart() {
-    if (this._genresChart !== null) {
-      this._genresChart = null;
-    }
-
-    const statisticCtx = this.getElement().querySelector('.statistic__chart');
-
-    this._genresChart = renderGenresChart(statisticCtx, this._data);
-  }
-
   _setInnerHandlers() {
-    this.getElement()
-      .querySelectorAll('.statistic__filters-input')
-      .forEach((input) => input.addEventListener('click', this._onStatsButtonClick));
+    this.getElement().querySelectorAll('.statistic__filters-input')
+      .forEach((input) => input.addEventListener('click', this._onClickStatisticsBtn));
   }
 
   restoreAllHandlers() {
-    this._setGenresChart();
+    this._drawChart();
     this._setInnerHandlers();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._genresChart !== null) {
+      this._genresChart = null;
+    }
   }
 }

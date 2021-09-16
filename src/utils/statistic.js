@@ -5,6 +5,15 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
 
+const getTotalDuration = (films) => films.reduce((acc, film) => {
+  const hour = parseInt(film.filmInfo.runTime.hour, 10) * 60;
+  const minute = parseInt(film.filmInfo.runTime.minute, 10);
+
+  acc += hour + minute;
+
+  return acc;
+}, 0);
+
 const TypeOfStatistics = {
   ALL_TIME: 'all-time',
   TODAY: 'today',
@@ -71,5 +80,7 @@ const getWatchedFilmsChart = (films, dateTo, dateFrom, currentInput) => {
 };
 
 export {
-  getWatchedFilmsChart
+  getWatchedFilmsChart,
+  getTotalDuration,
+  TypeOfStatistics
 };
