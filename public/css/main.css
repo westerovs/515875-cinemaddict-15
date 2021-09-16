@@ -250,6 +250,10 @@ button {
   padding: var(--vertical-gap) 0;
 }
 
+.main-navigation__item:first-letter {
+  text-transform: uppercase;
+}
+
 .main-navigation__item:first-child {
   margin-right: 130px;
 }
@@ -1056,6 +1060,11 @@ button {
   padding-bottom: 30px;
   cursor: pointer;
 }
+
+.statistic__filters-label:first-letter {
+  text-transform: uppercase;
+}
+
 .statistic__filters-label:hover {
   color: var(--text-color-active);
   opacity: 0.8;

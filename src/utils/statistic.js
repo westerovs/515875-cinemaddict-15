@@ -15,7 +15,7 @@ const getTotalDuration = (films) => films.reduce((acc, film) => {
 }, 0);
 
 const TypeOfStatistics = {
-  ALL_TIME: 'all-time',
+  ALL_TIME: 'all time',
   TODAY: 'today',
   WEEK: 'week',
   MONTH: 'month',

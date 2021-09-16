@@ -3,10 +3,10 @@
 * */
 
 const FilterType = {
-  ALL: 'All movies',
-  WATCHLIST: 'Watchlist',
-  HISTORY: 'History',
-  FAVORITES: 'Favorites',
+  ALL: 'all movies',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
 };
 
 const FilteredFilms = {

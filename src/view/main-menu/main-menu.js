@@ -11,7 +11,7 @@ const createFilters = (filters, currentFilterType) => {
           class="main-navigation__item ${ currentFilterType === type ? 'main-navigation__item--active' : '' }"
           data-name="${ type }">${ type }
             <span class="main-navigation__item-count
-              ${ name === 'All movies' ? 'visually-hidden' : '' }">${ count }
+              ${ type === 'all movies' ? 'visually-hidden' : '' }">${ count }
             </span>
         </a>`;
   });
@@ -19,7 +19,8 @@ const createFilters = (filters, currentFilterType) => {
   return template;
 };
 
-const createSiteMenuTemplate = (filters, currentFilterType) => `<nav class="main-navigation">
+const createSiteMenuTemplate = (filters, currentFilterType) => (
+  `<nav class="main-navigation">
     <div class="main-navigation__items">
       <div class="main-navigation__items">
         ${ createFilters(filters, currentFilterType) }
@@ -27,8 +28,8 @@ const createSiteMenuTemplate = (filters, currentFilterType) => `<nav class="main
     </div>
     <a href="#stats" class="main-navigation__additional
       ${ !currentFilterType ? 'main-navigation__additional--active' : '' }"
-    ">Stats</a>
-  </nav>`;
+    >Stats</a>
+  </nav>`);
 
 export default class MainMenu extends AbstractView {
   constructor(filter, currentFilterType) {
@@ -37,8 +38,8 @@ export default class MainMenu extends AbstractView {
     this._currentFilterType = currentFilterType;
 
     this._filterClickHandler = this._filterClickHandler.bind(this);
-    // statistics
     this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
+
     this._filterButtons = this.getElement().querySelectorAll('.main-navigation__item ');
     this._statisticsButton = this.getElement().querySelector('.main-navigation__additional');
   }
@@ -47,7 +48,6 @@ export default class MainMenu extends AbstractView {
     return createSiteMenuTemplate(this._filter, this._currentFilterType);
   }
 
-  // filter ↓
   _filterClickHandler(evt) {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.closest('.main-navigation__item').dataset.name);
@@ -60,7 +60,6 @@ export default class MainMenu extends AbstractView {
       .forEach((filterButton) => filterButton.addEventListener('click', this._filterClickHandler));
   }
 
-  // statistics ↓
   _statisticsClickHandler(evt) {
     evt.preventDefault();
 

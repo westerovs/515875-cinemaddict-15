@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
@@ -74,15 +72,28 @@ const renderGenresChart = (container, data) => {
   });
 };
 
+const createBtnsTemplate = (currentInput) => {
+  let template = '';
+
+  Object.values(TypeOfStatistics).forEach((type) => {
+    template += `
+      <input type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter"
+        id="statistic-${ type }"
+        value="${ type }"
+        ${ currentInput === type ? 'checked' : '' }>
+      <label for="statistic-${ type }" class="statistic__filters-label">${ type }</label>`;
+  });
+
+  return template;
+};
+
 const createStatsTemplate = (data, userRank) => {
   const { films, dateTo, dateFrom, currentInput } = data;
 
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
   const totalDuration = getTotalDuration(WatchedFilmsChart.watchedFilms);
-
-  console.log(' ')
-  console.log(`createStatsTemplate: `, currentInput)
-  console.log(' ')
 
   return `<section class="statistic">
       <p class="statistic__rank">
@@ -93,42 +104,7 @@ const createStatsTemplate = (data, userRank) => {
 
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
         <p class="statistic__filters-description">Show stats:</p>
-
-        <input type="radio"
-          class="statistic__filters-input visually-hidden"
-          name="statistic-filter"
-          id="statistic-all-time"
-          value="all-time"
-          ${ currentInput === 'all-time' ? 'checked' : '' }>
-        <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-        <input type="radio"
-          class="statistic__filters-input visually-hidden"
-          name="statistic-filter"
-          id="statistic-today"
-          value="today" ${ currentInput === 'today' ? 'checked' : '' }>
-        <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-        <input type="radio"
-          class="statistic__filters-input visually-hidden"
-          name="statistic-filter"
-          id="statistic-week"
-          value="week" ${ currentInput === 'week' ? 'checked' : '' }>
-        <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-        <input type="radio"
-          class="statistic__filters-input visually-hidden"
-          name="statistic-filter"
-          id="statistic-month"
-          value="month" ${ currentInput === 'month' ? 'checked' : '' }>
-        <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-        <input type="radio"
-          class="statistic__filters-input visually-hidden"
-          name="statistic-filter"
-          id="statistic-year"
-          value="year" ${ currentInput === 'year' ? 'checked' : '' }>
-        <label for="statistic-year" class="statistic__filters-label">Year</label>
+        ${ createBtnsTemplate(currentInput) }
       </form>
 
       <ul class="statistic__text-list">
@@ -157,7 +133,6 @@ const createStatsTemplate = (data, userRank) => {
       <div class="statistic__chart-wrap">
         <canvas class="statistic__chart" width="1000"></canvas>
       </div>
-
     </section>`;
 };
 
@@ -168,11 +143,11 @@ export default class Statistics extends SmartView {
     this._state = {
       films,
       dateFrom: (() => {
-        const typeOfTime = 'year';
+        const typeOfTime = TypeOfStatistics.YEAR;
         return dayjs().subtract( 1 , typeOfTime).toDate();
       })(),
       dateTo: dayjs().toDate(),
-      currentInput: 'all-time', // radio по умолчанию
+      currentInput: TypeOfStatistics.ALL_TIME, // radio по умолчанию
     };
 
     this._userRank = document.querySelector('.profile__rating').textContent;
@@ -184,9 +159,6 @@ export default class Statistics extends SmartView {
   }
 
   getTemplate() {
-    console.log(' ')
-    console.log('getTemplate: ' ,this._state.currentInput )
-    console.log(' ')
     return createStatsTemplate(this._state, this._userRank);
   }
 
@@ -203,10 +175,6 @@ export default class Statistics extends SmartView {
     if (evt.target.value === this._state.currentInput) {
       return;
     }
-
-    console.log('click')
-    console.log('evt.target.value: ', evt.target.value)
-    console.log('this._state.currentInput: ', this._state.currentInput)
 
     this.updateState(
       {
