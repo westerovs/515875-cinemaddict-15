@@ -1,25 +1,56 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
-import { getWatchedFilmsChart, getTotalDuration, TypeOfStatistics } from '../../utils/statistic.js';
+import { getWatchedFilmsChart, getTotalDuration, TypeOfStatistics, getMostFrequentlyRepeatedItems } from '../../utils/statistic.js';
 import SmartView from '../../utils/abstract/smart.js';
 /* eslint-disable */
 const ROW_HEIGHT = 50;
 
+const getDataHistoryFilms = (films) => {
+  const historyFilms = films.filter(item => item.userDetails.isAlreadyWatched ? item.userDetails.isAlreadyWatched : '')
+  const watchedFilmsCount = historyFilms.length;
+  const totalDuration = getTotalDuration(historyFilms);
+
+  // *** вычисление топ жанров из просмотренных фильмов ***
+  // жанры просмотренных фильмов
+  const repeatingGenresHistoryFilms = historyFilms
+    .map((film) => [...film.filmInfo.genre])
+    .flat(1);
+
+  const filteredByTopGenres = getMostFrequentlyRepeatedItems(repeatingGenresHistoryFilms)
+
+  const getTopGenre = () =>  Object.entries(filteredByTopGenres)
+    .reduce((acc, curr) => acc[1] > curr[1] ? acc : curr)[0];
+
+  return {
+    watchedFilmsCount,
+    totalDuration,
+    topGenre: getTopGenre,
+    filteredByTopGenres: {
+      genre: Object.keys(filteredByTopGenres),
+      value: Object.values(filteredByTopGenres)
+    }
+  };
+}
+
 const renderGenresChart = (container, state) => {
   const { films, dateTo, dateFrom, currentInput } = state;
-return
-  const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
-  container.height = ROW_HEIGHT * WatchedFilmsChart.uniqGenres.length;
+
+  const { filteredByTopGenres, watchedFilmsCount } = getDataHistoryFilms(films);
+
+  // const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
+  container.height = ROW_HEIGHT * filteredByTopGenres.genre.length
+
+  console.log(watchedFilmsCount)
 
   // код от коллеги
   return new Chart(container, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: WatchedFilmsChart.uniqGenres,
+      labels: filteredByTopGenres.genre,
       datasets: [{
-        data: WatchedFilmsChart.filmsByGenresCount,
+        data: filteredByTopGenres.value,
         backgroundColor: '#ffe800',
         hoverBackgroundColor: '#ffe800',
         anchor: 'start',
@@ -88,45 +119,12 @@ const createBtnsTemplate = (currentInput) => {
   return template;
 };
 
-// абстрактная ф-ция для нахождения наиболее часто повторяющихся значений в массиве
-const getMostFrequentlyRepeatedItems = (arr) => {
-  return arr.reduce((acc, item) => {
-    return (typeof acc[item] !== 'undefined')
-      ? { ...acc, [item]: acc[item] + 1 }
-      : { ...acc, [item]: 1 }
-  }, {})
-}
-
-const getDataHistoryFilms = (films) => {
-  const historyFilms = films.filter(item => item.userDetails.isAlreadyWatched ? item.userDetails.isAlreadyWatched : '')
-  const watchedFilmsCount = historyFilms.length;
-  const totalDuration = getTotalDuration(historyFilms);
-
-  // *** вычисление топ жанров из просмотренных фильмов ***
-  // жанры просмотренных фильмов
-  const repeatingGenresHistoryFilms = historyFilms
-    .map((film) => [...film.filmInfo.genre])
-    .flat(1);
-
-  const filteredByTopGenres = getMostFrequentlyRepeatedItems(repeatingGenresHistoryFilms)
-
-  const getTopGenre = () =>  Object.entries(filteredByTopGenres)
-      .reduce((acc, curr) => acc[1] > curr[1] ? acc : curr)[0];
-
-  console.log(filteredByTopGenres)
-
-  return {
-    watchedFilmsCount,
-    totalDuration,
-    topGenre: getTopGenre
-  }
-}
-
 const createStatsTemplate = (state, userRank) => {
   const { films, dateFrom, dateTo, currentInput } = state;
+  const { watchedFilmsCount, totalDuration, topGenre } = getDataHistoryFilms(films);
 
   // ---------------------------------
-  const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
+  // const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
 
   return `<section class="statistic">
       <p class="statistic__rank">
@@ -144,21 +142,21 @@ const createStatsTemplate = (state, userRank) => {
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
           <p class="statistic__item-text">
-            ${ getDataHistoryFilms(films).watchedFilmsCount }
+            ${ watchedFilmsCount }
             <span class="statistic__item-description">movies</span>
           </p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
           <p class="statistic__item-text">
-            ${ Math.floor(getDataHistoryFilms(films).totalDuration / 60) }
-            <span class="statistic__item-description">h</span>${ getDataHistoryFilms(films).totalDuration % 60 }
+            ${ Math.floor(totalDuration / 60) }
+            <span class="statistic__item-description">h</span>${ totalDuration % 60 }
             <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
           <p class="statistic__item-text">
-            ${ getDataHistoryFilms(films).watchedFilmsCount > 0 ? getDataHistoryFilms(films).topGenre() : ''}
+            ${ watchedFilmsCount > 0 ? topGenre() : ''}
           </p>
         </li>
       </ul>

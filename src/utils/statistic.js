@@ -5,6 +5,12 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
 
+// абстрактная ф-ция для нахождения наиболее часто повторяющихся значений в массиве
+const getMostFrequentlyRepeatedItems = (arr) => arr.reduce((acc, item) => (typeof acc[item] !== 'undefined')
+  ? { ...acc, [item]: acc[item] + 1 }
+  : { ...acc, [item]: 1 }, {});
+
+
 const getTotalDuration = (films) => films.reduce((acc, film) => {
   const hour = parseInt(film.filmInfo.runTime.hour, 10) * 60;
   const minute = parseInt(film.filmInfo.runTime.minute, 10);
@@ -81,5 +87,6 @@ const getWatchedFilmsChart = (films, dateTo, dateFrom, currentInput) => {
 export {
   getWatchedFilmsChart,
   getTotalDuration,
-  TypeOfStatistics
+  TypeOfStatistics,
+  getMostFrequentlyRepeatedItems
 };
