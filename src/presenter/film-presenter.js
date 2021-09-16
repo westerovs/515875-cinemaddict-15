@@ -24,7 +24,7 @@ export default class FilmPresenter {
     this._destroyFilmDetails = this._destroyFilmDetails.bind(this);
     this._onEscCloseFilmDetails = this._onEscCloseFilmDetails.bind(this);
     // *** ↓ handle controls ↓ ***
-    this._handleWatchListClick = this._handleWatchListClick.bind(this);
+    this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
@@ -82,11 +82,11 @@ export default class FilmPresenter {
   _addHandlers() {
     // film
     this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
-    this._filmCardComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._filmCardComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     // film-details
-    this._filmDetailsComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._filmDetailsComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
@@ -108,14 +108,13 @@ export default class FilmPresenter {
   }
 
   // *** ↓ handle controls ↓ ***
-  _handleWatchListClick() {
+  _handleAddToWatchListClick() {
     // передаём объект задачи с изменённым свойством
-    const userDetails = {
-      isWatchlist: !this._film.userDetails.isWatchlist,
-      isAlreadyWatched: this._film.userDetails.isAlreadyWatched,
-      isWatchingDate: this._film.userDetails.isWatchingDate,
-      isFavorite: this._film.userDetails.isFavorite,
-    };
+    const userDetails = Object.assign({}, this._film.userDetails,
+      {
+        isWatchlist: !this._film.userDetails.isWatchlist,
+      },
+    );
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
@@ -128,12 +127,12 @@ export default class FilmPresenter {
 
   _handleWatchedClick() {
     // передаём объект задачи с изменённым свойством
-    const userDetails = {
-      isWatchlist: this._film.userDetails.isWatchlist,
-      isAlreadyWatched: !this._film.userDetails.isAlreadyWatched,
-      isWatchingDate: this._film.userDetails.isWatchingDate,
-      isFavorite: this._film.userDetails.isFavorite,
-    };
+    const userDetails = Object.assign({}, this._film.userDetails,
+      {
+        isAlreadyWatched: !this._film.userDetails.isAlreadyWatched,
+        watchingDate: (this._film.userDetails.watchingDate === null) ? this._film.filmInfo.release.date : null,
+      },
+    );
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
@@ -146,12 +145,11 @@ export default class FilmPresenter {
 
   _handleFavoriteClick() {
     // передаём объект задачи с изменённым свойством
-    const userDetails = {
-      isWatchlist: this._film.userDetails.isWatchlist,
-      isAlreadyWatched: this._film.userDetails.isAlreadyWatched,
-      isWatchingDate: this._film.userDetails.isWatchingDate,
-      isFavorite: !this._film.userDetails.isFavorite,
-    };
+    const userDetails = Object.assign({}, this._film.userDetails,
+      {
+        isFavorite: !this._film.userDetails.isFavorite,
+      },
+    );
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 

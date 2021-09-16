@@ -314,6 +314,7 @@ export default class MoviesPresenter {
 
   destroy() {
     this._clearBoard({ resetRenderedFilmCardsCount: true, resetSortType: true });
+    console.warn('movies board Уничтожен !');
   }
 
 }

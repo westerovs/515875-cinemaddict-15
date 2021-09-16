@@ -25,16 +25,16 @@ const TypeOfStatistics = {
 // просмотренные фильмы в диапазоне
 const getWatchedFilmsInDateRange = (films, dateFrom, dateTo, currentInput) => {
   if (currentInput === TypeOfStatistics.ALL_TIME) {
-    return films.filter((film) => dayjs(film.userDetails.isWatchingDate).isSameOrBefore(dateTo));
+    return films.filter((film) => dayjs(film.userDetails.watchingDate).isSameOrBefore(dayjs()));
   }
   if (currentInput === TypeOfStatistics.TODAY) {
-    return films.filter((film) => dayjs(film.userDetails.isWatchingDate).isSame(dateTo, 'day'));
+    return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'day'));
   }
 
   return films.filter((film) =>
-    dayjs(film.userDetails.isWatchingDate).isSame(dateFrom, 'day') ||
-    dayjs(film.userDetails.isWatchingDate).isBetween(dateFrom, dateTo) ||
-    dayjs(film.userDetails.isWatchingDate).isSame(dateTo, 'day'),
+    dayjs(film.userDetails.watchingDate).isSame(dateFrom, 'day') ||
+    dayjs(film.userDetails.watchingDate).isBetween(dateFrom, dateTo) ||
+    dayjs(film.userDetails.watchingDate).isSame(dateTo, 'day'),
   );
 };
 

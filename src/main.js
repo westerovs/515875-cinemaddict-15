@@ -16,9 +16,14 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-render(siteFooterStatistics, new FooterStatisticView(Films.TOTAL_MOVIES));
+const allFilms = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
 
-const films = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
+const films = allFilms.map((filmCard) => {
+  if(filmCard.userDetails.isAlreadyWatched) {
+    filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
+  }
+  return filmCard;
+});
 
 const filterModel = new FilterModel();
 const moviesModel = new MoviesModel();
@@ -35,3 +40,6 @@ const mainMenuPresenter = new MainMenuPresenter(
 
 mainMenuPresenter.init();
 moviesPresenter.init();
+
+render(siteFooterStatistics, new FooterStatisticView(Films.FILMS_COUNT));
+

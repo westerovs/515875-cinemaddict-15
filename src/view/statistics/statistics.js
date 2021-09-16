@@ -7,6 +7,8 @@ import SmartView from '../../utils/abstract/smart.js';
 const TOP_GENRE_INDEX = 0;
 const ROW_HEIGHT = 50;
 
+// const getTotalDuration = (films) => films.reduce((acc, film) => acc += film.filmInfo.runtime,0);
+
 const renderGenresChart = (container, data) => {
   const { films, dateTo, dateFrom, currentInput } = data;
 

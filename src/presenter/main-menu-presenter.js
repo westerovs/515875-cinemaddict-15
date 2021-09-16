@@ -112,7 +112,6 @@ export default class MainMenuPresenter {
     if (this._filterModel.getActiveFilter() === filterType) {
       return;
     }
-
     if (this._siteMainElement.querySelector('.statistic')) {
       this._destroyStatistics()
     }
@@ -123,7 +122,6 @@ export default class MainMenuPresenter {
 
   _handleStatisticsClick() {
     this._moviesPresenter.destroy();
-
     this._statisticsComponent = new StatisticsView(this._moviesModel.getFilms());
     this._filterModel.setActiveFilter(null);
 
