@@ -1,47 +1,17 @@
+/* eslint-disable */
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
-import { getWatchedFilmsChart, getTotalDuration, TypeOfStatistics, getMostFrequentlyRepeatedItems } from '../../utils/statistic.js';
+import { TypeOfStatistics, getDataHistoryFilms } from '../../utils/statistic.js';
 import SmartView from '../../utils/abstract/smart.js';
-/* eslint-disable */
+
 const ROW_HEIGHT = 50;
 
-const getDataHistoryFilms = (films) => {
-  const historyFilms = films.filter(item => item.userDetails.isAlreadyWatched ? item.userDetails.isAlreadyWatched : '')
-  const watchedFilmsCount = historyFilms.length;
-  const totalDuration = getTotalDuration(historyFilms);
-
-  // *** вычисление топ жанров из просмотренных фильмов ***
-  // жанры просмотренных фильмов
-  const repeatingGenresHistoryFilms = historyFilms
-    .map((film) => [...film.filmInfo.genre])
-    .flat(1);
-
-  const filteredByTopGenres = getMostFrequentlyRepeatedItems(repeatingGenresHistoryFilms)
-
-  const getTopGenre = () =>  Object.entries(filteredByTopGenres)
-    .reduce((acc, curr) => acc[1] > curr[1] ? acc : curr)[0];
-
-  return {
-    watchedFilmsCount,
-    totalDuration,
-    topGenre: getTopGenre,
-    filteredByTopGenres: {
-      genre: Object.keys(filteredByTopGenres),
-      value: Object.values(filteredByTopGenres)
-    }
-  };
-}
-
 const renderGenresChart = (container, state) => {
-  const { films, dateTo, dateFrom, currentInput } = state;
+  const { films, dateFrom, dateTo, currentInput } = state;
+  const { filteredByTopGenres } = getDataHistoryFilms(films, dateFrom, dateTo, currentInput);
 
-  const { filteredByTopGenres, watchedFilmsCount } = getDataHistoryFilms(films);
-
-  // const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
   container.height = ROW_HEIGHT * filteredByTopGenres.genre.length
-
-  console.log(watchedFilmsCount)
 
   // код от коллеги
   return new Chart(container, {
@@ -121,7 +91,7 @@ const createBtnsTemplate = (currentInput) => {
 
 const createStatsTemplate = (state, userRank) => {
   const { films, dateFrom, dateTo, currentInput } = state;
-  const { watchedFilmsCount, totalDuration, topGenre } = getDataHistoryFilms(films);
+  const { watchedFilmsCount, totalDuration, topGenre } = getDataHistoryFilms(films, dateFrom, dateTo, currentInput);
 
   // ---------------------------------
   // const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);

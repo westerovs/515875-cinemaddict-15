@@ -1,9 +1,17 @@
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-
+/* eslint-disable */
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
+
+const TypeOfStatistics = {
+  ALL_TIME: 'all time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
 
 // абстрактная ф-ция для нахождения наиболее часто повторяющихся значений в массиве
 const getMostFrequentlyRepeatedItems = (arr) => arr.reduce((acc, item) => (typeof acc[item] !== 'undefined')
@@ -19,14 +27,6 @@ const getTotalDuration = (films) => films.reduce((acc, film) => {
 
   return acc;
 }, 0);
-
-const TypeOfStatistics = {
-  ALL_TIME: 'all time',
-  TODAY: 'today',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
-};
 
 // просмотренные фильмы в диапазоне
 const getWatchedFilmsInDateRange = (films, dateFrom, dateTo, currentInput) => {
@@ -44,49 +44,39 @@ const getWatchedFilmsInDateRange = (films, dateFrom, dateTo, currentInput) => {
   );
 };
 
-// жанры просмотренных фильмов
-const getAllWatchedFilmsGenres = (films) => {
-  const genres = [];
+// возвращает все данные для графика
+const getDataHistoryFilms = (films, dateFrom, dateTo, currentInput) => {
+  const filmsFromRange = getWatchedFilmsInDateRange(films, dateFrom, dateTo, currentInput);
 
-  films.forEach((film) => {
-    film.filmInfo.genre.forEach((genre) => genres.push(genre));
-  });
+  const historyFilms = filmsFromRange.filter((item) => item.userDetails.isAlreadyWatched ? item.userDetails.isAlreadyWatched : '');
+  const watchedFilmsCount = historyFilms.length;
+  const totalDuration = getTotalDuration(historyFilms);
 
-  return genres;
-};
+  // *** вычисление топ жанров из просмотренных фильмов ***
+  // жанры просмотренных фильмов
+  const repeatingGenresHistoryFilms = historyFilms
+    .map((film) => [...film.filmInfo.genre])
+    .flat(1);
 
-const countFilmsByGenres = (allGenres,genre) => allGenres.filter((item) => item === genre).length;
+  const filteredByTopGenres = getMostFrequentlyRepeatedItems(repeatingGenresHistoryFilms);
 
-const getWatchedFilmsChart = (films, dateTo, dateFrom, currentInput) => {
-  const WatchedFilmsChart = {
-    watchedFilms : [],
-    uniqGenres : [],
-    filmsByGenresCount : [],
+  const getTopGenre = () =>  Object.entries(filteredByTopGenres)
+    .reduce((acc, curr) => acc[1] > curr[1] ? acc : curr)[0];
+
+  return {
+    watchedFilmsCount,
+    totalDuration,
+    topGenre: getTopGenre,
+    filteredByTopGenres: {
+      genre: Object.keys(filteredByTopGenres),
+      value: Object.values(filteredByTopGenres),
+    },
   };
-
-  WatchedFilmsChart.watchedFilms = getWatchedFilmsInDateRange(films, dateTo, dateFrom, currentInput);
-
-  const AllWatchedFilmsGenres = getAllWatchedFilmsGenres(WatchedFilmsChart.watchedFilms);
-  const uniqGenres = [...new Set(AllWatchedFilmsGenres)];
-  const filmsByGenresCount = uniqGenres.map((genre) => countFilmsByGenres(AllWatchedFilmsGenres, genre));
-  let genreAndCount = {};
-
-  // добавить в объект ключ жанр и число просмотренных фильмов данного жанра
-  uniqGenres.forEach((genre, index) => genreAndCount[genre] = filmsByGenresCount[index]);
-
-  genreAndCount = Object.entries(genreAndCount)
-    .sort((a, b) => b[1] - a[1])
-    .forEach((genre) => {
-      WatchedFilmsChart.uniqGenres.push(genre[0]);
-      WatchedFilmsChart.filmsByGenresCount.push(genre[1]);
-    });
-
-  return WatchedFilmsChart;
 };
 
 export {
-  getWatchedFilmsChart,
   getTotalDuration,
   TypeOfStatistics,
-  getMostFrequentlyRepeatedItems
+  getMostFrequentlyRepeatedItems,
+  getDataHistoryFilms
 };
