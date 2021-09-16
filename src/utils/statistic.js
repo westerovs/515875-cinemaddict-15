@@ -63,7 +63,6 @@ const getWatchedFilmsChart = (films, dateTo, dateFrom, currentInput) => {
   const AllWatchedFilmsGenres = getAllWatchedFilmsGenres(WatchedFilmsChart.watchedFilms);
   const uniqGenres = [...new Set(AllWatchedFilmsGenres)];
   const filmsByGenresCount = uniqGenres.map((genre) => countFilmsByGenres(AllWatchedFilmsGenres, genre));
-
   let genreAndCount = {};
 
   // добавить в объект ключ жанр и число просмотренных фильмов данного жанра

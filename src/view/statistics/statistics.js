@@ -3,15 +3,12 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
 import { getWatchedFilmsChart, getTotalDuration, TypeOfStatistics } from '../../utils/statistic.js';
 import SmartView from '../../utils/abstract/smart.js';
-
-const TOP_GENRE_INDEX = 0;
+/* eslint-disable */
 const ROW_HEIGHT = 50;
 
-// const getTotalDuration = (films) => films.reduce((acc, film) => acc += film.filmInfo.runtime,0);
-
-const renderGenresChart = (container, data) => {
-  const { films, dateTo, dateFrom, currentInput } = data;
-
+const renderGenresChart = (container, state) => {
+  const { films, dateTo, dateFrom, currentInput } = state;
+return
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
   container.height = ROW_HEIGHT * WatchedFilmsChart.uniqGenres.length;
 
@@ -91,11 +88,45 @@ const createBtnsTemplate = (currentInput) => {
   return template;
 };
 
-const createStatsTemplate = (data, userRank) => {
-  const { films, dateTo, dateFrom, currentInput } = data;
+// абстрактная ф-ция для нахождения наиболее часто повторяющихся значений в массиве
+const getMostFrequentlyRepeatedItems = (arr) => {
+  return arr.reduce((acc, item) => {
+    return (typeof acc[item] !== 'undefined')
+      ? { ...acc, [item]: acc[item] + 1 }
+      : { ...acc, [item]: 1 }
+  }, {})
+}
 
+const getDataHistoryFilms = (films) => {
+  const historyFilms = films.filter(item => item.userDetails.isAlreadyWatched ? item.userDetails.isAlreadyWatched : '')
+  const watchedFilmsCount = historyFilms.length;
+  const totalDuration = getTotalDuration(historyFilms);
+
+  // *** вычисление топ жанров из просмотренных фильмов ***
+  // жанры просмотренных фильмов
+  const repeatingGenresHistoryFilms = historyFilms
+    .map((film) => [...film.filmInfo.genre])
+    .flat(1);
+
+  const filteredByTopGenres = getMostFrequentlyRepeatedItems(repeatingGenresHistoryFilms)
+
+  const getTopGenre = () =>  Object.entries(filteredByTopGenres)
+      .reduce((acc, curr) => acc[1] > curr[1] ? acc : curr)[0];
+
+  console.log(filteredByTopGenres)
+
+  return {
+    watchedFilmsCount,
+    totalDuration,
+    topGenre: getTopGenre
+  }
+}
+
+const createStatsTemplate = (state, userRank) => {
+  const { films, dateFrom, dateTo, currentInput } = state;
+
+  // ---------------------------------
   const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
-  const totalDuration = getTotalDuration(WatchedFilmsChart.watchedFilms);
 
   return `<section class="statistic">
       <p class="statistic__rank">
@@ -113,21 +144,21 @@ const createStatsTemplate = (data, userRank) => {
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
           <p class="statistic__item-text">
-            ${ WatchedFilmsChart.watchedFilms.length }
+            ${ getDataHistoryFilms(films).watchedFilmsCount }
             <span class="statistic__item-description">movies</span>
           </p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
           <p class="statistic__item-text">
-            ${ Math.floor(totalDuration / 60) }
-            <span class="statistic__item-description">h</span>${ totalDuration % 60 }
+            ${ Math.floor(getDataHistoryFilms(films).totalDuration / 60) }
+            <span class="statistic__item-description">h</span>${ getDataHistoryFilms(films).totalDuration % 60 }
             <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
           <p class="statistic__item-text">
-            ${ WatchedFilmsChart.watchedFilms.length > 0 ? WatchedFilmsChart.uniqGenres[TOP_GENRE_INDEX] : '' }
+            ${ getDataHistoryFilms(films).watchedFilmsCount > 0 ? getDataHistoryFilms(films).topGenre() : ''}
           </p>
         </li>
       </ul>
@@ -145,7 +176,7 @@ export default class Statistics extends SmartView {
     this._state = {
       films,
       dateFrom: (() => {
-        const typeOfTime = TypeOfStatistics.YEAR;
+        const typeOfTime = 'year';
         return dayjs().subtract( 1 , typeOfTime).toDate();
       })(),
       dateTo: dayjs().toDate(),
