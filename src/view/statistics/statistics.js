@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
@@ -11,7 +10,7 @@ const renderGenresChart = (container, state) => {
   const { films, dateFrom, dateTo, currentInput } = state;
   const { filteredByTopGenres } = getDataHistoryFilms(films, dateFrom, dateTo, currentInput);
 
-  container.height = ROW_HEIGHT * filteredByTopGenres.genre.length
+  container.height = ROW_HEIGHT * filteredByTopGenres.genre.length;
 
   // код от коллеги
   return new Chart(container, {
@@ -92,9 +91,6 @@ const createBtnsTemplate = (currentInput) => {
 const createStatsTemplate = (state, userRank) => {
   const { films, dateFrom, dateTo, currentInput } = state;
   const { watchedFilmsCount, totalDuration, topGenre } = getDataHistoryFilms(films, dateFrom, dateTo, currentInput);
-
-  // ---------------------------------
-  // const WatchedFilmsChart = getWatchedFilmsChart(films, dateTo, dateFrom, currentInput);
 
   return `<section class="statistic">
       <p class="statistic__rank">

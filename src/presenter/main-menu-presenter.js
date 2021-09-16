@@ -11,8 +11,6 @@ import { UpdateType } from '../utils/const.js';
 import { FilterType, FilteredFilms } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
 
-/* eslint-disable */
-
 export default class MainMenuPresenter {
   constructor(siteMainElement, headerContainer, filterModel, moviesModel, moviesPresenter) {
     this._siteMainElement = siteMainElement;
@@ -113,7 +111,7 @@ export default class MainMenuPresenter {
       return;
     }
     if (this._siteMainElement.querySelector('.statistic')) {
-      this._destroyStatistics()
+      this._destroyStatistics();
     }
 
     // вызвать update
