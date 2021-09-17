@@ -5,8 +5,9 @@
 * раз форма удаляется, то удаляются и обработчики
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
-
 import dayjs from 'dayjs';
+import RelativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(RelativeTime);
 import { isDay } from '../../utils/days.js';
 import { nanoid } from 'nanoid';
 import he from 'he';
@@ -87,9 +88,11 @@ const createFilmDetailsTemplate = (state) => {
   } = filmInfo;
   const { date, releaseCountry } = release;
   const countComments = comments.size;
-  const releaseDate = date.format('DD MMMM YYYY');
 
-  const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
+  const releaseDate = dayjs(date).format('DD MMMM YYYY');
+
+  // console.log(emotion)
+  const emojiPic = emotion ? `<img src="./${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
   const { hour, minute } = runTime;
 
   return (
@@ -101,7 +104,7 @@ const createFilmDetailsTemplate = (state) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${ poster }" alt="">
+              <img class="film-details__poster-img" src="./${ poster }" alt="">
               <p class="film-details__age">${ ageRating }+</p>
             </div>
 

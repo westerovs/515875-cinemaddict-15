@@ -37,15 +37,24 @@ const mainMenuPresenter = new MainMenuPresenter(
   moviesPresenter,
 );
 
+mainMenuPresenter.init();
 moviesPresenter.init();
 
 api.getMovies()
-  .then((films) => {
-    mainMenuPresenter.init();
+  .then((movies) => {
+
+    const films = movies.map((filmCard) => {
+      if(filmCard.userDetails.isAlreadyWatched) {
+        filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
+      }
+      return filmCard;
+    });
+
     moviesModel.setFilms(UpdateType.INIT, films); // добавляет в модель фильмы
     render(siteFooterStatistics, new FooterStatisticView(films.length));
   })
-  .catch(() => {
+  .catch((error) => {
     moviesModel.setFilms(UpdateType.INIT, []);
+    throw new Error(error); // временно
   });
 

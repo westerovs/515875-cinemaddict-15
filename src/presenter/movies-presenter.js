@@ -1,7 +1,6 @@
 /*
 * ===== главный презентер =====
 * */
-
 import { getExtraTypeFilms, Films, UpdateType, UserAction } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
@@ -251,7 +250,7 @@ export default class MoviesPresenter {
       case UpdateType.INIT:
         this._isLoading = false;
         removeComponent(this._loadingComponent);
-        // this._renderBoard();
+        this._renderBoard();
         break;
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
