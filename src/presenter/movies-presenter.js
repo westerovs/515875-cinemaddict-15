@@ -78,8 +78,8 @@ export default class MoviesPresenter {
     }
   }
 
+
   // ----------- RENDERS ↓
-  // главный метод для начала работы модуля
   _renderBoard() {
     // если фильмов нет
     if (!this._getFilms().length) {
@@ -94,7 +94,7 @@ export default class MoviesPresenter {
     this._renderFilmList(true);
   }
 
-  // [1] рендерит 3 секции: main и extra/extra
+  // рендерит 3 секции: main и extra/extra
   _renderFilmList(firstInit) {
     // render центрального контейнера для фильмов
     render(this._filmsBoard, this._filmsListComponent);
@@ -114,12 +114,10 @@ export default class MoviesPresenter {
     }
   }
 
-  // [2]
   _renderFilms(container, films) {
     films.forEach((film) => this._renderFilm(container, film));
   }
 
-  // [3]
   _renderFilm(container, film) {
     const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._filterModel.getActiveFilter()); // принимает ф-цию update
     filmPresenter.init(film);
@@ -167,7 +165,6 @@ export default class MoviesPresenter {
         break;
     }
   }
-  // ----------- RENDERS ↑
 
 
   // ----------- SORT ↓
@@ -191,7 +188,6 @@ export default class MoviesPresenter {
     this._clearBoard({ resetRenderedFilmCount: true });
     this._renderBoard();
   }
-  // ----------- SORT ↑
 
 
   // ----------- load more ↓
@@ -221,10 +217,9 @@ export default class MoviesPresenter {
       removeComponent(this._showMoreBtnComponent);
     }
   }
-  // ----------- load more ↑
 
 
-  // ----------- ↓ NEW HANDLES ↓
+  // ----------- other ↓
   _handleViewAction(actionType, updateType, updateElement) {
     // Описываем все возможные пользовательские действия и все возможные реакции на них
     // когда хотим в презенторе что-то изменить в модели, вызываем updateFilm, куда сообщаем тип и объект обновления ↓
@@ -269,10 +264,7 @@ export default class MoviesPresenter {
         break;
     }
   }
-  // ----------- ↑ NEW HANDLES ↑
 
-
-  // ----------- other
   _renderNoFilms() {
     this._noFilmsComponent = new NoFilmsView(this._activeFilter);
     render(this._mainElement, this._noFilmsComponent);
@@ -315,5 +307,4 @@ export default class MoviesPresenter {
   destroy() {
     this._clearBoard({ resetRenderedFilmCardsCount: true, resetSortType: true });
   }
-
 }

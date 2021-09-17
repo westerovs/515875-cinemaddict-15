@@ -10,7 +10,6 @@ updateFilm(updateType, updateElement)
 */
 
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
-/* eslint-disable */
 
 export default class MoviesModel extends AbstractObserver {
   constructor() {
@@ -22,8 +21,10 @@ export default class MoviesModel extends AbstractObserver {
     return this._films;
   }
 
-  setFilms(films) {
+  setFilms(updateType, films) {
     this._films = films.slice();
+    // ↓ уведомить всех подписчиков о том, что появились новые данные ↓
+    this._notify(updateType);
   }
 
   updateFilm(updateType, updateElement) {
@@ -67,7 +68,6 @@ export default class MoviesModel extends AbstractObserver {
   }
 
   // то что приходит от сервера
-
   static adaptToClient(film) {
     return {
       id: film.id,
@@ -98,6 +98,7 @@ export default class MoviesModel extends AbstractObserver {
     };
   }
 
+  // то что уходит на сервер
   static adaptToServer(film) {
     return {
       id: film.id,
