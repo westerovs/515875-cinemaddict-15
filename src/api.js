@@ -1,3 +1,5 @@
+import MoviesModel from './model/movies-model.js';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -18,7 +20,9 @@ export default class Api {
   getMovies() {
     // при выполнении метода, будет отправлен запрос на получение фильмов
     return this._load({ url: 'movies' }) // в настройках передаём ключ movies
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then((films) => films.map(MoviesModel.adaptToClient));
+
   }
 
   updateMovies(film) {
@@ -26,10 +30,11 @@ export default class Api {
     return this._load({
       url: `movies/${ film.id }`,
       method: Method.PUT,
-      body: JSON.stringify(film), // преобразуем объект в строку
+      body: JSON.stringify(MoviesModel.adaptToServer(film)), // преобразуем объект в строку
       headers: new Headers({ 'Content-Type': 'application/json' }), // тип содержимого
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then(MoviesModel.adaptToClient);
   }
 
   // что бы не вызывать fetch в каждом методе, заведём метод _load
