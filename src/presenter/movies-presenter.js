@@ -47,7 +47,7 @@ export default class MoviesPresenter {
     this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
-    this._isLoading = true;
+    this._isLoading = true; // когда будем создавать экз.доски, будем считать что всегда происх. загрузка данных
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -251,7 +251,7 @@ export default class MoviesPresenter {
       case UpdateType.INIT:
         this._isLoading = false;
         removeComponent(this._loadingComponent);
-        this._renderBoard();
+        // this._renderBoard();
         break;
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)

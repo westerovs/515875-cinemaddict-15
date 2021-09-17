@@ -31,12 +31,14 @@ export default class MainMenuPresenter {
     this._getWatchedFilmsCount = this._getWatchedFilmsCount.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    // this._moviesModel.addObserver(this._handleModelEvent);
+    // this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
     const filters = this._getFilters();
+    this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
 
     const prevMainMenuComponent = this._mainMenuComponent;
     const prevRankComponent = this._rankComponent;

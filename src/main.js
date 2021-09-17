@@ -37,13 +37,13 @@ const mainMenuPresenter = new MainMenuPresenter(
   moviesPresenter,
 );
 
-mainMenuPresenter.init();
 moviesPresenter.init();
 
 api.getMovies()
   .then((films) => {
-    render(siteFooterStatistics, new FooterStatisticView(films.length));
+    mainMenuPresenter.init();
     moviesModel.setFilms(UpdateType.INIT, films); // добавляет в модель фильмы
+    render(siteFooterStatistics, new FooterStatisticView(films.length));
   })
   .catch(() => {
     moviesModel.setFilms(UpdateType.INIT, []);
