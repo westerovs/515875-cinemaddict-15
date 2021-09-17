@@ -2,11 +2,10 @@
 * Неизменяемые значения в приложении
 * */
 const Films = {
-  FILMS_COUNT: 7,
+  FILMS_COUNT: 20,
   SHOW_FILMS: 5,
   SHOW_FILMS_EXTRA: 2,
   FILM_COUNT_PER_STEP: 5,
-  TOTAL_MOVIES: 9999,
 };
 
 const getExtraTypeFilms = (films) => ({

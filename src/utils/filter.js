@@ -3,13 +3,13 @@
 * */
 
 const FilterType = {
-  ALL: 'All movies',
-  WATCHLIST: 'Watchlist',
-  HISTORY: 'History',
-  FAVORITES: 'Favorites',
+  ALL: 'all movies',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites',
 };
 
-const filterCallBack = {
+const FilteredFilms = {
   [FilterType.ALL]: (films) => films,
   [FilterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.isWatchlist),
   [FilterType.HISTORY]: (films) => films.filter((film) => film.userDetails.isAlreadyWatched),
@@ -18,5 +18,5 @@ const filterCallBack = {
 
 export {
   FilterType,
-  filterCallBack
+  FilteredFilms
 };

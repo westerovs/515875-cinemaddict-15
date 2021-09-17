@@ -5,9 +5,9 @@ import { Films } from './utils/const.js';
 // Model
 import MoviesModel from './model/movies-model.js';
 import FilterModel from './model/filter-model.js';
-// // View
+// View
 import FooterStatisticView from './view/footer/footer-statistic.js';
-// // Presenter
+// Presenter
 import MoviesPresenter from './presenter/movies-presenter.js';
 import MainMenuPresenter from './presenter/main-menu-presenter.js';
 
@@ -16,15 +16,30 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-render(siteFooterStatistics, new FooterStatisticView(Films.TOTAL_MOVIES));
+const allFilms = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
 
-const films = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
+const films = allFilms.map((filmCard) => {
+  if(filmCard.userDetails.isAlreadyWatched) {
+    filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
+  }
+  return filmCard;
+});
 
 const filterModel = new FilterModel();
 const moviesModel = new MoviesModel();
 moviesModel.setFilms(films); // добавляет в модель фильмы
 
-const mainMenuPresenter = new MainMenuPresenter(siteMainElement, siteHeaderElement, filterModel, moviesModel);
 const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel, filterModel);
+const mainMenuPresenter = new MainMenuPresenter(
+  siteMainElement,
+  siteHeaderElement,
+  filterModel,
+  moviesModel,
+  moviesPresenter,
+);
+
 mainMenuPresenter.init();
 moviesPresenter.init();
+
+render(siteFooterStatistics, new FooterStatisticView(Films.FILMS_COUNT));
+

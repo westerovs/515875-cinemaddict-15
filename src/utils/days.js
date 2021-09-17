@@ -12,15 +12,15 @@ dayjs.extend(isYesterday  );
 
 const getRandomDate = () => {
   const daysGap = getRandomNumber(-31, 31);
-  const yearsGap = getRandomNumber(-10, 10);
-  const monthGap = getRandomNumber(-10, 10);
+  const yearsGap = getRandomNumber(-10, 0);
+  const monthGap = getRandomNumber(-5, 5);
   const hourGap = getRandomNumber(0, 24);
   const minuteGap = getRandomNumber(0, 60);
 
   return dayjs()
-    .add(daysGap, 'year')
+    .add(daysGap, 'day')
     .add(monthGap, 'month')
-    .add(yearsGap, 'day')
+    .add(yearsGap, 'year')
     .add(hourGap, 'hour')
     .add(minuteGap, 'minute')
     .toDate();
