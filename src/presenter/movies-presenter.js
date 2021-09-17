@@ -233,34 +233,28 @@ export default class MoviesPresenter {
 
 
   // ----------- other ↓
-  _handleViewAction(actionType, updateType, updateElement) {
-    // Описываем все возможные пользовательские действия и все возможные реакции на них
-    // когда хотим в презенторе что-то изменить в модели, вызываем updateFilm, куда сообщаем тип и объект обновления ↓
-    // тип обновления - это абстрактный эвент
+  _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._api.updateMovies(updateElement)
-          .then((response) => {
+        this._api.updateMovies(updatedFilm).then((response) => {
+          // при резолве промиса, вызываем модель
             this._moviesModel.updateFilm(updateType, response);
           });
         break;
 
       case UserAction.ADD_NEW_COMMENT:
-        // this._api.updateMovies(updateElement)
-        //   .then((response) => {
-        //     this._moviesModel.addComment(updateType, response);
-        //   });
+        this._api.addNewComment(updatedFilm).then((response) => {
+          this._moviesModel.addComment(updateType, response);
+        });
         break;
 
       case UserAction.DELETE_COMMENT:
-        // this._filmPresenters.get(updateElement.id).setViewState(State.DELETING);
-        // this._api.deleteComment(updateElement)
-        //   .then(() => {
-        //     this._moviesModel.updateFilm(updateType, updateElement);
-        //   })
-        //   .catch(() => {
-        //     this._filmPresenters.get(updateElement.id).setAbortingDeletingComment();
-        //   });
+        this._api.deleteComment(updatedFilm).then(() => {
+          this._moviesModel.deleteComment(updateType, updatedFilm);
+        });
+        // .catch(() => {
+        //   this._filmPresenters.get(updateElement.id).setAbortingDeletingComment();
+        // });
         break;
     }
   }

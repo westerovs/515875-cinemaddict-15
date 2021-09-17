@@ -41,6 +41,14 @@ export default class MoviesModel extends AbstractObserver {
     this._notify(updateType, updateElement);
   }
 
+  addComment(updateType, response) {
+    console.log('add comment');
+  }
+
+  deleteComment(updateType, updatedFilm) {
+    console.log('add comment');
+  }
+
   // то что приходит от сервера
   static adaptToClient(film) {
     return {

@@ -188,21 +188,21 @@ export default class FilmPresenter {
     );
   }
 
-  setAbortingSendNewComment() {
-    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
-  }
+  // setAbortingSendNewComment() {
+  //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
+  // }
+  //
+  // setAbortingDeletingComment() {
+  //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
+  // }
 
-  setAbortingDeletingComment() {
-    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
-  }
-
-  _resetFormState(){
-    this._filmDetailsComponent.updateState({
-      isDisabledForm: false,
-      isDisabledComment: false,
-      isDeleting: false,
-    });
-  }
+  // _resetFormState() {
+  //   this._filmDetailsComponent.updateState({
+  //     isDisabledForm: false,
+  //     isDisabledComment: false,
+  //     isDeleting: false,
+  //   });
+  // }
 
   destroy() {
     removeComponent(this._filmCardComponent);

@@ -9,7 +9,6 @@ import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(RelativeTime);
 import { isDay } from '../../utils/days.js';
-import { nanoid } from 'nanoid';
 import he from 'he';
 import { EMOTION, KeyCodes } from '../../utils/const.js';
 import SmartView from '../../utils/abstract/smart.js';
@@ -221,7 +220,7 @@ export default class FilmDetails extends SmartView {
     this._emotionClickHandler = this._emotionClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
     this._onDeleteCommentClick = this._onDeleteCommentClick.bind(this);
-    this._onSubmitNewComment = this._onSubmitNewComment.bind(this);
+    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
 
     this.setInnerHandlers();
 
@@ -251,7 +250,8 @@ export default class FilmDetails extends SmartView {
     this._callback.watchListClick(this._state);
   }
 
-  _watchedClickHandler() {
+  _watchedClickHandler(e) {
+    e.preventDefault();
     this._callback.watchedClick(this._state);
   }
 
@@ -299,7 +299,7 @@ export default class FilmDetails extends SmartView {
     this.updateState({ commentText: evt.target.value }, true);
   }
 
-  _onSubmitNewComment(evt) {
+  _onSubmitEnterNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
       this._data.newComment = this._createNewComment();
       const scrollTopPosition = this.getElement().scrollTop;
@@ -347,7 +347,7 @@ export default class FilmDetails extends SmartView {
   setSubmitNewComment(callback) {
     this._callback.onSubmitNewComment = callback;
     this.getElement().querySelector('.film-details__comment-input')
-      .addEventListener('keydown', this._onSubmitNewComment);
+      .addEventListener('keydown', this._onSubmitEnterNewComment);
   }
   // -------------------------------- comments ↑
 
