@@ -17,7 +17,6 @@ import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
 import LoadingView from '../view/board/loading.js';
 
-/* eslint-disable */
 export default class MoviesPresenter {
   constructor(mainElement, model, filterModel, api) {
     this._mainElement = mainElement;
@@ -131,7 +130,7 @@ export default class MoviesPresenter {
       container,
       this._handleViewAction,
       this._filterModel.getActiveFilter(),
-      this._api
+      this._api,
     );
     filmPresenter.init(film);
 
@@ -236,24 +235,19 @@ export default class MoviesPresenter {
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
+        // при резолве промиса, вызываем модель
         this._api.updateMovies(updatedFilm).then((response) => {
-          // при резолве промиса, вызываем модель
-            this._moviesModel.updateFilm(updateType, response);
-          });
+          this._moviesModel.updateFilm(updateType, response);
+        });
         break;
-
       case UserAction.ADD_NEW_COMMENT:
-        this._api.addNewComment(updatedFilm).then((response) => {
-          this._moviesModel.addComment(updateType, response);
-        });
+        // this._api.addNewComment(updatedFilm).then((response) => {
+        //   this._moviesModel.addComment(updateType, response);
+        // });
         break;
-
       case UserAction.DELETE_COMMENT:
-        this._api.deleteComment(updatedFilm).then(() => {
-          this._moviesModel.deleteComment(updateType, updatedFilm);
-        });
-        // .catch(() => {
-        //   this._filmPresenters.get(updateElement.id).setAbortingDeletingComment();
+        // this._api.deleteComment(updatedFilm).then(() => {
+        //   this._moviesModel.deleteComment(updateType, updatedFilm);
         // });
         break;
     }
