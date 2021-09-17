@@ -11,10 +11,11 @@ import FilmDetailsView from '../view/film-cards/film-details.js';
 const observer = new AbstractObserver();
 
 export default class FilmPresenter {
-  constructor(filmContainer, _handleViewAction, currentFilterType) {
+  constructor(filmContainer, _handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
     this._handleViewAction = _handleViewAction;
     this._currentFilterType = currentFilterType;
+    this._api = api;
 
     this._film = null;
     this._filmCardComponent = null;
@@ -33,18 +34,17 @@ export default class FilmPresenter {
 
   init(film) {
     this._film = film;
-
     const prevFilmComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
+
     // сперва создаются вюьхи, потом пересоздаются
     this._filmCardComponent    = new FilmCardView(film);
-    this._filmDetailsComponent = new FilmDetailsView(film);
 
     this._addHandlers();
     observer.addObserver(this._destroyFilmDetails);
 
     // [1] если первый init
-    if (prevFilmComponent === null || prevFilmDetailsComponent === null) {
+    if (prevFilmComponent === null) {
       this._renderFilm(this._filmContainer, film);
       return;
     }
@@ -53,9 +53,8 @@ export default class FilmPresenter {
     if (this._filmContainer.contains(prevFilmComponent.getElement())) {
       replace(this._filmCardComponent, prevFilmComponent);
     }
-    if (document.contains(prevFilmDetailsComponent.getElement())) {
-      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
-      this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
+    if (prevFilmDetailsComponent && document.contains(prevFilmDetailsComponent.getElement())) {
+      this._renderFilmDetails();
     }
 
     removeComponent(prevFilmComponent);
@@ -70,13 +69,22 @@ export default class FilmPresenter {
   _renderFilmDetails() {
     observer._notify(this._destroyFilmDetails);
 
-    render(document.body, this._filmDetailsComponent.getElement());
+    this._api.getComments(this._film)
+      .then((comments) => {
+        this._film.comments = comments;
+        this._filmDetailsComponent = new FilmDetailsView(this._film);
+        this._addPopupHandlers();
 
-    document.body.classList.add('hide-overflow');
-    document.addEventListener('keydown', this._onEscCloseFilmDetails );
+        document.body.classList.add('hide-overflow');
+        document.addEventListener('keydown', this._onEscCloseFilmDetails );
+        render(document.body, this._filmDetailsComponent);
 
-    this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
-    this._filmDetailsComponent.reset();
+        this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
+        this._filmDetailsComponent.reset();
+      })
+      .catch(() => {
+        throw new Error('Не удалось загрузить информацию, попробуйте позже');
+      });
   }
 
   _addHandlers() {
@@ -85,17 +93,20 @@ export default class FilmPresenter {
     this._filmCardComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    // film-details
+  }
+
+  _addPopupHandlers() {
     this._filmDetailsComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
     this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
     this._filmDetailsComponent.setSubmitNewComment(this._handleSubmitNewComment);
   }
 
   _destroyFilmDetails() {
-    this._filmDetailsComponent.getElement().remove();
+    if (this._filmDetailsComponent) {
+      this._filmDetailsComponent.getElement().remove();
+    }
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this._onEscCloseFilmDetails);
   }

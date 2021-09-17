@@ -91,8 +91,7 @@ const createFilmDetailsTemplate = (state) => {
 
   const releaseDate = dayjs(date).format('DD MMMM YYYY');
 
-  // console.log(emotion)
-  const emojiPic = emotion ? `<img src="./${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
+  const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
   const { hour, minute } = runTime;
 
   return (

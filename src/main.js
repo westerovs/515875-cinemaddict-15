@@ -17,18 +17,10 @@ const siteHeaderElement = pageBody.querySelector('.header');
 const siteMainElement = pageBody.querySelector('.main');
 const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
 
-// const allFilms = new Array(Films.FILMS_COUNT).fill('').map(() => generateFilm());
-// const films = allFilms.map((filmCard) => {
-//   if(filmCard.userDetails.isAlreadyWatched) {
-//     filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
-//   }
-//   return filmCard;
-// });
-
 const filterModel = new FilterModel();
 const moviesModel = new MoviesModel();
 
-const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel, filterModel);
+const moviesPresenter = new MoviesPresenter(siteMainElement, moviesModel, filterModel, api);
 const mainMenuPresenter = new MainMenuPresenter(
   siteMainElement,
   siteHeaderElement,
@@ -42,7 +34,6 @@ moviesPresenter.init();
 
 api.getMovies()
   .then((movies) => {
-
     const films = movies.map((filmCard) => {
       if(filmCard.userDetails.isAlreadyWatched) {
         filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;

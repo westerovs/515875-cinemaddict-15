@@ -5,11 +5,6 @@ const Method = {
   PUT: 'PUT',
 };
 
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299,
-};
-
 export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint; // ← передаём ссылку на адрес сервера
@@ -26,7 +21,6 @@ export default class Api {
   }
 
   updateMovies(film) {
-    // обновление фильмов
     return this._load({
       url: `movies/${ film.id }`,
       method: Method.PUT,
@@ -35,6 +29,11 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(MoviesModel.adaptToClient);
+  }
+
+  getComments(film) {
+    return this._load({ url: `comments/${ film.id }` })
+      .then(Api.toJSON);
   }
 
   // что бы не вызывать fetch в каждом методе, заведём метод _load
@@ -58,11 +57,7 @@ export default class Api {
 
   // когда промис зарезолвится, будет вызван checkStatus
   static checkStatus(response) {
-    // todo оптимизировать до "ok" if (!response.ok)
-    if (// от 200 до 299
-      response.status < SuccessHTTPStatusRange.MIN ||
-      response.status > SuccessHTTPStatusRange.MAX
-    ) {
+    if (!response.ok) {
       throw new Error(`${ response.status }: ${ response.statusText }`);
     }
 

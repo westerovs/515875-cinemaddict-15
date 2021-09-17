@@ -17,9 +17,9 @@ import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
 import LoadingView from '../view/board/loading.js';
 
-
+/* eslint-disable */
 export default class MoviesPresenter {
-  constructor(mainElement, model, filterModel) {
+  constructor(mainElement, model, filterModel, api) {
     this._mainElement = mainElement;
     this._moviesModel = model;
     this._filterModel = filterModel;
@@ -47,6 +47,7 @@ export default class MoviesPresenter {
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
     this._isLoading = true; // когда будем создавать экз.доски, будем считать что всегда происх. загрузка данных
+    this._api = api;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -126,7 +127,12 @@ export default class MoviesPresenter {
   }
 
   _renderFilm(container, film) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._filterModel.getActiveFilter()); // принимает ф-цию update
+    const filmPresenter = new FilmPresenter(
+      container,
+      this._handleViewAction,
+      this._filterModel.getActiveFilter(),
+      this._api
+    );
     filmPresenter.init(film);
 
     switch (container) {
@@ -233,12 +239,23 @@ export default class MoviesPresenter {
     // тип обновления - это абстрактный эвент
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
+        this._api.updateMovies(updateElement)
+          .then((response) => {
+            this._moviesModel.updateFilm(updateType, response);
+          });
         this._moviesModel.updateFilm(updateType, updateElement);
         break;
+
       case UserAction.ADD_NEW_COMMENT:
-        this._moviesModel.addComment(updateType, updateElement);
+
+        this._api.updateMovies(updateElement)
+          .then((response) => {
+            this._moviesModel.addComment(updateType, response);
+          });
+
         break;
       case UserAction.DELETE_COMMENT:
+
         this._moviesModel.deleteComment(updateType, updateElement);
         break;
     }
