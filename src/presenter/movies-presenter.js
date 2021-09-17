@@ -16,6 +16,7 @@ import FilmsListView from '../view/board/films-list.js';
 import FilmsListExtraView from '../view/board/films-list-extra.js';
 import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
+import LoadingView from '../view/board/loading.js';
 
 
 export default class MoviesPresenter {
@@ -26,6 +27,7 @@ export default class MoviesPresenter {
 
     this._filmsBoardComponent = new FilmsBoardView();
     this._filmsListComponent  = new FilmsListView();
+    this._loadingComponent    = new LoadingView();
     this._noFilmsComponent    = null;
 
     // ↓ запоминаем все созданные презентеры ↓
@@ -45,6 +47,7 @@ export default class MoviesPresenter {
     this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
+    this._isLoading = true;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
@@ -82,6 +85,11 @@ export default class MoviesPresenter {
   // ----------- RENDERS ↓
   _renderBoard() {
     // если фильмов нет
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (!this._getFilms().length) {
       this._renderNoFilms();
       return;
@@ -240,6 +248,11 @@ export default class MoviesPresenter {
   _handleModelEvent(updateType, updatedFilm) {
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
+      case UpdateType.INIT:
+        this._isLoading = false;
+        removeComponent(this._loadingComponent);
+        this._renderBoard();
+        break;
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
         if (this._filmPresenters.get(updatedFilm.id)) {
@@ -270,6 +283,10 @@ export default class MoviesPresenter {
     render(this._mainElement, this._noFilmsComponent);
   }
 
+  _renderLoading() {
+    render(this._mainElement, this._loadingComponent);
+  }
+
   _clearBoard({ resetRenderedFilmCount = false, resetSortType = false } = {}) {
     const filmsCount = this._getFilms().length;
 
@@ -284,6 +301,7 @@ export default class MoviesPresenter {
     removeComponent(this._sortComponent);
     removeComponent(this._showMoreBtnComponent);
     removeComponent(this._filmsBoardComponent);
+    removeComponent(this._loadingComponent);
 
     if (this._noFilmsComponent) {
       removeComponent(this._noFilmsComponent);
