@@ -15,7 +15,7 @@ const getExtraTypeFilms = (films) => ({
     .slice(0, Films.SHOW_FILMS_EXTRA),
   mostCommented: films
     .slice()
-    .sort((a, b) => b.comments.size - a.comments.size)
+    .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, Films.SHOW_FILMS_EXTRA),
 });
 
