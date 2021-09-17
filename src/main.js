@@ -1,7 +1,7 @@
 import { generateFilm } from './utils/mock/film.js';
 import { render } from './utils/render.js';
 import { Films } from './utils/const.js';
-
+import Api from './api.js';
 // Model
 import MoviesModel from './model/movies-model.js';
 import FilterModel from './model/filter-model.js';
@@ -10,6 +10,14 @@ import FooterStatisticView from './view/footer/footer-statistic.js';
 // Presenter
 import MoviesPresenter from './presenter/movies-presenter.js';
 import MainMenuPresenter from './presenter/main-menu-presenter.js';
+
+const AUTHORIZATION = 'Basic 555WTFeelThePower777JavaScript2077';
+const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getMovies().then((movies) => {
+  console.log(movies);
+});
 
 const pageBody = document.querySelector('body');
 const siteHeaderElement = pageBody.querySelector('.header');
