@@ -1,8 +1,6 @@
 /*
 * главный класс Model
-* */
 
-/*
 updateFilm(updateType, updateElement)
   когда в презенторе хотим что-то изменить в модели, вызываем этот метод
   куда мы сообщаем тип обновления - сам объект обновления
@@ -41,30 +39,6 @@ export default class MoviesModel extends AbstractObserver {
     ];
 
     this._notify(updateType, updateElement);
-  }
-
-  addComment(updateType, updateElement) {
-    this._films = [
-      updateElement,
-      ...this._films,
-    ];
-
-    this._notify(updateType, updateElement);
-  }
-
-  deleteComment(updateType, updateElement) {
-    const index = this._films.findIndex((film) => film.id === updateElement.id);
-
-    if (index === -1) {
-      throw new Error('Нельзя удалить несуществующий фильм');
-    }
-
-    this._films = [
-      ...this._films.slice(0, index),
-      ...this._films.slice(index + 1),
-    ];
-
-    this._notify(updateType);
   }
 
   // то что приходит от сервера

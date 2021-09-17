@@ -3,6 +3,8 @@ import MoviesModel from './model/movies-model.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class Api {
@@ -20,11 +22,11 @@ export default class Api {
 
   }
 
-  updateMovies(film) {
+  updateMovies(movie) {
     return this._load({
-      url: `movies/${ film.id }`,
+      url: `movies/${ movie.id }`,
       method: Method.PUT,
-      body: JSON.stringify(MoviesModel.adaptToServer(film)), // преобразуем объект в строку
+      body: JSON.stringify(MoviesModel.adaptToServer(movie)), // преобразуем объект в строку
       headers: new Headers({ 'Content-Type': 'application/json' }), // тип содержимого
     })
       .then(Api.toJSON)
@@ -34,6 +36,27 @@ export default class Api {
   getComments(film) {
     return this._load({ url: `comments/${ film.id }` })
       .then(Api.toJSON);
+  }
+
+  addNewComment(movie) { // принимает текущий pop-up
+    // при вызове должен быть выполнен метод load с http методом POST
+    // и то что пользователь ввёл, должно быть отправлено на сервер
+    return this._load({
+      url: `comments/${ movie.id }`,
+      method: Method.POST,
+      body: JSON.stringify(movie.newComment),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then((response) => response = response.movie)
+      .then(MoviesModel.adaptToClient);
+  }
+
+  deleteComment(film) {
+    return this._load({
+      url: `comments/${ film.commentToDelete.id }`,
+      method: Method.DELETE,
+    });
   }
 
   // что бы не вызывать fetch в каждом методе, заведём метод _load

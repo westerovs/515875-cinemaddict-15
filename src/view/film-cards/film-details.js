@@ -301,29 +301,27 @@ export default class FilmDetails extends SmartView {
 
   _onSubmitNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
+      this._data.newComment = this._createNewComment();
       const scrollTopPosition = this.getElement().scrollTop;
 
-      this._state.comments.push(this._createNewComment());
-      this._callback.onSubmitNewComment(FilmDetails.parseDataToFilm(this._state));
-
+      this._callback.onSubmitNewComment(this._state);
+      // this._state.comments.push(this._createNewComment());
+      //
       document.querySelector('.film-details').scrollTop = scrollTopPosition;
     }
   }
 
   _createNewComment() {
-    if (!this._state.commentText) {
+    if (!this._state.newComment.commentText) {
       throw new Error('Нельзя отправить пустой комментарий !');
     }
-    if (!this._state.emotion) {
+    if (!this._state.newComment.emotion) {
       throw new Error('Пожалуйста, выберите эмоцию !');
     }
 
     return {
-      id: nanoid(),
-      author: 'Волк Ларсен',
-      comment: he.encode(this._state.commentText),
-      date: dayjs(),
-      emotion: this._state.emotion,
+      comment: he.encode(this._data.newComment.commentText),
+      emotion: this._data.newComment.emotion,
     };
   }
 

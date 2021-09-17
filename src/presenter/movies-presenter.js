@@ -243,20 +243,24 @@ export default class MoviesPresenter {
           .then((response) => {
             this._moviesModel.updateFilm(updateType, response);
           });
-        this._moviesModel.updateFilm(updateType, updateElement);
         break;
 
       case UserAction.ADD_NEW_COMMENT:
-
-        this._api.updateMovies(updateElement)
-          .then((response) => {
-            this._moviesModel.addComment(updateType, response);
-          });
-
+        // this._api.updateMovies(updateElement)
+        //   .then((response) => {
+        //     this._moviesModel.addComment(updateType, response);
+        //   });
         break;
-      case UserAction.DELETE_COMMENT:
 
-        this._moviesModel.deleteComment(updateType, updateElement);
+      case UserAction.DELETE_COMMENT:
+        // this._filmPresenters.get(updateElement.id).setViewState(State.DELETING);
+        // this._api.deleteComment(updateElement)
+        //   .then(() => {
+        //     this._moviesModel.updateFilm(updateType, updateElement);
+        //   })
+        //   .catch(() => {
+        //     this._filmPresenters.get(updateElement.id).setAbortingDeletingComment();
+        //   });
         break;
     }
   }
