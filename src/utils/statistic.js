@@ -19,11 +19,14 @@ const getMostFrequentlyRepeatedItems = (arr) => (
     : { ...acc, [item]: 1 }, {})
 );
 
-const getTotalDuration = (films) => films.reduce((acc, film) => {
-  const hour = parseInt(film.filmInfo.runTime.hour, 10) * 60;
-  const minute = parseInt(film.filmInfo.runTime.minute, 10);
+const calculateRuntime = (runtime) => {
+  const hours = Math.floor(runtime / 60);
+  const minutes = runtime % 60;
+  return `${ hours }h ${ minutes }m`;
+};
 
-  acc += hour + minute;
+const getTotalDuration = (films) => films.reduce((acc, film) => {
+  acc += film.filmInfo.runTime;
 
   return acc;
 }, 0);
@@ -74,5 +77,6 @@ export {
   getTotalDuration,
   TypeOfStatistics,
   getMostFrequentlyRepeatedItems,
-  getDataHistoryFilms
+  getDataHistoryFilms,
+  calculateRuntime
 };

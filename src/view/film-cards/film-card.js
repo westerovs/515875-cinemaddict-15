@@ -1,4 +1,6 @@
 import AbstractView from '../../utils/abstract/abstract-view.js';
+import { calculateRuntime } from '../../utils/statistic.js';
+import dayjs from 'dayjs';
 
 const createFilmCardTemplate = (film) => {
   const { id, comments, filmInfo, userDetails } = film;
@@ -15,8 +17,8 @@ const createFilmCardTemplate = (film) => {
   const { date } = release;
   const countComments = comments.length;
 
-  const yearRelease = date.format('YYYY');
-  const { hour, minute } = runTime;
+  const yearRelease = dayjs(date).year();
+  const durationFilm = calculateRuntime(runTime);
 
   return (
     `<article class="film-card" id="${ id }">
@@ -24,10 +26,10 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__rating">${ totalRating }</p>
       <p class="film-card__info">
         <span class="film-card__year">${ yearRelease }</span>
-        <span class="film-card__duration">${ hour } ${ minute }</span>
+        <span class="film-card__duration">${ durationFilm }</span>
         <span class="film-card__genre">${ genre[0] }</span>
       </p>
-      <img src="./images/posters/${ poster }" alt="" class="film-card__poster">
+      <img src="./${ poster }" alt="" class="film-card__poster">
       <p class="film-card__description">${ description }</p>
       <a class="film-card__comments">${ countComments } comments</a>
 

@@ -15,7 +15,7 @@ const getExtraTypeFilms = (films) => ({
     .slice(0, Films.SHOW_FILMS_EXTRA),
   mostCommented: films
     .slice()
-    .sort((a, b) => b.comments.size - a.comments.size)
+    .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, Films.SHOW_FILMS_EXTRA),
 });
 
@@ -27,6 +27,7 @@ const UserAction = {
 
 // семантическое версионирование
 const UpdateType = {
+  INIT: 'INIT',
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
@@ -37,22 +38,6 @@ const EMOTION = [
   'sleeping',
   'puke',
   'angry',
-];
-
-const COUNTRIES = [
-  'Usa',
-  'Albania',
-  'Tajikistan',
-  'Finland',
-  'Ussr',
-];
-
-const GENRES = [
-  'Musical',
-  'Drama',
-  'Thriller',
-  'Comedy',
-  'Historical',
 ];
 
 const KeyCodes = {
@@ -69,8 +54,6 @@ const KeyCodes = {
 export {
   UserAction,
   UpdateType,
-  COUNTRIES,
-  GENRES,
   Films,
   getExtraTypeFilms,
   EMOTION,

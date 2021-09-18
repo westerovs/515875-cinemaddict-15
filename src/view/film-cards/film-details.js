@@ -5,11 +5,12 @@
 * раз форма удаляется, то удаляются и обработчики
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
-
 import dayjs from 'dayjs';
+import RelativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(RelativeTime);
 import { isDay } from '../../utils/days.js';
-import { nanoid } from 'nanoid';
-import he from 'he';
+import { calculateRuntime } from '../../utils/statistic.js';
+// import he from 'he';
 import { EMOTION, KeyCodes } from '../../utils/const.js';
 import SmartView from '../../utils/abstract/smart.js';
 
@@ -86,11 +87,12 @@ const createFilmDetailsTemplate = (state) => {
     description,
   } = filmInfo;
   const { date, releaseCountry } = release;
-  const countComments = comments.size;
-  const releaseDate = date.format('DD MMMM YYYY');
+  const countComments = comments.length;
+
+  const releaseDate = dayjs(date).format('DD MMMM YYYY');
 
   const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
-  const { hour, minute } = runTime;
+  const durationFilm = calculateRuntime(runTime);
 
   return (
     `<section class="film-details" id="${ id }">
@@ -101,7 +103,7 @@ const createFilmDetailsTemplate = (state) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${ poster }" alt="">
+              <img class="film-details__poster-img" src="./${ poster }" alt="">
               <p class="film-details__age">${ ageRating }+</p>
             </div>
 
@@ -136,7 +138,7 @@ const createFilmDetailsTemplate = (state) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${ hour }${ minute }</td>
+                  <td class="film-details__cell">${ durationFilm }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -219,7 +221,7 @@ export default class FilmDetails extends SmartView {
     this._emotionClickHandler = this._emotionClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
     this._onDeleteCommentClick = this._onDeleteCommentClick.bind(this);
-    this._onSubmitNewComment = this._onSubmitNewComment.bind(this);
+    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
 
     this.setInnerHandlers();
 
@@ -249,7 +251,8 @@ export default class FilmDetails extends SmartView {
     this._callback.watchListClick(this._state);
   }
 
-  _watchedClickHandler() {
+  _watchedClickHandler(e) {
+    e.preventDefault();
     this._callback.watchedClick(this._state);
   }
 
@@ -297,32 +300,30 @@ export default class FilmDetails extends SmartView {
     this.updateState({ commentText: evt.target.value }, true);
   }
 
-  _onSubmitNewComment(evt) {
+  _onSubmitEnterNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
-      const scrollTopPosition = this.getElement().scrollTop;
-
-      this._state.comments.push(this._createNewComment());
-      this._callback.onSubmitNewComment(FilmDetails.parseDataToFilm(this._state));
-
-      document.querySelector('.film-details').scrollTop = scrollTopPosition;
+      // // this._data.newComment = this._createNewComment();
+      // const scrollTopPosition = this.getElement().scrollTop;
+      //
+      // // this._callback.onSubmitNewComment(this._state);
+      // // // this._state.comments.push(this._createNewComment());
+      // // //
+      // document.querySelector('.film-details').scrollTop = scrollTopPosition;
     }
   }
 
   _createNewComment() {
-    if (!this._state.commentText) {
-      throw new Error('Нельзя отправить пустой комментарий !');
-    }
-    if (!this._state.emotion) {
-      throw new Error('Пожалуйста, выберите эмоцию !');
-    }
-
-    return {
-      id: nanoid(),
-      author: 'Волк Ларсен',
-      comment: he.encode(this._state.commentText),
-      date: dayjs(),
-      emotion: this._state.emotion,
-    };
+    // if (!this._state.newComment.commentText) {
+    //   throw new Error('Нельзя отправить пустой комментарий !');
+    // }
+    // if (!this._state.newComment.emotion) {
+    //   throw new Error('Пожалуйста, выберите эмоцию !');
+    // }
+    //
+    // return {
+    //   comment: he.encode(this._data.newComment.commentText),
+    //   emotion: this._data.newComment.emotion,
+    // };
   }
 
   _onDeleteCommentClick(evt) {
@@ -347,7 +348,7 @@ export default class FilmDetails extends SmartView {
   setSubmitNewComment(callback) {
     this._callback.onSubmitNewComment = callback;
     this.getElement().querySelector('.film-details__comment-input')
-      .addEventListener('keydown', this._onSubmitNewComment);
+      .addEventListener('keydown', this._onSubmitEnterNewComment);
   }
   // -------------------------------- comments ↑
 
