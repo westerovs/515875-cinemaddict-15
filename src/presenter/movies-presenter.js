@@ -6,9 +6,7 @@ import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
 import { FilterType, FilteredFilms } from '../utils/filter.js';
 
-// presenter
 import FilmPresenter from './film-presenter.js';
-// view
 import SortView from '../view/board/sort.js';
 import FilmsBoardView from '../view/board/film-board.js';
 import FilmsListView from '../view/board/films-list.js';
@@ -235,7 +233,6 @@ export default class MoviesPresenter {
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        // при резолве промиса, вызываем модель
         this._api.updateMovies(updatedFilm).then((response) => {
           this._moviesModel.updateFilm(updateType, response);
         });
@@ -254,7 +251,6 @@ export default class MoviesPresenter {
   }
 
   _handleModelEvent(updateType, updatedFilm) {
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.INIT:
         this._isLoading = false;
@@ -262,7 +258,6 @@ export default class MoviesPresenter {
         this._renderBoard();
         break;
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         if (this._filmPresenters.get(updatedFilm.id)) {
           this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
         }
@@ -274,12 +269,10 @@ export default class MoviesPresenter {
         }
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
         this._clearBoard();
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();
         break;

@@ -35,7 +35,7 @@ moviesPresenter.init();
 api.getMovies()
   .then((movies) => {
     const films = movies.map((filmCard) => {
-      if(filmCard.userDetails.isAlreadyWatched) {
+      if (filmCard.userDetails.isAlreadyWatched) {
         filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
       }
       return filmCard;

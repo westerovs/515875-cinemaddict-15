@@ -9,7 +9,8 @@ import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(RelativeTime);
 import { isDay } from '../../utils/days.js';
-import he from 'he';
+import { calculateRuntime } from '../../utils/statistic.js';
+// import he from 'he';
 import { EMOTION, KeyCodes } from '../../utils/const.js';
 import SmartView from '../../utils/abstract/smart.js';
 
@@ -91,7 +92,7 @@ const createFilmDetailsTemplate = (state) => {
   const releaseDate = dayjs(date).format('DD MMMM YYYY');
 
   const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
-  const { hour, minute } = runTime;
+  const durationFilm = calculateRuntime(runTime);
 
   return (
     `<section class="film-details" id="${ id }">
@@ -137,7 +138,7 @@ const createFilmDetailsTemplate = (state) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${ hour }${ minute }</td>
+                  <td class="film-details__cell">${ durationFilm }</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -301,28 +302,28 @@ export default class FilmDetails extends SmartView {
 
   _onSubmitEnterNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
-      this._data.newComment = this._createNewComment();
-      const scrollTopPosition = this.getElement().scrollTop;
-
-      this._callback.onSubmitNewComment(this._state);
-      // this._state.comments.push(this._createNewComment());
+      // // this._data.newComment = this._createNewComment();
+      // const scrollTopPosition = this.getElement().scrollTop;
       //
-      document.querySelector('.film-details').scrollTop = scrollTopPosition;
+      // // this._callback.onSubmitNewComment(this._state);
+      // // // this._state.comments.push(this._createNewComment());
+      // // //
+      // document.querySelector('.film-details').scrollTop = scrollTopPosition;
     }
   }
 
   _createNewComment() {
-    if (!this._state.newComment.commentText) {
-      throw new Error('Нельзя отправить пустой комментарий !');
-    }
-    if (!this._state.newComment.emotion) {
-      throw new Error('Пожалуйста, выберите эмоцию !');
-    }
-
-    return {
-      comment: he.encode(this._data.newComment.commentText),
-      emotion: this._data.newComment.emotion,
-    };
+    // if (!this._state.newComment.commentText) {
+    //   throw new Error('Нельзя отправить пустой комментарий !');
+    // }
+    // if (!this._state.newComment.emotion) {
+    //   throw new Error('Пожалуйста, выберите эмоцию !');
+    // }
+    //
+    // return {
+    //   comment: he.encode(this._data.newComment.commentText),
+    //   emotion: this._data.newComment.emotion,
+    // };
   }
 
   _onDeleteCommentClick(evt) {

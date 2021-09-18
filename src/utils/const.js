@@ -40,22 +40,6 @@ const EMOTION = [
   'angry',
 ];
 
-const COUNTRIES = [
-  'Usa',
-  'Albania',
-  'Tajikistan',
-  'Finland',
-  'Ussr',
-];
-
-const GENRES = [
-  'Musical',
-  'Drama',
-  'Thriller',
-  'Comedy',
-  'Historical',
-];
-
 const KeyCodes = {
   ESCAPE : 'Escape',
   ENTER: 'Enter',
@@ -70,8 +54,6 @@ const KeyCodes = {
 export {
   UserAction,
   UpdateType,
-  COUNTRIES,
-  GENRES,
   Films,
   getExtraTypeFilms,
   EMOTION,

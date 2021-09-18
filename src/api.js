@@ -3,6 +3,8 @@ import MoviesModel from './model/movies-model.js';
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class Api {
@@ -15,7 +17,6 @@ export default class Api {
     return this._load({ url: 'movies' })
       .then(Api.toJSON)
       .then((films) => films.map(MoviesModel.adaptToClient));
-
   }
 
   updateMovies(movie) {
@@ -32,6 +33,24 @@ export default class Api {
   getComments(film) {
     return this._load({ url: `comments/${ film.id }` })
       .then(Api.toJSON);
+  }
+
+  addComments(film) {
+    return this._load({
+      url: 'tasks',
+      method: Method.POST,
+      body: JSON.stringify(MoviesModel.adaptToServer(film)),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    })
+      .then(Api.toJSON)
+      .then(MoviesModel.adaptToClient);
+  }
+
+  deleteComments(film) {
+    return this._load({
+      url: `tasks/${ film.id }`,
+      method: Method.DELETE,
+    });
   }
 
   _load({

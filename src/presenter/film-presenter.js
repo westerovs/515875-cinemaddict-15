@@ -131,7 +131,7 @@ export default class FilmPresenter {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      this._currentFilterType === FilterType.WATCHLIST ? UpdateType.MINOR : UpdateType.PATCH,
+      (this._currentFilterType === FilterType.WATCHLIST) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
@@ -149,7 +149,7 @@ export default class FilmPresenter {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      this._currentFilterType === FilterType.HISTORY ? UpdateType.MINOR : UpdateType.PATCH,
+      (this._currentFilterType === FilterType.HISTORY) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
@@ -166,7 +166,7 @@ export default class FilmPresenter {
 
     this._handleViewAction(
       UserAction.UPDATE_FILM_CARD,
-      this._currentFilterType === FilterType.FAVORITES ? UpdateType.MINOR : UpdateType.PATCH,
+      (this._currentFilterType === FilterType.FAVORITES) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
