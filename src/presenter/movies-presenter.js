@@ -43,7 +43,7 @@ export default class MoviesPresenter {
     this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
-    this._isLoading = true; // когда будем создавать экз.доски, будем считать что всегда происх. загрузка данных
+    this._isLoading = true;
     this._api = api;
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
@@ -61,9 +61,9 @@ export default class MoviesPresenter {
   }
 
   _getFilms() {
-    this._activeFilter = this._filterModel.getActiveFilter(); // (ALL) текущий тип фильтра
-    const films = this._moviesModel.getFilms(); // набор фильмов из модели фильмов
-    const filteredFilms = FilteredFilms[this._activeFilter](films); // возвращает отфильтрованные фильмы
+    this._activeFilter = this._filterModel.getActiveFilter();
+    const films = this._moviesModel.getFilms();
+    const filteredFilms = FilteredFilms[this._activeFilter](films);
 
     this._filmsExtra = {
       topRated: getExtraTypeFilms(films).topRated,
@@ -78,10 +78,8 @@ export default class MoviesPresenter {
     }
   }
 
-
   // ----------- RENDERS ↓
   _renderBoard() {
-    // если фильмов нет
     if (this._isLoading) {
       this._renderLoading();
       return;
@@ -99,7 +97,6 @@ export default class MoviesPresenter {
     this._renderFilmList(true);
   }
 
-  // рендерит 3 секции: main и extra/extra
   _renderFilmList(firstInit) {
     // render центрального контейнера для фильмов
     render(this._filmsBoard, this._filmsListComponent);
@@ -176,7 +173,6 @@ export default class MoviesPresenter {
     }
   }
 
-
   // ----------- SORT ↓
   _renderSortList() {
     if (this._sortComponent !== null) {
@@ -198,7 +194,6 @@ export default class MoviesPresenter {
     this._clearBoard({ resetRenderedFilmCount: true });
     this._renderBoard();
   }
-
 
   // ----------- load more ↓
   _renderLoadMoreBtn() {
@@ -227,7 +222,6 @@ export default class MoviesPresenter {
       removeComponent(this._showMoreBtnComponent);
     }
   }
-
 
   // ----------- other ↓
   _handleViewAction(actionType, updateType, updatedFilm) {

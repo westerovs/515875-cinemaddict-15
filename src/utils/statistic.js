@@ -26,8 +26,7 @@ const calculateRuntime = (runtime) => {
 };
 
 const getTotalDuration = (films) => films.reduce((acc, film) => {
-  const durationFilm = film.filmInfo.runTime;
-  acc += durationFilm;
+  acc += film.filmInfo.runTime;
 
   return acc;
 }, 0);

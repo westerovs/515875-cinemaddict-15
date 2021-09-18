@@ -38,7 +38,7 @@ export default class FilmPresenter {
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
     // сперва создаются вюьхи, потом пересоздаются
-    this._filmCardComponent    = new FilmCardView(film);
+    this._filmCardComponent = new FilmCardView(film);
 
     this._addHandlers();
     observer.addObserver(this._destroyFilmDetails);
@@ -61,7 +61,6 @@ export default class FilmPresenter {
     removeComponent(prevFilmDetailsComponent);
   }
 
-  // главный метод для начала работы модуля
   _renderFilm() {
     render(this._filmContainer, this._filmCardComponent);
   }
@@ -88,7 +87,6 @@ export default class FilmPresenter {
   }
 
   _addHandlers() {
-    // film
     this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
     this._filmCardComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
@@ -120,7 +118,6 @@ export default class FilmPresenter {
 
   // *** ↓ handle controls ↓ ***
   _handleAddToWatchListClick() {
-    // передаём объект задачи с изменённым свойством
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isWatchlist: !this._film.userDetails.isWatchlist,
@@ -137,7 +134,6 @@ export default class FilmPresenter {
   }
 
   _handleWatchedClick() {
-    // передаём объект задачи с изменённым свойством
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isAlreadyWatched: !this._film.userDetails.isAlreadyWatched,
@@ -155,7 +151,6 @@ export default class FilmPresenter {
   }
 
   _handleFavoriteClick() {
-    // передаём объект задачи с изменённым свойством
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isFavorite: !this._film.userDetails.isFavorite,
