@@ -87,7 +87,7 @@ const createFilmDetailsTemplate = (state) => {
     description,
   } = filmInfo;
   const { date, releaseCountry } = release;
-  const countComments = comments.size;
+  const countComments = comments.length;
 
   const releaseDate = dayjs(date).format('DD MMMM YYYY');
 
