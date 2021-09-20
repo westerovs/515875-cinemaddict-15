@@ -227,32 +227,38 @@ export default class MoviesPresenter {
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._api.updateMovie(updatedFilm).then((response) => {
-          this._moviesModel.updateFilm(updateType, response);
-        });
+        this._api.updateMovie(updatedFilm)
+          .then((response) => {
+            this._moviesModel.updateFilm(updateType, response);
+          });
         break;
       case UserAction.ADD_NEW_COMMENT:
+        this._setViewStateInOpenPopup(updatedFilm.id, State.SENDING_NEW_COMMENT);
 
         this._api.addNewComment(updatedFilm)
           .then((response) => {
             this._moviesModel.updateFilm(updateType, response);
+            // меняем состояние на добавление
             // this._updateMostCommentedFilms(UserAction.ADD_NEW_COMMENT);
           })
           .catch((err) => {
-            // this._filmCardMainPresenter.get(updatedFilm.id).setAbortingSendNewComment();
-            console.log(err)
+            // меняем состояние на удаление setViewState
+            // this._filmPresenters.get(updatedFilm.id).setAbortingSendNewComment();
+            console.log(err);
           });
         break;
-      case UserAction.DELETE_COMMENT:
-        // this._setViewStateInOpenPopup(updatedFilm.id, State.DELETING);
 
-        this._api.deleteComment(updatedFilm).then(() => {
+      case UserAction.DELETE_COMMENT:
+        this._setViewStateInOpenPopup(updatedFilm.id, State.DELETING);
+
+        this._api.deleteComment(updatedFilm)
+          .then(() => {
             this._moviesModel.updateFilm(updateType, updatedFilm);
             // this._updateMostCommentedFilms(UserAction.DELETE_COMMENT, updatedFilm);
           })
           .catch((e) => {
             // this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment(); // покачивание
-            console.log(e)
+            console.log(e);
           });
         break;
     }
@@ -284,6 +290,18 @@ export default class MoviesPresenter {
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();
         break;
+    }
+  }
+
+  _setViewStateInOpenPopup(filmId, state) {
+    if (this._filmPresenters.get(filmId) && this._filmPresenters.get(filmId).getFilmDetails()) {
+      this._filmPresenters.get(filmId).setViewState(state);
+    }
+    if (this._filmPresentersExtra.topRated.get(filmId) && this._filmPresentersExtra.topRated.get(filmId).getFilmDetails()) {
+      this._filmPresentersExtra.topRated.get(filmId).setViewState(state);
+    }
+    if (this._filmPresentersExtra.mostCommented.get(filmId) && this._filmPresentersExtra.mostCommented.get(filmId).getFilmDetails()) {
+      this._filmPresentersExtra.mostCommented.get(filmId).setViewState(state);
     }
   }
 

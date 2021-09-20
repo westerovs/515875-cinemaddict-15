@@ -17,11 +17,22 @@ import SmartView from '../../utils/abstract/smart.js';
 
 dayjs.extend(RelativeTime);
 
-const createCommentTemplate = (comments) => {
+const createCommentTemplate = (comments, isDisabledComment, isDeleting, commentToDelete) => {
   let template = '';
 
   comments.forEach((comment) => {
     const { id, emotion, comment: textComment, author, date } = comment;
+
+    const getStatusBtnDelete = () => {
+      if (!commentToDelete) {
+        return 'Delete'
+      }
+      if (commentToDelete.id === id && isDeleting) {
+        return 'Deleting...';
+      }
+      else return 'Delete'
+    }
+
     template += `
       <li class="film-details__comment" id="${ id }">
         <span class="film-details__comment-emoji">
@@ -32,7 +43,10 @@ const createCommentTemplate = (comments) => {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${ author }</span>
             <span class="film-details__comment-day">${ isDay(date) }</span>
-            <button class="film-details__comment-delete">Delete</button>
+
+            <button ${ isDisabledComment ? 'disabled' : '' } class="film-details__comment-delete">
+              ${ getStatusBtnDelete() }
+            </button>
           </p>
         </div>
       </li>`;
@@ -73,7 +87,7 @@ const createEmojiTemplate = () => {
 };
 
 const createFilmDetailsTemplate = (state) => {
-  const { id, comments, filmInfo, userDetails, emotion, commentText } = state;
+  const { id, comments, filmInfo, userDetails, isDisabledForm, isDisabledComment, isDeleting, commentToDelete } = state;
   const { isWatchlist, isAlreadyWatched, isFavorite } = userDetails;
   const {
     title,
@@ -87,14 +101,17 @@ const createFilmDetailsTemplate = (state) => {
     release,
     runTime,
     genre,
-    description,
+    description
   } = filmInfo;
+
   const { date, releaseCountry } = release;
   const countComments = comments.length;
 
   const releaseDate = dayjs(date).format('DD MMMM YYYY');
 
-  const emojiPic = emotion ? `<img src="./images/emoji/${ emotion }.png" width="55" height="55" alt="${ emotion }">` : '';
+  // todo что-то c текстом
+  const commentText = state.newComment.commentText ?  state.newComment.commentText : '';
+
   const durationFilm = calculateRuntime(runTime);
 
   return (
@@ -185,19 +202,21 @@ const createFilmDetailsTemplate = (state) => {
             </h3>
 
             <ul class="film-details__comments-list">
-              ${ createCommentTemplate(comments) }
+              ${ createCommentTemplate(comments, isDisabledComment, isDeleting, commentToDelete) }
             </ul>
 
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">
-                ${ emojiPic }
+               <!-- рендер emoji через js -->
               </div>
 
               <label class="film-details__comment-label">
                 <textarea
+                  ${ isDisabledForm ? 'disabled' : '' }
                   class="film-details__comment-input"
                   placeholder="Select reaction below and write comment here"
-                  name="comment">${ commentText ? commentText : '' }</textarea>
+                  name="comment">${ commentText }
+                </textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -368,7 +387,6 @@ export default class FilmDetails extends SmartView {
 
   // ----------- delete ↓
   _handleDeleteCommentClick(evt) {
-    console.log('_handleDeleteCommentClick')
     evt.preventDefault();
     const scrollTopPosition = this.getElement().scrollTop;
 

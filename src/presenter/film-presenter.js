@@ -3,7 +3,7 @@
 * */
 /* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
-import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
+import { UserAction, UpdateType, KeyCodes, State } from '../utils/const.js';
 import { FilterType } from '../utils/filter.js';
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 import FilmCardView from '../view/film-cards/film-card.js';
@@ -60,6 +60,10 @@ export default class FilmPresenter {
 
     removeComponent(prevFilmComponent);
     removeComponent(prevFilmDetailsComponent);
+  }
+
+  getFilmDetails() {
+    return this._filmDetailsComponent;
   }
 
   _renderFilm() {
@@ -182,10 +186,30 @@ export default class FilmPresenter {
     );
   }
 
+  // other
+  setViewState(state) {
+    switch (state) {
+      case State.SENDING_NEW_COMMENT: {
+        this._filmDetailsComponent.updateState({
+          isDisabledForm: true,
+        });
+        break;
+      }
+      case State.DELETING: {
+        console.log(state)
+        this._filmDetailsComponent.updateState({
+          isDisabledComment: true,
+          isDeleting: true,
+        });
+        break;
+      }
+    }
+  }
+
   // setAbortingSendNewComment() {
   //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
   // }
-  //
+
   // setAbortingDeletingComment() {
   //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
   // }

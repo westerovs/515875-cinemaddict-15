@@ -1114,3 +1114,16 @@ button {
   padding-top: 50px;
   padding-bottom: 50px;
 }
+
+
+.film-details__comment-delete:disabled {
+  color: gray;
+  text-decoration: none;
+  cursor: wait;
+}
+
+.film-details__comment-input:disabled {
+  background: gray;
+  text-decoration: none;
+  cursor: wait;
+}
