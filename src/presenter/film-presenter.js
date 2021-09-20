@@ -1,7 +1,6 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
-/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import { UserAction, UpdateType, KeyCodes, State } from '../utils/const.js';
 import { FilterType } from '../utils/filter.js';
@@ -196,7 +195,6 @@ export default class FilmPresenter {
         break;
       }
       case State.DELETING: {
-        console.log(state)
         this._filmDetailsComponent.updateState({
           isDisabledComment: true,
           isDeleting: true,
@@ -206,21 +204,22 @@ export default class FilmPresenter {
     }
   }
 
-  // setAbortingSendNewComment() {
-  //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
-  // }
+  // эффект покачивания
+  setAbortingSendNewComment() {
+    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
+  }
 
-  // setAbortingDeletingComment() {
-  //   this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
-  // }
+  setAbortingDeletingComment() {
+    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
+  }
 
-  // _resetFormState() {
-  //   this._filmDetailsComponent.updateState({
-  //     isDisabledForm: false,
-  //     isDisabledComment: false,
-  //     isDeleting: false,
-  //   });
-  // }
+  _resetFormState() {
+    this._filmDetailsComponent.updateState({
+      isDisabledForm: false,
+      isDisabledComment: false,
+      isDeleting: false,
+    });
+  }
 
   destroy() {
     removeComponent(this._filmCardComponent);

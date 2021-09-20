@@ -28,7 +28,6 @@ export default class AbstractView {
     this._elem = null;
   }
 
-  // для будущей анимации
   shake(element, callback) {
     element.style.animation = `shake ${ SHAKE_ANIMATION_TIMEOUT / 1000 }s`;
 

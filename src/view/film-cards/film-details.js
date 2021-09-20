@@ -5,7 +5,6 @@
 * раз форма удаляется, то удаляются и обработчики
 * Тут же навешиваем обработчики через restoreAllHandlers
 * */
-/* eslint-disable */
 import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import { isDay } from '../../utils/days.js';
@@ -25,13 +24,13 @@ const createCommentTemplate = (comments, isDisabledComment, isDeleting, commentT
 
     const getStatusBtnDelete = () => {
       if (!commentToDelete) {
-        return 'Delete'
+        return 'Delete';
       }
       if (commentToDelete.id === id && isDeleting) {
         return 'Deleting...';
       }
-      else return 'Delete'
-    }
+      else {return 'Delete';}
+    };
 
     template += `
       <li class="film-details__comment" id="${ id }">
@@ -101,16 +100,13 @@ const createFilmDetailsTemplate = (state) => {
     release,
     runTime,
     genre,
-    description
+    description,
   } = filmInfo;
 
   const { date, releaseCountry } = release;
   const countComments = comments.length;
 
   const releaseDate = dayjs(date).format('DD MMMM YYYY');
-
-  // todo что-то c текстом
-  const commentText = state.newComment.commentText ?  state.newComment.commentText : '';
 
   const durationFilm = calculateRuntime(runTime);
 
@@ -215,8 +211,7 @@ const createFilmDetailsTemplate = (state) => {
                   ${ isDisabledForm ? 'disabled' : '' }
                   class="film-details__comment-input"
                   placeholder="Select reaction below and write comment here"
-                  name="comment">${ commentText }
-                </textarea>
+                  name="comment">${ state.newComment.commentText ? state.newComment.commentText : '' }</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -245,6 +240,9 @@ export default class FilmDetails extends SmartView {
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
 
+    this.getElementOfDeletingComment = this.getElementOfDeletingComment.bind(this);
+    this.getElementOfNewComment = this.getElementOfNewComment.bind(this);
+
     this.setInnerHandlers();
 
     this._scrollPosition = 0;
@@ -252,6 +250,14 @@ export default class FilmDetails extends SmartView {
 
   getTemplate() {
     return createFilmDetailsTemplate(this._state);
+  }
+
+  getElementOfNewComment(){
+    return this.getElement().querySelector('.film-details__new-comment');
+  }
+
+  getElementOfDeletingComment() {
+    return this.getElement().querySelectorAll('.film-details__comment')[this._data.comments.indexOf(this._data.commentToDelete)];
   }
 
   // -------------------------------- close ↓
@@ -265,8 +271,6 @@ export default class FilmDetails extends SmartView {
 
     closeBtn.addEventListener('click', this._closeDetailsClickHandler);
   }
-  // -------------------------------- close ↑
-
 
   // -------------------------------- controls ↓
   _watchListClickHandler() {
@@ -302,7 +306,6 @@ export default class FilmDetails extends SmartView {
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
-  // -------------------------------- controls ↑
 
 
   // -------------------------------- comments ↓
@@ -338,9 +341,7 @@ export default class FilmDetails extends SmartView {
 
     replace(newEmotionElement, oldEmotionElement);
   }
-  // ----------- emotion ↑
 
-  // ----------- Text Area and ...
   _commentTextAreaHandler(evt) {
     this.updateState({
       newComment: Object.assign(
@@ -353,7 +354,6 @@ export default class FilmDetails extends SmartView {
     }, true);
   }
 
-  // [1]
   _onSubmitEnterNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
       this._state.newComment = this._createNewComment();
@@ -364,7 +364,6 @@ export default class FilmDetails extends SmartView {
     }
   }
 
-  // [2]
   _createNewComment() {
     if (!this._state.newComment.commentText) {
       throw new Error('Нельзя отправить пустой комментарий !');
@@ -385,7 +384,6 @@ export default class FilmDetails extends SmartView {
       .addEventListener('keydown', this._onSubmitEnterNewComment);
   }
 
-  // ----------- delete ↓
   _handleDeleteCommentClick(evt) {
     evt.preventDefault();
     const scrollTopPosition = this.getElement().scrollTop;
@@ -404,8 +402,6 @@ export default class FilmDetails extends SmartView {
     this.getElement().querySelectorAll('.film-details__comment-delete')
       .forEach((button) => button.addEventListener('click', this._handleDeleteCommentClick));
   }
-  // -------------------------------- comments ↑
-
 
   // -------------------------------- other ↓
   setInnerHandlers() {
@@ -437,9 +433,9 @@ export default class FilmDetails extends SmartView {
       film,
       {
         newComment: {
-        emotion: null,
-        commentText: null,
-      },
+          emotion: null,
+          commentText: null,
+        },
         commentToDelete: null,
         isDisabledForm: false,
         isDeleting: false,

@@ -14,7 +14,7 @@ import FilmsListExtraView from '../view/board/films-list-extra.js';
 import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
 import LoadingView from '../view/board/loading.js';
-/* eslint-disable */
+
 export default class MoviesPresenter {
   constructor(mainElement, model, filterModel, api) {
     this._mainElement = mainElement;
@@ -232,19 +232,16 @@ export default class MoviesPresenter {
             this._moviesModel.updateFilm(updateType, response);
           });
         break;
+
       case UserAction.ADD_NEW_COMMENT:
         this._setViewStateInOpenPopup(updatedFilm.id, State.SENDING_NEW_COMMENT);
 
         this._api.addNewComment(updatedFilm)
           .then((response) => {
             this._moviesModel.updateFilm(updateType, response);
-            // меняем состояние на добавление
-            // this._updateMostCommentedFilms(UserAction.ADD_NEW_COMMENT);
           })
-          .catch((err) => {
-            // меняем состояние на удаление setViewState
-            // this._filmPresenters.get(updatedFilm.id).setAbortingSendNewComment();
-            console.log(err);
+          .catch(() => {
+            this._filmPresenters.get(updatedFilm.id).setAbortingSendNewComment();
           });
         break;
 
@@ -254,11 +251,9 @@ export default class MoviesPresenter {
         this._api.deleteComment(updatedFilm)
           .then(() => {
             this._moviesModel.updateFilm(updateType, updatedFilm);
-            // this._updateMostCommentedFilms(UserAction.DELETE_COMMENT, updatedFilm);
           })
-          .catch((e) => {
-            // this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment(); // покачивание
-            console.log(e);
+          .catch(() => {
+            this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment();
           });
         break;
     }
