@@ -29,23 +29,17 @@ const mainMenuPresenter = new MainMenuPresenter(
   moviesPresenter,
 );
 
-mainMenuPresenter.init();
 moviesPresenter.init();
 
 api.getMovies()
   .then((movies) => {
-    const films = movies.map((filmCard) => {
-      if (filmCard.userDetails.isAlreadyWatched) {
-        filmCard.userDetails.watchingDate = filmCard.filmInfo.release.date;
-      }
-      return filmCard;
-    });
+    mainMenuPresenter.init();
 
-    moviesModel.setFilms(UpdateType.INIT, films); // добавляет в модель фильмы
-    render(siteFooterStatistics, new FooterStatisticView(films.length));
+    moviesModel.setFilms(UpdateType.INIT, movies); // добавляет в модель фильмы
+    render(siteFooterStatistics, new FooterStatisticView(movies.length));
   })
   .catch((error) => {
     moviesModel.setFilms(UpdateType.INIT, []);
-    throw new Error(error); // временно
+    throw new Error(error);
   });
 

@@ -1,7 +1,7 @@
 /*
 * ===== главный презентер =====
 * */
-import { getExtraTypeFilms, Films, UpdateType, UserAction } from '../utils/const.js';
+import { getExtraTypeFilms, Films, UpdateType, UserAction, State } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
 import { FilterType, FilteredFilms } from '../utils/filter.js';
@@ -227,19 +227,34 @@ export default class MoviesPresenter {
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._api.updateMovies(updatedFilm).then((response) => {
-          this._moviesModel.updateFilm(updateType, response);
-        });
+        this._api.updateMovie(updatedFilm)
+          .then((response) => {
+            this._moviesModel.updateFilm(updateType, response);
+          });
         break;
+
       case UserAction.ADD_NEW_COMMENT:
-        // this._api.addNewComment(updatedFilm).then((response) => {
-        //   this._moviesModel.addComment(updateType, response);
-        // });
+        this._setViewStateInOpenPopup(updatedFilm.id, State.SENDING_NEW_COMMENT);
+
+        this._api.addNewComment(updatedFilm)
+          .then((response) => {
+            this._moviesModel.updateFilm(updateType, response);
+          })
+          .catch(() => {
+            this._filmPresenters.get(updatedFilm.id).setAbortingSendNewComment();
+          });
         break;
+
       case UserAction.DELETE_COMMENT:
-        // this._api.deleteComment(updatedFilm).then(() => {
-        //   this._moviesModel.deleteComment(updateType, updatedFilm);
-        // });
+        this._setViewStateInOpenPopup(updatedFilm.id, State.DELETING);
+
+        this._api.deleteComment(updatedFilm)
+          .then(() => {
+            this._moviesModel.updateFilm(updateType, updatedFilm);
+          })
+          .catch(() => {
+            this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment();
+          });
         break;
     }
   }
@@ -270,6 +285,18 @@ export default class MoviesPresenter {
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();
         break;
+    }
+  }
+
+  _setViewStateInOpenPopup(filmId, state) {
+    if (this._filmPresenters.get(filmId) && this._filmPresenters.get(filmId).getFilmDetails()) {
+      this._filmPresenters.get(filmId).setViewState(state);
+    }
+    if (this._filmPresentersExtra.topRated.get(filmId) && this._filmPresentersExtra.topRated.get(filmId).getFilmDetails()) {
+      this._filmPresentersExtra.topRated.get(filmId).setViewState(state);
+    }
+    if (this._filmPresentersExtra.mostCommented.get(filmId) && this._filmPresentersExtra.mostCommented.get(filmId).getFilmDetails()) {
+      this._filmPresentersExtra.mostCommented.get(filmId).setViewState(state);
     }
   }
 

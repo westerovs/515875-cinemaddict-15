@@ -19,7 +19,7 @@ export default class Api {
       .then((films) => films.map(MoviesModel.adaptToClient));
   }
 
-  updateMovies(movie) {
+  updateMovie(movie) {
     return this._load({
       url: `movies/${ movie.id }`,
       method: Method.PUT,
@@ -35,20 +35,21 @@ export default class Api {
       .then(Api.toJSON);
   }
 
-  addComments(film) {
+  addNewComment(movie) {
     return this._load({
-      url: 'tasks',
+      url: `comments/${ movie.id }`,
       method: Method.POST,
-      body: JSON.stringify(MoviesModel.adaptToServer(film)),
+      body: JSON.stringify(movie.newComment),
       headers: new Headers({ 'Content-Type': 'application/json' }),
     })
       .then(Api.toJSON)
+      .then((response) => response = response.movie)
       .then(MoviesModel.adaptToClient);
   }
 
-  deleteComments(film) {
+  deleteComment(film) {
     return this._load({
-      url: `tasks/${ film.id }`,
+      url: `comments/${ film.commentToDelete.id }`,
       method: Method.DELETE,
     });
   }
