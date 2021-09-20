@@ -1,6 +1,7 @@
 /*
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
+/* eslint-disable */
 import { removeComponent, render, replace } from '../utils/render.js';
 import { UserAction, UpdateType, KeyCodes } from '../utils/const.js';
 import { FilterType } from '../utils/filter.js';
@@ -11,9 +12,9 @@ import FilmDetailsView from '../view/film-cards/film-details.js';
 const observer = new AbstractObserver();
 
 export default class FilmPresenter {
-  constructor(filmContainer, _handleViewAction, currentFilterType, api) {
+  constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
-    this._handleViewAction = _handleViewAction;
+    this._handleViewAction = handleViewAction;
     this._currentFilterType = currentFilterType;
     this._api = api;
 
@@ -29,7 +30,7 @@ export default class FilmPresenter {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
-    this._handleSubmitNewComment = this._handleSubmitNewComment.bind(this);
+    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
   }
 
   init(film) {
@@ -87,18 +88,20 @@ export default class FilmPresenter {
   }
 
   _addHandlers() {
-    this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
     this._filmCardComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
   }
 
   _addPopupHandlers() {
     this._filmDetailsComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    // todo перенести сюда close btn ?
     this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
-    this._filmDetailsComponent.setSubmitNewComment(this._handleSubmitNewComment);
+    this._filmDetailsComponent.setSubmitNewComment(this._onSubmitEnterNewComment);
   }
 
   _destroyFilmDetails() {
@@ -167,19 +170,15 @@ export default class FilmPresenter {
   }
 
   // *** ↓ comments ↓ ***
-  _handleDeleteCommentClick(card){
-    this._handleViewAction(
-      UserAction.UPDATE_FILM_CARD,
-      UpdateType.PATCH,
-      card,
-    );
+  _handleDeleteCommentClick(film) {
+    this._handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
   }
 
-  _handleSubmitNewComment(card){
+  _onSubmitEnterNewComment(film) {
     this._handleViewAction(
-      UserAction.UPDATE_FILM_CARD,
+      UserAction.ADD_NEW_COMMENT,
       UpdateType.PATCH,
-      card,
+      film,
     );
   }
 

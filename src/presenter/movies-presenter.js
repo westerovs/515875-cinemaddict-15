@@ -1,7 +1,7 @@
 /*
 * ===== главный презентер =====
 * */
-import { getExtraTypeFilms, Films, UpdateType, UserAction } from '../utils/const.js';
+import { getExtraTypeFilms, Films, UpdateType, UserAction, State } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
 import { FilterType, FilteredFilms } from '../utils/filter.js';
@@ -14,7 +14,7 @@ import FilmsListExtraView from '../view/board/films-list-extra.js';
 import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
 import LoadingView from '../view/board/loading.js';
-
+/* eslint-disable */
 export default class MoviesPresenter {
   constructor(mainElement, model, filterModel, api) {
     this._mainElement = mainElement;
@@ -227,19 +227,33 @@ export default class MoviesPresenter {
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
-        this._api.updateMovies(updatedFilm).then((response) => {
+        this._api.updateMovie(updatedFilm).then((response) => {
           this._moviesModel.updateFilm(updateType, response);
         });
         break;
       case UserAction.ADD_NEW_COMMENT:
-        // this._api.addNewComment(updatedFilm).then((response) => {
-        //   this._moviesModel.addComment(updateType, response);
-        // });
+
+        this._api.addNewComment(updatedFilm)
+          .then((response) => {
+            this._moviesModel.updateFilm(updateType, response);
+            // this._updateMostCommentedFilms(UserAction.ADD_NEW_COMMENT);
+          })
+          .catch((err) => {
+            // this._filmCardMainPresenter.get(updatedFilm.id).setAbortingSendNewComment();
+            console.log(err)
+          });
         break;
       case UserAction.DELETE_COMMENT:
-        // this._api.deleteComment(updatedFilm).then(() => {
-        //   this._moviesModel.deleteComment(updateType, updatedFilm);
-        // });
+        // this._setViewStateInOpenPopup(updatedFilm.id, State.DELETING);
+
+        this._api.deleteComment(updatedFilm).then(() => {
+            this._moviesModel.updateFilm(updateType, updatedFilm);
+            // this._updateMostCommentedFilms(UserAction.DELETE_COMMENT, updatedFilm);
+          })
+          .catch((e) => {
+            // this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment(); // покачивание
+            console.log(e)
+          });
         break;
     }
   }

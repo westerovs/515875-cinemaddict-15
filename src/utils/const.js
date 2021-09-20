@@ -51,11 +51,17 @@ const KeyCodes = {
 // todo возможно добавить потом для удобства
 // const isEscPressed = (evt) => evt.code === KeyCodes.ESCAPE || evt.key === 'Esc';
 
+const State = {
+  SENDING_NEW_COMMENT: 'SENDING_NEW_COMMENT',
+  DELETING: 'DELETING',
+};
+
 export {
   UserAction,
   UpdateType,
   Films,
   getExtraTypeFilms,
   EMOTION,
-  KeyCodes
+  KeyCodes,
+  State
 };

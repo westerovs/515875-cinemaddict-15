@@ -15,7 +15,7 @@ export default class Api {
       .then((films) => films.map(MoviesModel.adaptToClient));
   }
 
-  updateMovies(movie) {
+  updateMovie(movie) {
     return this._load({
       url: `movies/${ movie.id }`,
       method: Method.PUT,
