@@ -9,7 +9,7 @@ import FilmCardView from '../view/film-cards/film-card.js';
 import FilmDetailsView from '../view/film-cards/film-details.js';
 
 const observer = new AbstractObserver();
-
+/* eslint-disable */
 export default class FilmPresenter {
   constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
@@ -204,13 +204,16 @@ export default class FilmPresenter {
     }
   }
 
-  // эффект покачивания
-  setAbortingSendNewComment() {
-    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfNewComment(), this._resetFormState);
-  }
+  runErrorAnimations(duration = 1000) {
+    this._filmDetailsComponent.getElement().classList.add('shake')
+    this._scrollPosition = this._filmDetailsComponent.getElement().scrollTop;
 
-  setAbortingDeletingComment() {
-    this._filmDetailsComponent.shake(this._filmDetailsComponent.getElementOfDeletingComment(), this._resetFormState);
+    setTimeout(() => {
+      this._filmDetailsComponent.getElement().classList.remove('shake')
+
+      this._resetFormState()
+      this._filmDetailsComponent.getElement().scrollTop = this._scrollPosition;
+    }, duration);
   }
 
   _resetFormState() {

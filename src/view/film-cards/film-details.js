@@ -239,25 +239,14 @@ export default class FilmDetails extends SmartView {
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
     this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
-
-    this.getElementOfDeletingComment = this.getElementOfDeletingComment.bind(this);
-    this.getElementOfNewComment = this.getElementOfNewComment.bind(this);
+    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
 
     this.setInnerHandlers();
-
     this._scrollPosition = 0;
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._state);
-  }
-
-  getElementOfNewComment(){
-    return this.getElement().querySelector('.film-details__new-comment');
-  }
-
-  getElementOfDeletingComment() {
-    return this.getElement().querySelectorAll('.film-details__comment')[this._data.comments.indexOf(this._data.commentToDelete)];
   }
 
   // -------------------------------- close ↓
@@ -306,7 +295,6 @@ export default class FilmDetails extends SmartView {
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
   }
-
 
   // -------------------------------- comments ↓
   _emotionClickHandler(evt) {
@@ -357,10 +345,7 @@ export default class FilmDetails extends SmartView {
   _onSubmitEnterNewComment(evt) {
     if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
       this._state.newComment = this._createNewComment();
-
       this._callback.onSubmitNewComment(this._state);
-
-      document.querySelector('.film-details').scrollTop = this.getElement().scrollTop;
     }
   }
 

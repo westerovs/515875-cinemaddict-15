@@ -241,7 +241,7 @@ export default class MoviesPresenter {
             this._moviesModel.updateFilm(updateType, response);
           })
           .catch(() => {
-            this._filmPresenters.get(updatedFilm.id).setAbortingSendNewComment();
+            this._filmPresenters.get(updatedFilm.id).runErrorAnimations();
           });
         break;
 
@@ -253,7 +253,7 @@ export default class MoviesPresenter {
             this._moviesModel.updateFilm(updateType, updatedFilm);
           })
           .catch(() => {
-            this._filmPresenters.get(updatedFilm.id).setAbortingDeletingComment();
+            this._filmPresenters.get(updatedFilm.id).runErrorAnimations();
           });
         break;
     }

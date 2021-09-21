@@ -1116,15 +1116,8 @@ button {
 }
 
 
+.film-details__comment-input:disabled,
 .film-details__comment-delete:disabled {
-  color: gray;
-  text-decoration: none;
-  cursor: wait;
-}
-
-.film-details__comment-input:disabled {
-  background: gray;
-  text-decoration: none;
   cursor: wait;
 }
 
