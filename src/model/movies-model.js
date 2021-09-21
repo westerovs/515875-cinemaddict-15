@@ -1,10 +1,5 @@
 /*
 * главный класс Model
-
-updateFilm(updateType, updateElement)
-  когда в презенторе хотим что-то изменить в модели, вызываем этот метод
-  куда мы сообщаем тип обновления - сам объект обновления
-    updateType - вызывается в презенторе, это абстрактный event, его нет в модели, он никуда не записывается
 */
 
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
@@ -21,7 +16,6 @@ export default class MoviesModel extends AbstractObserver {
 
   setFilms(updateType, films) {
     this._films = films.slice();
-    // ↓ уведомить всех подписчиков о том, что появились новые данные ↓
     this._notify(updateType);
   }
 
@@ -41,7 +35,6 @@ export default class MoviesModel extends AbstractObserver {
     this._notify(updateType, updateElement);
   }
 
-  // то что приходит от сервера
   static adaptToClient(film) {
     return {
       id: film.id,
@@ -72,7 +65,6 @@ export default class MoviesModel extends AbstractObserver {
     };
   }
 
-  // то что уходит на сервер
   static adaptToServer(film) {
     return {
       id: film.id,

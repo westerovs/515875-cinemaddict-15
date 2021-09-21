@@ -9,7 +9,6 @@ import FilmCardView from '../view/film-cards/film-card.js';
 import FilmDetailsView from '../view/film-cards/film-details.js';
 
 const observer = new AbstractObserver();
-/* eslint-disable */
 export default class FilmPresenter {
   constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
@@ -37,19 +36,16 @@ export default class FilmPresenter {
     const prevFilmComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
-    // сперва создаются вюьхи, потом пересоздаются
     this._filmCardComponent = new FilmCardView(film);
 
     this._addHandlers();
     observer.addObserver(this._destroyFilmDetails);
 
-    // [1] если первый init
     if (prevFilmComponent === null) {
       this._renderFilm(this._filmContainer, film);
       return;
     }
 
-    // [2] если init был, то нужно не рендерить, а заменить...
     if (this._filmContainer.contains(prevFilmComponent.getElement())) {
       replace(this._filmCardComponent, prevFilmComponent);
     }
@@ -102,7 +98,6 @@ export default class FilmPresenter {
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
-    // todo перенести сюда close btn ?
     this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
     this._filmDetailsComponent.setSubmitNewComment(this._onSubmitEnterNewComment);
   }
@@ -122,7 +117,6 @@ export default class FilmPresenter {
     }
   }
 
-  // *** ↓ handle controls ↓ ***
   _handleAddToWatchListClick() {
     const userDetails = Object.assign({}, this._film.userDetails,
       {
@@ -205,13 +199,13 @@ export default class FilmPresenter {
   }
 
   runErrorAnimations(duration = 1000) {
-    this._filmDetailsComponent.getElement().classList.add('shake')
+    this._filmDetailsComponent.getElement().classList.add('shake');
     this._scrollPosition = this._filmDetailsComponent.getElement().scrollTop;
 
     setTimeout(() => {
-      this._filmDetailsComponent.getElement().classList.remove('shake')
+      this._filmDetailsComponent.getElement().classList.remove('shake');
 
-      this._resetFormState()
+      this._resetFormState();
       this._filmDetailsComponent.getElement().scrollTop = this._scrollPosition;
     }, duration);
   }

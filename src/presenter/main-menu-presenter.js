@@ -30,9 +30,6 @@ export default class MainMenuPresenter {
 
     this._getWatchedFilmsCount = this._getWatchedFilmsCount.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-
-    // this._moviesModel.addObserver(this._handleModelEvent);
-    // this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -43,7 +40,6 @@ export default class MainMenuPresenter {
     const prevMainMenuComponent = this._mainMenuComponent;
     const prevRankComponent = this._rankComponent;
 
-    //                     отфильтрованные числа ↓   тип фильтра по умолчанию ↓ (ALL)
     this._mainMenuComponent = new MainMenuView(filters, this._filterModel.getActiveFilter());
     this._rankComponent = new RankView(this._getWatchedFilmsCount);
 
@@ -116,7 +112,6 @@ export default class MainMenuPresenter {
       this._destroyStatistics();
     }
 
-    // вызвать update
     this._filterModel.setActiveFilter(UpdateType.MAJOR, filterType);
   }
 

@@ -1,10 +1,3 @@
-/*
-* Обработчики должны добавляться во вьюхе, иначе это нарушение паттерна
-* Пользователь чего-то жмакает по попапу
-* это приводит к перерисовке формы
-* раз форма удаляется, то удаляются и обработчики
-* Тут же навешиваем обработчики через restoreAllHandlers
-* */
 import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import { isDay } from '../../utils/days.js';
@@ -249,7 +242,6 @@ export default class FilmDetails extends SmartView {
     return createFilmDetailsTemplate(this._state);
   }
 
-  // -------------------------------- close ↓
   _closeDetailsClickHandler() {
     this._callback.toCloseClick();
   }
@@ -411,7 +403,6 @@ export default class FilmDetails extends SmartView {
     this.setSubmitNewComment(this._callback.onSubmitNewComment);
   }
 
-  // this.state ↓
   static parseFilmToData(film) {
     return Object.assign(
       {},

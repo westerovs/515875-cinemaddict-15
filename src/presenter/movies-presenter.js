@@ -48,7 +48,6 @@ export default class MoviesPresenter {
 
     this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    //  ------ callbacks MVP ↓
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
@@ -93,7 +92,7 @@ export default class MoviesPresenter {
     this._renderSortList();
 
     render(this._mainElement, this._filmsBoardComponent);
-    this._filmsBoard = this._mainElement.querySelector('.films'); // section films
+    this._filmsBoard = this._mainElement.querySelector('.films');
     this._renderFilmList(true);
   }
 
@@ -173,7 +172,6 @@ export default class MoviesPresenter {
     }
   }
 
-  // ----------- SORT ↓
   _renderSortList() {
     if (this._sortComponent !== null) {
       this._sortComponent = null;
@@ -195,7 +193,6 @@ export default class MoviesPresenter {
     this._renderBoard();
   }
 
-  // ----------- load more ↓
   _renderLoadMoreBtn() {
     if (this._showMoreBtnComponent !== null) {
       this._showMoreBtnComponent = null;
@@ -223,7 +220,6 @@ export default class MoviesPresenter {
     }
   }
 
-  // ----------- other ↓
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD:
@@ -333,8 +329,6 @@ export default class MoviesPresenter {
     if (resetRenderedFilmCount) {
       this._renderedFilmsCount = Films.SHOW_FILMS;
     } else {
-      // На случай, если перерисовка доски вызвана уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
       this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
     }
 

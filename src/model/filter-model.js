@@ -8,7 +8,6 @@ export default class FilterModel extends AbstractObserver {
   }
 
   setActiveFilter(updateType, filter) {
-    // установка фильтра значит изменение данных модели и уведомления всех, кто подписался
     this._activeFilter = filter;
     this._notify(updateType, filter);
   }
