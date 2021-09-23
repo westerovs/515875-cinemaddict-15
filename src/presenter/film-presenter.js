@@ -2,7 +2,7 @@
 * дополнительный презентер, отвечает за обработку карточки фильма
 * */
 import { removeComponent, render, replace } from '../utils/render.js';
-import { UserAction, UpdateType, KeyCodes, State } from '../utils/const.js';
+import { UserAction, UpdateType, KeyCode, State } from '../utils/const.js';
 import { FilterType } from '../utils/filter.js';
 import AbstractObserver from '../utils/abstract/abstract-observer.js';
 import FilmCardView from '../view/film-cards/film-card.js';
@@ -111,7 +111,7 @@ export default class FilmPresenter {
   }
 
   _onEscCloseFilmDetails(evt) {
-    if (evt.code === KeyCodes.ESCAPE || evt.key === 'Esc') {
+    if (evt.code === KeyCode.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
       this._destroyFilmDetails();
     }

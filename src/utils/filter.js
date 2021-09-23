@@ -9,7 +9,7 @@ const FilterType = {
   FAVORITES: 'favorites',
 };
 
-const FilteredFilms = {
+const FilterFilm = {
   [FilterType.ALL]: (films) => films,
   [FilterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.isWatchlist),
   [FilterType.HISTORY]: (films) => films.filter((film) => film.userDetails.isAlreadyWatched),
@@ -18,5 +18,5 @@ const FilteredFilms = {
 
 export {
   FilterType,
-  FilteredFilms
+  FilterFilm
 };

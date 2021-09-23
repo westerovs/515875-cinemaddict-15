@@ -1,10 +1,10 @@
 /*
 * ===== главный презентер =====
 * */
-import { getExtraTypeFilms, Films, UpdateType, UserAction, State } from '../utils/const.js';
+import { getExtraTypeFilms, FilmCounter, UpdateType, UserAction, State } from '../utils/const.js';
 import { render, removeComponent } from '../utils/render.js';
 import { SortType, sortDateDown, sortRatingDown } from '../utils/sort.js';
-import { FilterType, FilteredFilms } from '../utils/filter.js';
+import { FilterType, FilterFilm } from '../utils/filter.js';
 
 import FilmPresenter from './film-presenter.js';
 import SortView from '../view/board/sort.js';
@@ -40,7 +40,7 @@ export default class MoviesPresenter {
     this._topRatedFilmsList = null;
     this._mostCommentedFilmsList = null;
     this._currentSortType = SortType.DEFAULT;
-    this._renderedFilmsCount = Films.FILM_COUNT_PER_STEP;
+    this._renderedFilmsCount = FilmCounter.FILM_COUNT_PER_STEP;
     this._sortComponent = null;
     this._showMoreBtnComponent = null;
     this._isLoading = true;
@@ -62,7 +62,7 @@ export default class MoviesPresenter {
   _getFilms() {
     this._activeFilter = this._filterModel.getActiveFilter();
     const films = this._moviesModel.getFilms();
-    const filteredFilms = FilteredFilms[this._activeFilter](films);
+    const filteredFilms = FilterFilm[this._activeFilter](films);
 
     this._filmsExtra = {
       topRated: getExtraTypeFilms(films).topRated,
@@ -207,7 +207,7 @@ export default class MoviesPresenter {
 
   _handleLoadMoreBtnClick() {
     const filmsCount = this._getFilms().length;
-    const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + Films.FILM_COUNT_PER_STEP);
+    const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + FilmCounter.FILM_COUNT_PER_STEP);
     const films = this._getFilms().slice(this._renderedFilmsCount, newRenderedFilmCount);
 
     this._renderFilms(this._filmsListMainContainer, films);
@@ -327,7 +327,7 @@ export default class MoviesPresenter {
 
     // resetRenderedFilmCount - количество показанных фильмов
     if (resetRenderedFilmCount) {
-      this._renderedFilmsCount = Films.SHOW_FILMS;
+      this._renderedFilmsCount = FilmCounter.SHOW_FILMS;
     } else {
       this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
     }

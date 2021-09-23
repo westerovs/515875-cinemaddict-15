@@ -1,7 +1,7 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
-import { TypeOfStatistics, getDataHistoryFilms } from '../../utils/statistic.js';
+import { StatisticType, getDataHistoryFilms } from '../../utils/statistic.js';
 import SmartView from '../../utils/abstract/smart.js';
 
 const ROW_HEIGHT = 50;
@@ -74,7 +74,7 @@ const renderGenresChart = (container, state) => {
 const createBtnsTemplate = (currentInput) => {
   let template = '';
 
-  Object.values(TypeOfStatistics).forEach((type) => {
+  Object.values(StatisticType).forEach((type) => {
     template += `
       <input type="radio"
         class="statistic__filters-input visually-hidden"
@@ -144,7 +144,7 @@ export default class Statistics extends SmartView {
         return dayjs().subtract( 1 , typeOfTime).toDate();
       })(),
       dateTo: dayjs().toDate(),
-      currentInput: TypeOfStatistics.ALL_TIME, // radio по умолчанию
+      currentInput: StatisticType.ALL_TIME, // radio по умолчанию
     };
 
     this._userRank = document.querySelector('.profile__rating').textContent;

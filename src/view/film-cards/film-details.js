@@ -4,7 +4,7 @@ import { isDay } from '../../utils/days.js';
 import { calculateRuntime } from '../../utils/statistic.js';
 import { createElement, replace } from '../../utils/render.js';
 import he from 'he';
-import { EMOTION, KeyCodes } from '../../utils/const.js';
+import { EMOTION, KeyCode } from '../../utils/const.js';
 import SmartView from '../../utils/abstract/smart.js';
 
 dayjs.extend(RelativeTime);
@@ -335,7 +335,7 @@ export default class FilmDetails extends SmartView {
   }
 
   _onSubmitEnterNewComment(evt) {
-    if (evt.key === KeyCodes.ENTER && evt.ctrlKey) {
+    if (evt.key === KeyCode.ENTER && evt.ctrlKey) {
       this._state.newComment = this._createNewComment();
       this._callback.onSubmitNewComment(this._state);
     }

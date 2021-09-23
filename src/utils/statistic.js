@@ -4,7 +4,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
 
-const TypeOfStatistics = {
+const StatisticType = {
   ALL_TIME: 'all time',
   TODAY: 'today',
   WEEK: 'week',
@@ -34,15 +34,15 @@ const getTotalDuration = (films) => films.reduce((acc, film) => {
 // просмотренные фильмы в диапазоне
 const filterMoviesByPeriod = (films, dateFrom, dateTo, currentInput) => {
   switch (currentInput) {
-    case TypeOfStatistics.ALL_TIME:
+    case StatisticType.ALL_TIME:
       return films;
-    case TypeOfStatistics.TODAY:
+    case StatisticType.TODAY:
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'day'));
-    case TypeOfStatistics.WEEK:
+    case StatisticType.WEEK:
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'week'));
-    case TypeOfStatistics.MONTH:
+    case StatisticType.MONTH:
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'month'));
-    case TypeOfStatistics.YEAR:
+    case StatisticType.YEAR:
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'year'));
   }
 };
@@ -75,7 +75,7 @@ const getDataHistoryFilms = (films, dateFrom, dateTo, currentInput) => {
 
 export {
   getTotalDuration,
-  TypeOfStatistics,
+  StatisticType,
   getMostFrequentlyRepeatedItems,
   getDataHistoryFilms,
   calculateRuntime

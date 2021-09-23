@@ -8,7 +8,7 @@ import MainMenuView from '../view/main-menu/main-menu.js';
 import StatisticsView from '../view/statistics/statistics.js';
 import RankView from '../view/main-menu/rank.js';
 import { UpdateType } from '../utils/const.js';
-import { FilterType, FilteredFilms } from '../utils/filter.js';
+import { FilterType, FilterFilm } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
 
 export default class MainMenuPresenter {
@@ -65,19 +65,19 @@ export default class MainMenuPresenter {
     return [
       {
         type: FilterType.ALL,
-        count: FilteredFilms[FilterType.ALL](films).length,
+        count: FilterFilm[FilterType.ALL](films).length,
       },
       {
         type: FilterType.WATCHLIST,
-        count: FilteredFilms[FilterType.WATCHLIST](films).length,
+        count: FilterFilm[FilterType.WATCHLIST](films).length,
       },
       {
         type: FilterType.HISTORY,
-        count: FilteredFilms[FilterType.HISTORY](films).length,
+        count: FilterFilm[FilterType.HISTORY](films).length,
       },
       {
         type: FilterType.FAVORITES,
-        count: FilteredFilms[FilterType.FAVORITES](films).length,
+        count: FilterFilm[FilterType.FAVORITES](films).length,
       },
     ];
   }
