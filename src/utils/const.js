@@ -49,6 +49,12 @@ const State = {
   DELETING: 'DELETING',
 };
 
+const UserRank = {
+  NOVICE: 11,
+  FAN: 20,
+  MOVIE_BUFF: 21,
+};
+
 export {
   UserAction,
   UpdateType,
@@ -56,5 +62,6 @@ export {
   getExtraTypeFilms,
   EMOTIONS,
   KeyCode,
-  State
+  State,
+  UserRank
 };
