@@ -159,6 +159,19 @@ export default class Statistics extends SmartView {
     return createStatsTemplate(this._state, this._userRank);
   }
 
+  restoreAllHandlers() {
+    this._drawChart();
+    this._setInnerHandlers();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._genresChart !== null) {
+      this._genresChart = null;
+    }
+  }
+
   _drawChart() {
     if (this._genresChart !== null) {
       this._genresChart = null;
@@ -189,16 +202,4 @@ export default class Statistics extends SmartView {
       .forEach((input) => input.addEventListener('click', this._onClickStatisticsBtn));
   }
 
-  restoreAllHandlers() {
-    this._drawChart();
-    this._setInnerHandlers();
-  }
-
-  removeElement() {
-    super.removeElement();
-
-    if (this._genresChart !== null) {
-      this._genresChart = null;
-    }
-  }
 }

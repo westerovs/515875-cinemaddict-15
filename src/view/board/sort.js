@@ -36,6 +36,11 @@ export default class Sort extends AbstractView {
     return createSortingTemplate(this._currentSortType);
   }
 
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener('click', this._sortTypeChangeHandler);
+  }
+
   _sortTypeChangeHandler(evt) {
     if (evt.target !== evt.target.closest('.sort__button')) { return; }
 
@@ -43,11 +48,6 @@ export default class Sort extends AbstractView {
     evt.target.classList.add('sort__button--active');
 
     this._callback.sortTypeChange(evt.target.dataset.sortType);
-  }
-
-  setSortTypeChangeHandler(callback) {
-    this._callback.sortTypeChange = callback;
-    this.getElement().addEventListener('click', this._sortTypeChangeHandler);
   }
 }
 

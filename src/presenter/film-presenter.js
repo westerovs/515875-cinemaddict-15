@@ -22,7 +22,7 @@ export default class FilmPresenter {
 
     this._renderFilmDetails = this._renderFilmDetails.bind(this);
     this._destroyFilmDetails = this._destroyFilmDetails.bind(this);
-    this._onEscCloseFilmDetails = this._onEscCloseFilmDetails.bind(this);
+    this._escCloseFilmDetails = this._escCloseFilmDetails.bind(this);
     // *** ↓ handle controls ↓ ***
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
@@ -57,8 +57,43 @@ export default class FilmPresenter {
     removeComponent(prevFilmDetailsComponent);
   }
 
+  destroy() {
+    removeComponent(this._filmCardComponent);
+    removeComponent(this._filmDetailsComponent);
+  }
+
   getFilmDetails() {
     return this._filmDetailsComponent;
+  }
+
+  runErrorAnimations(duration = 1000) {
+    this._filmDetailsComponent.getElement().classList.add('shake');
+    this._scrollPosition = this._filmDetailsComponent.getElement().scrollTop;
+
+    setTimeout(() => {
+      this._filmDetailsComponent.getElement().classList.remove('shake');
+
+      this._resetFormState();
+      this._filmDetailsComponent.getElement().scrollTop = this._scrollPosition;
+    }, duration);
+  }
+
+  setViewState(state) {
+    switch (state) {
+      case State.SENDING_NEW_COMMENT: {
+        this._filmDetailsComponent.updateState({
+          isDisabledForm: true,
+        });
+        break;
+      }
+      case State.DELETING: {
+        this._filmDetailsComponent.updateState({
+          isDisabledComment: true,
+          isDeleting: true,
+        });
+        break;
+      }
+    }
   }
 
   _renderFilm() {
@@ -75,7 +110,7 @@ export default class FilmPresenter {
         this._addPopupHandlers();
 
         document.body.classList.add('hide-overflow');
-        document.addEventListener('keydown', this._onEscCloseFilmDetails );
+        document.addEventListener('keydown', this._escCloseFilmDetails );
         render(document.body, this._filmDetailsComponent);
 
         this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
@@ -107,10 +142,10 @@ export default class FilmPresenter {
       this._filmDetailsComponent.getElement().remove();
     }
     document.body.classList.remove('hide-overflow');
-    document.removeEventListener('keydown', this._onEscCloseFilmDetails);
+    document.removeEventListener('keydown', this._escCloseFilmDetails);
   }
 
-  _onEscCloseFilmDetails(evt) {
+  _escCloseFilmDetails(evt) {
     if (evt.code === KeyCode.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
       this._destroyFilmDetails();
@@ -179,47 +214,11 @@ export default class FilmPresenter {
     );
   }
 
-  // other
-  setViewState(state) {
-    switch (state) {
-      case State.SENDING_NEW_COMMENT: {
-        this._filmDetailsComponent.updateState({
-          isDisabledForm: true,
-        });
-        break;
-      }
-      case State.DELETING: {
-        this._filmDetailsComponent.updateState({
-          isDisabledComment: true,
-          isDeleting: true,
-        });
-        break;
-      }
-    }
-  }
-
-  runErrorAnimations(duration = 1000) {
-    this._filmDetailsComponent.getElement().classList.add('shake');
-    this._scrollPosition = this._filmDetailsComponent.getElement().scrollTop;
-
-    setTimeout(() => {
-      this._filmDetailsComponent.getElement().classList.remove('shake');
-
-      this._resetFormState();
-      this._filmDetailsComponent.getElement().scrollTop = this._scrollPosition;
-    }, duration);
-  }
-
   _resetFormState() {
     this._filmDetailsComponent.updateState({
       isDisabledForm: false,
       isDisabledComment: false,
       isDeleting: false,
     });
-  }
-
-  destroy() {
-    removeComponent(this._filmCardComponent);
-    removeComponent(this._filmDetailsComponent);
   }
 }

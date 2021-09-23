@@ -59,6 +59,10 @@ export default class MoviesPresenter {
     this._renderBoard();
   }
 
+  destroy() {
+    this._clearBoard({ resetRenderedFilmCardsCount: true, resetSortType: true });
+  }
+
   _getFilms() {
     this._activeFilter = this._filterModel.getActiveFilter();
     const films = this._moviesModel.getFilms();
@@ -336,9 +340,5 @@ export default class MoviesPresenter {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
-  }
-
-  destroy() {
-    this._clearBoard({ resetRenderedFilmCardsCount: true, resetSortType: true });
   }
 }

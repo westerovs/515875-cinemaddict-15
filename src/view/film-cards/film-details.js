@@ -242,8 +242,35 @@ export default class FilmDetails extends SmartView {
     return createFilmDetailsTemplate(this._state);
   }
 
-  _closeDetailsClickHandler() {
-    this._callback.toCloseClick();
+  reset(film) {
+    this.updateState(
+      FilmDetails.parseFilmToData(film),
+    );
+  }
+
+  restoreAllHandlers() {
+    this.setInnerHandlers();
+
+    this.setCloseDetailsClickHandler(this._callback.toCloseClick);
+
+    this.setWatchListClickHandler(this._callback.watchListClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+
+    this.setOnDeleteCommentClick(this._callback.onDeleteClick);
+    this.setSubmitNewComment(this._callback.onSubmitNewComment);
+  }
+
+  setSubmitNewComment(callback) {
+    this._callback.onSubmitNewComment = callback;
+    this.getElement().querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this._onSubmitEnterNewComment);
+  }
+
+  setOnDeleteCommentClick(callback) {
+    this._callback.onDeleteClick = callback;
+    this.getElement().querySelectorAll('.film-details__comment-delete')
+      .forEach((button) => button.addEventListener('click', this._handleDeleteCommentClick));
   }
 
   setCloseDetailsClickHandler(callback) {
@@ -253,18 +280,13 @@ export default class FilmDetails extends SmartView {
     closeBtn.addEventListener('click', this._closeDetailsClickHandler);
   }
 
-  // -------------------------------- controls ↓
-  _watchListClickHandler() {
-    this._callback.watchListClick(this._state);
-  }
+  setInnerHandlers() {
+    // тут вешаем обработчики на клик по эмоции и textarea
+    const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
+    const textarea = this.getElement().querySelector('.film-details__comment-input');
 
-  _watchedClickHandler(e) {
-    e.preventDefault();
-    this._callback.watchedClick(this._state);
-  }
-
-  _favoriteClickHandler() {
-    this._callback.favoriteClick(this._state);
+    emoji.forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
+    textarea.addEventListener('input', this._commentTextAreaHandler);
   }
 
   setWatchListClickHandler(callback) {
@@ -286,6 +308,24 @@ export default class FilmDetails extends SmartView {
 
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
+  }
+
+  _closeDetailsClickHandler() {
+    this._callback.toCloseClick();
+  }
+
+  // -------------------------------- controls ↓
+  _watchListClickHandler() {
+    this._callback.watchListClick(this._state);
+  }
+
+  _watchedClickHandler(e) {
+    e.preventDefault();
+    this._callback.watchedClick(this._state);
+  }
+
+  _favoriteClickHandler() {
+    this._callback.favoriteClick(this._state);
   }
 
   // -------------------------------- comments ↓
@@ -355,12 +395,6 @@ export default class FilmDetails extends SmartView {
     };
   }
 
-  setSubmitNewComment(callback) {
-    this._callback.onSubmitNewComment = callback;
-    this.getElement().querySelector('.film-details__comment-input')
-      .addEventListener('keydown', this._onSubmitEnterNewComment);
-  }
-
   _handleDeleteCommentClick(evt) {
     evt.preventDefault();
     const scrollTopPosition = this.getElement().scrollTop;
@@ -374,34 +408,6 @@ export default class FilmDetails extends SmartView {
     document.querySelector('.film-details').scrollTop = scrollTopPosition;
   }
 
-  setOnDeleteCommentClick(callback) {
-    this._callback.onDeleteClick = callback;
-    this.getElement().querySelectorAll('.film-details__comment-delete')
-      .forEach((button) => button.addEventListener('click', this._handleDeleteCommentClick));
-  }
-
-  // -------------------------------- other ↓
-  setInnerHandlers() {
-    // тут вешаем обработчики на клик по эмоции и textarea
-    const emoji = this.getElement().querySelectorAll('.film-details__emoji-item');
-    const textarea = this.getElement().querySelector('.film-details__comment-input');
-
-    emoji.forEach((emotion) => emotion.addEventListener('click', this._emotionClickHandler));
-    textarea.addEventListener('input', this._commentTextAreaHandler);
-  }
-
-  restoreAllHandlers() {
-    this.setInnerHandlers();
-
-    this.setCloseDetailsClickHandler(this._callback.toCloseClick);
-
-    this.setWatchListClickHandler(this._callback.watchListClick);
-    this.setWatchedClickHandler(this._callback.watchedClick);
-    this.setFavoriteClickHandler(this._callback.favoriteClick);
-
-    this.setOnDeleteCommentClick(this._callback.onDeleteClick);
-    this.setSubmitNewComment(this._callback.onSubmitNewComment);
-  }
 
   static parseFilmToData(film) {
     return Object.assign(
@@ -440,9 +446,4 @@ export default class FilmDetails extends SmartView {
     return state;
   }
 
-  reset(film) {
-    this.updateState(
-      FilmDetails.parseFilmToData(film),
-    );
-  }
 }
