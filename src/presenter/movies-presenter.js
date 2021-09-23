@@ -332,9 +332,8 @@ export default class MoviesPresenter {
     // resetRenderedFilmCount - количество показанных фильмов
     if (resetRenderedFilmCount) {
       this._renderedFilmsCount = FilmCounter.SHOW_FILMS;
-    } else {
-      this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
     }
+    this._renderedFilmsCount = Math.min(filmsCount, this._renderedFilmsCount);
 
     // resetSortType - сбросить тип сортировки
     if (resetSortType) {
