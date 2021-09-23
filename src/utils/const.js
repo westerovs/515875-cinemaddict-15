@@ -32,7 +32,7 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-const EMOTION = [
+const EMOTIONS = [
   'smile',
   'sleeping',
   'puke',
@@ -54,7 +54,7 @@ export {
   UpdateType,
   FilmCounter,
   getExtraTypeFilms,
-  EMOTION,
+  EMOTIONS,
   KeyCode,
   State
 };

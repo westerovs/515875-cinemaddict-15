@@ -4,7 +4,7 @@ import { isDay } from '../../utils/days.js';
 import { calculateRuntime } from '../../utils/statistic.js';
 import { createElement, replace } from '../../utils/render.js';
 import he from 'he';
-import { EMOTION, KeyCode } from '../../utils/const.js';
+import { EMOTIONS, KeyCode } from '../../utils/const.js';
 import SmartView from '../../utils/abstract/smart.js';
 
 dayjs.extend(RelativeTime);
@@ -63,7 +63,7 @@ const createGenreTemplate = (genre) => {
 const createEmojiTemplate = () => {
   let template = '';
 
-  EMOTION.forEach((emoji) => {
+  EMOTIONS.forEach((emoji) => {
     template += `
        <input class="film-details__emoji-item visually-hidden"
           name="comment-emoji"
