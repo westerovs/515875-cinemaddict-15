@@ -9,6 +9,7 @@ import FilmCardView from '../view/film-cards/film-card.js';
 import FilmDetailsView from '../view/film-cards/film-details.js';
 
 const observer = new AbstractObserver();
+
 export default class FilmPresenter {
   constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
