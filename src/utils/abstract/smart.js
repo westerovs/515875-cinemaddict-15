@@ -3,7 +3,7 @@
 * */
 import AbstractView from './abstract-view.js';
 
-export default class Smart extends AbstractView {
+class Smart extends AbstractView {
   constructor() {
     super();
     this._state = {};
@@ -42,3 +42,5 @@ export default class Smart extends AbstractView {
     throw new Error('Абстрактный метод должен вызываться только у потомков: restoreAllHandlers');
   }
 }
+
+export default Smart;

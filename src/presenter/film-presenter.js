@@ -10,7 +10,7 @@ import FilmDetailsView from '../view/film-cards/film-details.js';
 
 const observer = new AbstractObserver();
 
-export default class FilmPresenter {
+class FilmPresenter {
   constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
     this._handleViewAction = handleViewAction;
@@ -223,3 +223,5 @@ export default class FilmPresenter {
     });
   }
 }
+
+export default FilmPresenter;

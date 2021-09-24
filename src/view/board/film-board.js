@@ -4,9 +4,10 @@ const createFilmsBoardTemplate = () => (
   '<section class="films"></section>'
 );
 
-export default class FilmBoard extends AbstractView {
+class FilmBoard extends AbstractView {
   getTemplate() {
     return createFilmsBoardTemplate();
   }
 }
 
+export default FilmBoard;

@@ -16,7 +16,7 @@ const createNoFilmLsTemplate = (filterType) => {
           </section>`;
 };
 
-export default class NoFilms extends AbstractView {
+class NoFilms extends AbstractView {
   constructor(data){
     super();
     this._data = data;
@@ -26,4 +26,6 @@ export default class NoFilms extends AbstractView {
     return createNoFilmLsTemplate(this._data);
   }
 }
+
+export default NoFilms;
 

@@ -24,7 +24,7 @@ const createSortingTemplate = (currentSortType) => (
   </ul>`
 );
 
-export default class Sort extends AbstractView {
+class Sort extends AbstractView {
   constructor(currentSortType) {
     super();
 
@@ -51,3 +51,4 @@ export default class Sort extends AbstractView {
   }
 }
 
+export default Sort;

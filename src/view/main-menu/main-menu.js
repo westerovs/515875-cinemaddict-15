@@ -31,7 +31,7 @@ const createSiteMenuTemplate = (filters, currentFilterType) => (
     >Stats</a>
   </nav>`);
 
-export default class MainMenu extends AbstractView {
+class MainMenu extends AbstractView {
   constructor(filter, currentFilterType) {
     super();
     this._filter = filter;
@@ -77,4 +77,4 @@ export default class MainMenu extends AbstractView {
   }
 }
 
-
+export default MainMenu;

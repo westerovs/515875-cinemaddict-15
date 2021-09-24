@@ -15,7 +15,7 @@ import ShowMoreBtnView from '../view/board/show-more-btn.js';
 import NoFilmsView from '../view/board/no-films.js';
 import LoadingView from '../view/board/loading.js';
 
-export default class MoviesPresenter {
+class MoviesPresenter {
   constructor(mainElement, model, filterModel, api) {
     this._mainElement = mainElement;
     this._moviesModel = model;
@@ -354,3 +354,5 @@ export default class MoviesPresenter {
     }
   }
 }
+
+export default MoviesPresenter;

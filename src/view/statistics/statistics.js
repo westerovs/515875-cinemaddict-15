@@ -133,7 +133,7 @@ const createStatsTemplate = (state, userRank) => {
     </section>`;
 };
 
-export default class Statistics extends SmartView {
+class Statistics extends SmartView {
   constructor(films) {
     super();
 
@@ -201,5 +201,6 @@ export default class Statistics extends SmartView {
     this.getElement().querySelectorAll('.statistic__filters-input')
       .forEach((input) => input.addEventListener('click', this._onClickStatisticsBtn));
   }
-
 }
+
+export default Statistics;

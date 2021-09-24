@@ -1,6 +1,6 @@
 import { createElement } from '../render.js';
 
-export default class AbstractView {
+class AbstractView {
   constructor() {
     if (new.target === AbstractView) {
       throw Error('Нельзя создать экземпляр класса. Только наследование !');
@@ -27,3 +27,4 @@ export default class AbstractView {
   }
 }
 
+export default AbstractView;

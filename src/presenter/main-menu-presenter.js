@@ -11,7 +11,7 @@ import { UpdateType } from '../utils/const.js';
 import { FilterType, FilterFilm } from '../utils/filter.js';
 import { render, removeComponent, replace } from '../utils/render.js';
 
-export default class MainMenuPresenter {
+class MainMenuPresenter {
   constructor(siteMainElement, headerContainer, filterModel, moviesModel, moviesPresenter) {
     this._siteMainElement = siteMainElement;
     this._headerContainer = headerContainer;
@@ -128,3 +128,5 @@ export default class MainMenuPresenter {
     this._statisticsComponent = null;
   }
 }
+
+export default MainMenuPresenter;

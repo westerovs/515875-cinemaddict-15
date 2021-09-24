@@ -8,8 +8,10 @@ const createFilmListTemplate = () => (
     </section>`
 );
 
-export default class FilmsList extends AbstractView {
+class FilmsList extends AbstractView {
   getTemplate() {
     return createFilmListTemplate();
   }
 }
+
+export default FilmsList;

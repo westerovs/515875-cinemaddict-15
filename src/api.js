@@ -7,7 +7,7 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-export default class Api {
+class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -43,7 +43,7 @@ export default class Api {
       headers: new Headers({ 'Content-Type': 'application/json' }),
     })
       .then(Api.toJSON)
-      .then((response) => response = response.movie)
+      .then((response) => response.movie)
       .then(MoviesModel.adaptToClient);
   }
 
@@ -86,3 +86,5 @@ export default class Api {
     throw err;
   }
 }
+
+export default Api;

@@ -218,7 +218,7 @@ const createFilmDetailsTemplate = (state) => {
   );
 };
 
-export default class FilmDetails extends SmartView {
+class FilmDetails extends SmartView {
   constructor(film) {
     super();
     this._state = FilmDetails.parseFilmToData(film);
@@ -447,3 +447,6 @@ export default class FilmDetails extends SmartView {
   }
 
 }
+
+export default FilmDetails;
+

@@ -23,7 +23,7 @@ const createRankTemplate = (watchedMovies) => {
   );
 };
 
-export default class Rank extends AbstractView {
+class Rank extends AbstractView {
   constructor(watchedMovies){
     super();
     this._watchedMovies = watchedMovies;
@@ -33,3 +33,5 @@ export default class Rank extends AbstractView {
     return createRankTemplate(this._watchedMovies);
   }
 }
+
+export default Rank;
