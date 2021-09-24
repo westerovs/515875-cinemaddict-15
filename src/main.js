@@ -12,10 +12,10 @@ const AUTHORIZATION = 'Basic 555WTFuckThePower666JavaScript2077';
 const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const pageBody = document.querySelector('body');
-const siteHeaderElement = pageBody.querySelector('.header');
-const siteMainElement = pageBody.querySelector('.main');
-const siteFooterStatistics = pageBody.querySelector('.footer__statistics');
+const pageBodyElement = document.querySelector('body');
+const siteHeaderElement = pageBodyElement.querySelector('.header');
+const siteMainElement = pageBodyElement.querySelector('.main');
+const siteFooterStatisticsElement = pageBodyElement.querySelector('.footer__statistics');
 
 const filterModel = new FilterModel();
 const moviesModel = new MoviesModel();
@@ -36,7 +36,7 @@ api.getMovies()
     mainMenuPresenter.init();
 
     moviesModel.setFilms(UpdateType.INIT, movies); // добавляет в модель фильмы
-    render(siteFooterStatistics, new FooterStatisticView(movies.length));
+    render(siteFooterStatisticsElement, new FooterStatisticView(movies.length));
   })
   .catch((error) => {
     moviesModel.setFilms(UpdateType.INIT, []);

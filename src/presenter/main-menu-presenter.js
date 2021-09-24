@@ -25,17 +25,17 @@ class MainMenuPresenter {
     this._rankComponent = null;
 
     // controls
-    this._handleFilterClick = this._handleFilterClick.bind(this);
-    this._handleStatisticsClick = this._handleStatisticsClick.bind(this);
+    this._filterClickHandler = this._filterClickHandler.bind(this);
+    this._statisticsClickHandler = this._statisticsClickHandler.bind(this);
 
     this._getWatchedFilmsCount = this._getWatchedFilmsCount.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
   }
 
   init() {
     const filters = this._getFilters();
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._moviesModel.addObserver(this._modelEventHandler);
+    this._filterModel.addObserver(this._modelEventHandler);
 
     const prevMainMenuComponent = this._mainMenuComponent;
     const prevRankComponent = this._rankComponent;
@@ -83,8 +83,8 @@ class MainMenuPresenter {
   }
 
   _addHandlers() {
-    this._mainMenuComponent.setFilterClickHandler(this._handleFilterClick);
-    this._mainMenuComponent.setStatisticsClickHandler(this._handleStatisticsClick);
+    this._mainMenuComponent.setFilterClickHandler(this._filterClickHandler);
+    this._mainMenuComponent.setStatisticsClickHandler(this._statisticsClickHandler);
   }
 
   _getWatchedFilmsCount() {
@@ -100,11 +100,11 @@ class MainMenuPresenter {
     return watchedFilmsCount;
   }
 
-  _handleModelEvent() {
+  _modelEventHandler() {
     this.init();
   }
 
-  _handleFilterClick(filterType) {
+  _filterClickHandler(filterType) {
     if (this._filterModel.getActiveFilter() === filterType) {
       return;
     }
@@ -115,7 +115,7 @@ class MainMenuPresenter {
     this._filterModel.setActiveFilter(UpdateType.MAJOR, filterType);
   }
 
-  _handleStatisticsClick() {
+  _statisticsClickHandler() {
     this._moviesPresenter.destroy();
     this._statisticsComponent = new StatisticsView(this._moviesModel.getFilms());
     this._filterModel.setActiveFilter(null);

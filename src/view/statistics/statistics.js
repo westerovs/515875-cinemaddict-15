@@ -147,7 +147,7 @@ class Statistics extends SmartView {
       currentInput: StatisticType.ALL_TIME, // radio по умолчанию
     };
 
-    this._userRank = document.querySelector('.profile__rating').textContent;
+    this._userRankElement = document.querySelector('.profile__rating').textContent;
     this._genresChart = null;
 
     this._onClickStatisticsBtn = this._onClickStatisticsBtn.bind(this);
@@ -156,7 +156,7 @@ class Statistics extends SmartView {
   }
 
   getTemplate() {
-    return createStatsTemplate(this._state, this._userRank);
+    return createStatsTemplate(this._state, this._userRankElement);
   }
 
   restoreAllHandlers() {
@@ -181,6 +181,11 @@ class Statistics extends SmartView {
     this._genresChart = renderGenresChart(container, this._state);
   }
 
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll('.statistic__filters-input')
+      .forEach((input) => input.addEventListener('click', this._onClickStatisticsBtn));
+  }
+
   _onClickStatisticsBtn(evt) {
     if (evt.target.value === this._state.currentInput) {
       return;
@@ -195,11 +200,6 @@ class Statistics extends SmartView {
         currentInput: evt.target.value,
       },
     );
-  }
-
-  _setInnerHandlers() {
-    this.getElement().querySelectorAll('.statistic__filters-input')
-      .forEach((input) => input.addEventListener('click', this._onClickStatisticsBtn));
   }
 }
 

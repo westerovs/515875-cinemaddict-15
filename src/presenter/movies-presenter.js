@@ -46,13 +46,13 @@ class MoviesPresenter {
     this._isLoading = true;
     this._api = api;
 
-    this._handleLoadMoreBtnClick = this._handleLoadMoreBtnClick.bind(this);
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._handleViewAction = this._handleViewAction.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._loadMoreBtnClickHandler = this._loadMoreBtnClickHandler.bind(this);
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._viewActionHandler = this._viewActionHandler.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._moviesModel.addObserver(this._modelEventHandler);
+    this._filterModel.addObserver(this._modelEventHandler);
   }
 
   init() {
@@ -132,7 +132,7 @@ class MoviesPresenter {
   _renderFilm(container, film) {
     const filmPresenter = new FilmPresenter(
       container,
-      this._handleViewAction,
+      this._viewActionHandler,
       this._filterModel.getActiveFilter(),
       this._api,
     );
@@ -190,12 +190,12 @@ class MoviesPresenter {
     }
 
     this._sortComponent = new SortView(this._currentSortType);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
 
     render(this._mainElement, this._sortComponent);
   }
 
-  _handleSortTypeChange(sortType) {
+  _sortTypeChangeHandler(sortType) {
     if (this._currentSortType === sortType) {
       return;
     }
@@ -211,13 +211,13 @@ class MoviesPresenter {
     }
 
     this._showMoreBtnComponent = new ShowMoreBtnView();
-    this._showMoreBtnComponent.setClickHandler(this._handleLoadMoreBtnClick);
+    this._showMoreBtnComponent.setClickHandler(this._loadMoreBtnClickHandler);
 
     const filmsListMain = this._filmsBoard.querySelector('.films-list--main');
     render(filmsListMain, this._showMoreBtnComponent);
   }
 
-  _handleLoadMoreBtnClick() {
+  _loadMoreBtnClickHandler() {
     const filmsCount = this._getFilms().length;
     const newRenderedFilmCount = Math.min(filmsCount, this._renderedFilmsCount + FilmCounter.FILM_COUNT_PER_STEP);
     const films = this._getFilms().slice(this._renderedFilmsCount, newRenderedFilmCount);
@@ -227,12 +227,12 @@ class MoviesPresenter {
 
     // удаление кнопки
     if (this._renderedFilmsCount >= filmsCount) {
-      this._showMoreBtnComponent.getElement().removeEventListener('click', this._handleLoadMoreBtnClick);
+      this._showMoreBtnComponent.getElement().removeEventListener('click', this._loadMoreBtnClickHandler);
       removeComponent(this._showMoreBtnComponent);
     }
   }
 
-  _handleViewAction(actionType, updateType, updatedFilm) {
+  _viewActionHandler(actionType, updateType, updatedFilm) {
     switch (actionType) {
       case UserAction.UPDATE_FILM_CARD: {
         this._api.updateMovie(updatedFilm)
@@ -268,7 +268,7 @@ class MoviesPresenter {
     }
   }
 
-  _handleModelEvent(updateType, updatedFilm) {
+  _modelEventHandler(updateType, updatedFilm) {
     switch (updateType) {
       case UpdateType.INIT: {
         this._isLoading = false;

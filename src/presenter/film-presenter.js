@@ -13,7 +13,7 @@ const observer = new AbstractObserver();
 class FilmPresenter {
   constructor(filmContainer, handleViewAction, currentFilterType, api) {
     this._filmContainer = filmContainer;
-    this._handleViewAction = handleViewAction;
+    this._viewActionHandler = handleViewAction;
     this._currentFilterType = currentFilterType;
     this._api = api;
 
@@ -23,13 +23,13 @@ class FilmPresenter {
 
     this._renderFilmDetails = this._renderFilmDetails.bind(this);
     this._destroyFilmDetails = this._destroyFilmDetails.bind(this);
-    this._escCloseFilmDetails = this._escCloseFilmDetails.bind(this);
+    this._escCloseFilmDetailsHandler = this._escCloseFilmDetailsHandler.bind(this);
     // *** ↓ handle controls ↓ ***
-    this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
-    this._handleWatchedClick = this._handleWatchedClick.bind(this);
-    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
-    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
+    this._addToWatchListClickHandler = this._addToWatchListClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
+    this._onSubmitEnterNewCommentHandler = this._onSubmitEnterNewCommentHandler.bind(this);
   }
 
   init(film) {
@@ -97,6 +97,14 @@ class FilmPresenter {
     }
   }
 
+  _resetFormState() {
+    this._filmDetailsComponent.updateState({
+      isDisabledForm: false,
+      isDisabledComment: false,
+      isDeleting: false,
+    });
+  }
+
   _renderFilm() {
     render(this._filmContainer, this._filmCardComponent);
   }
@@ -111,7 +119,7 @@ class FilmPresenter {
         this._addPopupHandlers();
 
         document.body.classList.add('hide-overflow');
-        document.addEventListener('keydown', this._escCloseFilmDetails );
+        document.addEventListener('keydown', this._escCloseFilmDetailsHandler );
         render(document.body, this._filmDetailsComponent);
 
         this._filmDetailsComponent.setCloseDetailsClickHandler(this._destroyFilmDetails);
@@ -122,38 +130,38 @@ class FilmPresenter {
       });
   }
 
-  _addHandlers() {
-    this._filmCardComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
-    this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
-  }
-
-  _addPopupHandlers() {
-    this._filmDetailsComponent.setWatchListClickHandler(this._handleAddToWatchListClick);
-    this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    this._filmDetailsComponent.setOnDeleteCommentClick(this._handleDeleteCommentClick);
-    this._filmDetailsComponent.setSubmitNewComment(this._onSubmitEnterNewComment);
-  }
-
   _destroyFilmDetails() {
     if (this._filmDetailsComponent) {
       this._filmDetailsComponent.getElement().remove();
     }
     document.body.classList.remove('hide-overflow');
-    document.removeEventListener('keydown', this._escCloseFilmDetails);
+    document.removeEventListener('keydown', this._escCloseFilmDetailsHandler);
   }
 
-  _escCloseFilmDetails(evt) {
+  _addHandlers() {
+    this._filmCardComponent.setWatchListClickHandler(this._addToWatchListClickHandler);
+    this._filmCardComponent.setWatchedClickHandler(this._watchedClickHandler);
+    this._filmCardComponent.setFavoriteClickHandler(this._favoriteClickHandler);
+    this._filmCardComponent.setShowFilmDetailsClickHandler(this._renderFilmDetails);
+  }
+
+  _addPopupHandlers() {
+    this._filmDetailsComponent.setWatchListClickHandler(this._addToWatchListClickHandler);
+    this._filmDetailsComponent.setWatchedClickHandler(this._watchedClickHandler);
+    this._filmDetailsComponent.setFavoriteClickHandler(this._favoriteClickHandler);
+
+    this._filmDetailsComponent.setOnDeleteCommentClick(this._deleteCommentClickHandler);
+    this._filmDetailsComponent.setSubmitNewComment(this._onSubmitEnterNewCommentHandler);
+  }
+
+  _escCloseFilmDetailsHandler(evt) {
     if (evt.code === KeyCode.ESCAPE || evt.key === 'Esc') {
       evt.preventDefault();
       this._destroyFilmDetails();
     }
   }
 
-  _handleAddToWatchListClick() {
+  _addToWatchListClickHandler() {
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isWatchlist: !this._film.userDetails.isWatchlist,
@@ -162,14 +170,14 @@ class FilmPresenter {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleViewAction(
+    this._viewActionHandler(
       UserAction.UPDATE_FILM_CARD,
       (this._currentFilterType === FilterType.WATCHLIST) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
 
-  _handleWatchedClick() {
+  _watchedClickHandler() {
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isAlreadyWatched: !this._film.userDetails.isAlreadyWatched,
@@ -179,14 +187,14 @@ class FilmPresenter {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleViewAction(
+    this._viewActionHandler(
       UserAction.UPDATE_FILM_CARD,
       (this._currentFilterType === FilterType.HISTORY) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
 
-  _handleFavoriteClick() {
+  _favoriteClickHandler() {
     const userDetails = Object.assign({}, this._film.userDetails,
       {
         isFavorite: !this._film.userDetails.isFavorite,
@@ -195,32 +203,23 @@ class FilmPresenter {
 
     const updatedFilm = Object.assign({}, this._film, { userDetails });
 
-    this._handleViewAction(
+    this._viewActionHandler(
       UserAction.UPDATE_FILM_CARD,
       (this._currentFilterType === FilterType.FAVORITES) ? UpdateType.MINOR : UpdateType.PATCH,
       updatedFilm,
     );
   }
 
-  // *** ↓ comments ↓ ***
-  _handleDeleteCommentClick(film) {
-    this._handleViewAction(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
+  _deleteCommentClickHandler(film) {
+    this._viewActionHandler(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
   }
 
-  _onSubmitEnterNewComment(film) {
-    this._handleViewAction(
+  _onSubmitEnterNewCommentHandler(film) {
+    this._viewActionHandler(
       UserAction.ADD_NEW_COMMENT,
       UpdateType.PATCH,
       film,
     );
-  }
-
-  _resetFormState() {
-    this._filmDetailsComponent.updateState({
-      isDisabledForm: false,
-      isDisabledComment: false,
-      isDeleting: false,
-    });
   }
 }
 

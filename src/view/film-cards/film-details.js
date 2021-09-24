@@ -230,9 +230,9 @@ class FilmDetails extends SmartView {
 
     this._emotionClickHandler = this._emotionClickHandler.bind(this);
     this._commentTextAreaHandler = this._commentTextAreaHandler.bind(this);
-    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
-    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
-    this._onSubmitEnterNewComment = this._onSubmitEnterNewComment.bind(this);
+    this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
+    this._onSubmitEnterNewCommentHandler = this._onSubmitEnterNewCommentHandler.bind(this);
+    this._onSubmitEnterNewCommentHandler = this._onSubmitEnterNewCommentHandler.bind(this);
 
     this.setInnerHandlers();
     this._scrollPosition = 0;
@@ -264,20 +264,20 @@ class FilmDetails extends SmartView {
   setSubmitNewComment(callback) {
     this._callback.onSubmitNewComment = callback;
     this.getElement().querySelector('.film-details__comment-input')
-      .addEventListener('keydown', this._onSubmitEnterNewComment);
+      .addEventListener('keydown', this._onSubmitEnterNewCommentHandler);
   }
 
   setOnDeleteCommentClick(callback) {
     this._callback.onDeleteClick = callback;
     this.getElement().querySelectorAll('.film-details__comment-delete')
-      .forEach((button) => button.addEventListener('click', this._handleDeleteCommentClick));
+      .forEach((button) => button.addEventListener('click', this._deleteCommentClickHandler));
   }
 
   setCloseDetailsClickHandler(callback) {
     this._callback.toCloseClick = callback;
-    const closeBtn = this.getElement().querySelector('.film-details__close-btn');
+    const closeBtnElement = this.getElement().querySelector('.film-details__close-btn');
 
-    closeBtn.addEventListener('click', this._closeDetailsClickHandler);
+    closeBtnElement.addEventListener('click', this._closeDetailsClickHandler);
   }
 
   setInnerHandlers() {
@@ -308,6 +308,30 @@ class FilmDetails extends SmartView {
 
     const favorite = this.getElement().querySelector('.film-details__control-button--favorite');
     favorite.addEventListener('click', this._favoriteClickHandler);
+  }
+
+  _changeEmotion(newEmotion){
+    const createEmotionElement = (emotion) => createElement(`<div class="film-details__add-emoji-label">
+      ${emotion ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">` : ''}
+      </div>`);
+    const oldEmotionElement = document.querySelector('.film-details__add-emoji-label');
+    const newEmotionElement = createEmotionElement(newEmotion);
+
+    replace(newEmotionElement, oldEmotionElement);
+  }
+
+  _createNewComment() {
+    if (!this._state.newComment.commentText) {
+      throw new Error('Нельзя отправить пустой комментарий !');
+    }
+    else if (!this._state.newComment.emotion) {
+      throw new Error('Пожалуйста, выберите эмоцию !');
+    }
+
+    return {
+      comment: he.encode(this._state.newComment.commentText),
+      emotion: this._state.newComment.emotion,
+    };
   }
 
   _closeDetailsClickHandler() {
@@ -352,16 +376,6 @@ class FilmDetails extends SmartView {
     [...emojiItems].find((it) => it.value === evt.target.value).setAttribute('checked', 'true');
   }
 
-  _changeEmotion(newEmotion){
-    const createEmotionElement = (emotion) => createElement(`<div class="film-details__add-emoji-label">
-      ${emotion ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">` : ''}
-      </div>`);
-    const oldEmotionElement = document.querySelector('.film-details__add-emoji-label');
-    const newEmotionElement = createEmotionElement(newEmotion);
-
-    replace(newEmotionElement, oldEmotionElement);
-  }
-
   _commentTextAreaHandler(evt) {
     this.updateState({
       newComment: Object.assign(
@@ -374,28 +388,14 @@ class FilmDetails extends SmartView {
     }, true);
   }
 
-  _onSubmitEnterNewComment(evt) {
+  _onSubmitEnterNewCommentHandler(evt) {
     if (evt.key === KeyCode.ENTER && evt.ctrlKey) {
       this._state.newComment = this._createNewComment();
       this._callback.onSubmitNewComment(this._state);
     }
   }
 
-  _createNewComment() {
-    if (!this._state.newComment.commentText) {
-      throw new Error('Нельзя отправить пустой комментарий !');
-    }
-    else if (!this._state.newComment.emotion) {
-      throw new Error('Пожалуйста, выберите эмоцию !');
-    }
-
-    return {
-      comment: he.encode(this._state.newComment.commentText),
-      emotion: this._state.newComment.emotion,
-    };
-  }
-
-  _handleDeleteCommentClick(evt) {
+  _deleteCommentClickHandler(evt) {
     evt.preventDefault();
     const scrollTopPosition = this.getElement().scrollTop;
 
@@ -407,7 +407,6 @@ class FilmDetails extends SmartView {
     this._callback.onDeleteClick(FilmDetails.getDataWithoutDeleteComment(this._state));
     document.querySelector('.film-details').scrollTop = scrollTopPosition;
   }
-
 
   static parseFilmToData(film) {
     return Object.assign(
@@ -445,7 +444,6 @@ class FilmDetails extends SmartView {
 
     return state;
   }
-
 }
 
 export default FilmDetails;
