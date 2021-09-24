@@ -12,9 +12,9 @@ const StatisticType = {
   YEAR: 'year',
 };
 
-// абстрактная ф-ция для нахождения наиболее часто повторяющихся значений в массиве
-const getMostFrequentlyRepeatedItems = (arr) => (
-  arr.reduce((acc, item) => (typeof acc[item] !== 'undefined')
+// ф-ция для нахождения наиболее часто повторяющихся значений в массиве
+const getMostFrequentlyRepeatedItems = (genres) => (
+  genres.reduce((acc, item) => (typeof acc[item] !== 'undefined')
     ? { ...acc, [item]: acc[item] + 1 }
     : { ...acc, [item]: 1 }, {})
 );
