@@ -75,9 +75,15 @@ export default class MoviesPresenter {
 
     // сортируем отфильтрованный результат
     switch (this._currentSortType) {
-      case SortType.DEFAULT: return filteredFilms;
-      case SortType.DATE:    return filteredFilms.slice().sort(sortDateDown);
-      case SortType.RATING:  return filteredFilms.slice().sort(sortRatingDown);
+      case SortType.DEFAULT: {
+        return filteredFilms;
+      }
+      case SortType.DATE: {
+        return filteredFilms.slice().sort(sortDateDown);
+      }
+      case SortType.RATING: {
+        return filteredFilms.slice().sort(sortRatingDown);
+      }
     }
   }
 
@@ -167,12 +173,14 @@ export default class MoviesPresenter {
 
   _renderAllExtraFilms(name) {
     switch (name) {
-      case 'Top rated':
+      case 'Top rated': {
         this._filmsExtra.topRated.forEach((film) => this._renderFilm(this._topRatedFilmsList, film));
         break;
-      case 'Most commented':
+      }
+      case 'Most commented': {
         this._filmsExtra.mostCommented.forEach((film) => this._renderFilm(this._mostCommentedFilmsList, film));
         break;
+      }
     }
   }
 
@@ -226,14 +234,14 @@ export default class MoviesPresenter {
 
   _handleViewAction(actionType, updateType, updatedFilm) {
     switch (actionType) {
-      case UserAction.UPDATE_FILM_CARD:
+      case UserAction.UPDATE_FILM_CARD: {
         this._api.updateMovie(updatedFilm)
           .then((response) => {
             this._moviesModel.updateFilm(updateType, response);
           });
         break;
-
-      case UserAction.ADD_NEW_COMMENT:
+      }
+      case UserAction.ADD_NEW_COMMENT: {
         this._setViewStateInOpenPopup(updatedFilm.id, State.SENDING_NEW_COMMENT);
 
         this._api.addNewComment(updatedFilm)
@@ -244,8 +252,8 @@ export default class MoviesPresenter {
             this._filmPresenters.get(updatedFilm.id).runErrorAnimations();
           });
         break;
-
-      case UserAction.DELETE_COMMENT:
+      }
+      case UserAction.DELETE_COMMENT: {
         this._setViewStateInOpenPopup(updatedFilm.id, State.DELETING);
 
         this._api.deleteComment(updatedFilm)
@@ -256,17 +264,19 @@ export default class MoviesPresenter {
             this._filmPresenters.get(updatedFilm.id).runErrorAnimations();
           });
         break;
+      }
     }
   }
 
   _handleModelEvent(updateType, updatedFilm) {
     switch (updateType) {
-      case UpdateType.INIT:
+      case UpdateType.INIT: {
         this._isLoading = false;
         removeComponent(this._loadingComponent);
         this._renderBoard();
         break;
-      case UpdateType.PATCH:
+      }
+      case UpdateType.PATCH: {
         if (this._filmPresenters.get(updatedFilm.id)) {
           this._filmPresenters.get(updatedFilm.id).init(updatedFilm);
         }
@@ -277,14 +287,17 @@ export default class MoviesPresenter {
           this._filmPresentersExtra.mostCommented.get(updatedFilm.id).init(updatedFilm);
         }
         break;
-      case UpdateType.MINOR:
+      }
+      case UpdateType.MINOR: {
         this._clearBoard();
         this._renderBoard();
         break;
-      case UpdateType.MAJOR:
+      }
+      case UpdateType.MAJOR: {
         this._clearBoard({ resetRenderedFilmCount: true, resetSortType: true });
         this._renderBoard();
         break;
+      }
     }
   }
 

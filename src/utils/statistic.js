@@ -34,16 +34,21 @@ const getTotalDuration = (films) => films.reduce((acc, film) => {
 // просмотренные фильмы в диапазоне
 const filterMoviesByPeriod = (films, dateFrom, dateTo, currentInput) => {
   switch (currentInput) {
-    case StatisticType.ALL_TIME:
+    case StatisticType.ALL_TIME: {
       return films;
-    case StatisticType.TODAY:
+    }
+    case StatisticType.TODAY: {
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'day'));
-    case StatisticType.WEEK:
+    }
+    case StatisticType.WEEK: {
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'week'));
-    case StatisticType.MONTH:
+    }
+    case StatisticType.MONTH: {
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'month'));
-    case StatisticType.YEAR:
+    }
+    case StatisticType.YEAR: {
       return films.filter((film) => dayjs(film.userDetails.watchingDate).isSame(dateTo, 'year'));
+    }
   }
 };
 
